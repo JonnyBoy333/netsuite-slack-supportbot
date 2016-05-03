@@ -12,6 +12,12 @@
     "ejs": "~2.3.3",
     "express": "~4.13.1",
     "morgan": "~1.6.1",
-    "serve-favicon": "~2.3.0"
+    "serve-favicon": "~2.3.0",
+    "botkit": "~0.1.1",
+    "request": "2.x.x",
+    "http": "latest",
+    "url": "latest",
+    "querystring": "latest",
+    "sanitize-html": "latest"
   }
 }
