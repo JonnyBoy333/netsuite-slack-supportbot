@@ -9,6 +9,7 @@ var url = require('url');
 var Botkit = require('botkit');
 var request = require("request");
 var http = require("http");
+var sanitizeHtml = require('sanitize-html');
 //var url = require("url");
 var qs = require("querystring");
 
@@ -44,6 +45,7 @@ router.post('/', function (req, res, next) {
     }
     console.log('Slack Attachment: ' + JSON.stringify(body));
     webhooksBot.sendWebhook({
+        fallback: body.fallback,
         channel: '#testing',
         username: "support",
         icon_emoji: ":support:",
