@@ -4,7 +4,7 @@ var request = require("request");
 var Botkit = require('botkit');
 var controller = Botkit.slackbot();
 var bot = controller.spawn({
-    token: 'xoxb-39896988051-VhGDhjPGmlZEEcUMmDCMpHPt'
+    token: 'xoxb-15323778418-BRvb2hDVdIcyNwLL0Oi9iju4'
 });
 
 bot.startRTM(function(err, bot, payload){
