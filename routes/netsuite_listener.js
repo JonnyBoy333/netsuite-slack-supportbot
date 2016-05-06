@@ -41,8 +41,8 @@ router.post('/', function (req, res, next) {
     attachment.channel = '#testing';
     attachment.username = 'support';
     attachment.icon_emoji = ':support:'
-    console.log('Slack Attachment: ' + JSON.stringify(body));
-    webhooksBot.sendWebhook(body,function(err,res) {
+    console.log('Slack Attachment: ' + JSON.stringify(attachment));
+    webhooksBot.sendWebhook(attachment,function(err,res) {
         if (err) {
             console.log(err)
         }
