@@ -4,15 +4,10 @@
 
 var express = require('express');
 var router = express.Router();
-var qs = require('querystring');
-var url = require('url');
 var Botkit = require('botkit');
-var request = require("request");
-var http = require("http");
 var sanitizeHtml = require('sanitize-html');
-//var url = require("url");
-var qs = require("querystring");
 
+//Create Bot
 var controller = Botkit.slackbot();
 var webhooksBot = controller.spawn({
     incoming_webhook: {
@@ -22,10 +17,10 @@ var webhooksBot = controller.spawn({
 
 /* GET home page. */
 router.post('/', function (req, res, next) {
-    var body = req.body;
-    console.log('body: ' + JSON.stringify(body));
+    var attachment = req.body;
+    console.log('body: ' + JSON.stringify(attachment));
     console.log('headers: ' + JSON.stringify(req.headers));
-    var dirtyMessage = body.fields[2].value;
+    var dirtyMessage = attachment.fields[2].value;
     if (dirtyMessage){
         var cleanMessage = sanitizeHtml(dirtyMessage, {
             allowedTags: [ ],
@@ -37,15 +32,15 @@ router.post('/', function (req, res, next) {
         var noBlankLinesMessage = trimmedMessage.replace(removeBlanks, '\r\n');
         console.log('No Blanks: ' + noBlankLinesMessage);
         if (noBlankLinesMessage.length > 500){
-            body.fields[2].value = noBlankLinesMessage.substring(0, 500) + "...";
+            attachment.fields[2].value = noBlankLinesMessage.substring(0, 500) + "...";
         } else {
-            body.fields[2].value = noBlankLinesMessage;
+            attachment.fields[2].value = noBlankLinesMessage;
         }
 
     }
-    body.channel = '#testing';
-    body.username = 'support';
-    body.icon_emoji = ':support:'
+    attachment.channel = '#testing';
+    attachment.username = 'support';
+    attachment.icon_emoji = ':support:'
     console.log('Slack Attachment: ' + JSON.stringify(body));
     webhooksBot.sendWebhook(body,function(err,res) {
         if (err) {
@@ -54,5 +49,4 @@ router.post('/', function (req, res, next) {
     });
     res.end("NetSuite Listener");
 });
-
 module.exports = router;

@@ -4,11 +4,10 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-//var Botkit = require('botkit');
 
 var slack_listener = require('./routes/slack_listener');
 var netsuite_listener = require('./routes/netsuite_listener');
-var users = require('./routes/users');
+var heroku_keep_alive = require('./routes/heroku_keep_alive');
 
 var app = express();
 
@@ -26,7 +25,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/slack_listener', slack_listener);
 app.use('/netsuite_listener', netsuite_listener);
-app.use('/users', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
