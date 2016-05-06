@@ -20,7 +20,7 @@ var webhooksBot = controller.spawn({
 })
 
 /* GET home page. */
-router.get('/', function (req, res, next) {
+router.post('/', function (req, res, next) {
     var body = req.body;
     console.log('body: ' + JSON.stringify(body));
     console.log('headers: ' + JSON.stringify(req.headers));

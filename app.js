@@ -11,20 +11,6 @@ var netsuite_listener = require('./routes/netsuite_listener');
 var users = require('./routes/users');
 
 var app = express();
-// var controller = Botkit.slackbot();
-// var bot = controller.spawn({
-//     token: 'xoxb-39896988051-VhGDhjPGmlZEEcUMmDCMpHPt'
-// });
-//
-// bot.startRTM(function(err, bot, payload){
-//     if (err){
-//         throw new Error('Could not connect to slack.');
-//     }
-// });
-//
-// controller.hears(['hello','hi'],['direct_message','direct_mention','mention'],function(bot,message) {
-//     bot.reply(message,"Hello.");
-// });
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
