@@ -43,14 +43,11 @@ router.post('/', function (req, res, next) {
         }
 
     }
+    body.channel = '#testing';
+    body.username = 'support';
+    body.icon_emoji = ':support:'
     console.log('Slack Attachment: ' + JSON.stringify(body));
-    webhooksBot.sendWebhook({
-        fallback: body.fallback,
-        channel: '#testing',
-        username: "support",
-        icon_emoji: ":support:",
-        attachments: body
-    },function(err,res) {
+    webhooksBot.sendWebhook(body,function(err,res) {
         if (err) {
             console.log(err)
         }
