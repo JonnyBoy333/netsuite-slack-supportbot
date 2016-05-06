@@ -38,7 +38,7 @@ router.post('/', function (req, res, next) {
         }
 
     }
-    attachment.channel = '#testing';
+    attachment.channel = '#support_cases';
     attachment.username = 'support';
     attachment.icon_emoji = ':support:'
     console.log('Slack Attachment: ' + JSON.stringify(attachment));
