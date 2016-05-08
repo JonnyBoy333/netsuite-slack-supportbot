@@ -16,8 +16,8 @@ var webhooksBot = controller.spawn({
 })
 
 webhooksBot.sendWebhook({
-    fallback: 'Fallback Message',
-    Text: 'Some Text',
+    pretext: 'Some Text',
+    channel: '#testing',
     fields:[
         {
             "title": "Hello",
@@ -35,7 +35,7 @@ webhooksBot.sendWebhook({
 router.post('/', function (req, res, next) {
     var attachment = req.body;
     console.log('body: ' + JSON.stringify(attachment));
-    console.log('headers: ' + JSON.stringify(req.headers));
+    //console.log('headers: ' + JSON.stringify(req.headers));
     var dirtyMessage = attachment.fields[2].value;
     if (dirtyMessage){
         var cleanMessage = sanitizeHtml(dirtyMessage, {
@@ -54,7 +54,7 @@ router.post('/', function (req, res, next) {
         }
 
     }
-    attachment.channel = '#support_cases';
+    attachment.channel = '#testing';
     attachment.username = 'support';
     attachment.icon_emoji = ':support:'
     console.log('Slack Attachment: ' + JSON.stringify(attachment));
