@@ -16,7 +16,8 @@ var webhooksBot = controller.spawn({
 })
 
 webhooksBot.sendWebhook({
-    pretext: 'Some Text',
+    title: 'Some Text',
+    title_link: 'www.google.com',
     channel: '#testing',
     fields:[
         {
@@ -42,7 +43,7 @@ router.post('/', function (req, res, next) {
             allowedTags: [ ],
             allowedAttributes: [ ]
         });
-        console.log('Clean message: ' + cleanMessage);
+        //console.log('Clean message: ' + cleanMessage);
         var trimmedMessage = cleanMessage.trim();
         var removeBlanks = /[\r\n]{2,}/g;
         var noBlankLinesMessage = trimmedMessage.replace(removeBlanks, '\r\n');
@@ -54,11 +55,17 @@ router.post('/', function (req, res, next) {
         }
 
     }
-    attachment.channel = '#testing';
-    attachment.username = 'support';
-    attachment.icon_emoji = ':support:'
-    console.log('Slack Attachment: ' + JSON.stringify(attachment));
-    webhooksBot.sendWebhook(attachment,function(err,res) {
+    var attachmentMessage = {
+        channel: '#testing',
+        username: 'support',
+        icon_emoji: ':support:',
+        attachments: attachment
+    }
+    // attachment.channel = '#testing';
+    // attachment.username = 'support';
+    // attachment.icon_emoji = ':support:'
+    console.log('Slack Attachment: ' + JSON.stringify(attachmentMessage));
+    webhooksBot.sendWebhook(attachmentMessage,function(err,res) {
         if (err) {
             console.log(err)
         }
