@@ -13,23 +13,6 @@ var webhooksBot = controller.spawn({
     incoming_webhook: {
         url: 'https://hooks.slack.com/services/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'
     }
-})
-
-webhooksBot.sendWebhook({
-    title: 'Some Text',
-    title_link: 'www.google.com',
-    channel: '#testing',
-    fields:[
-        {
-            "title": "Hello",
-            "value": "World",
-            "short": true
-        }
-        ]
-},function(err,res) {
-    if (err) {
-        console.log(err)
-    }
 });
 
 /* GET home page. */
@@ -60,10 +43,7 @@ router.post('/', function (req, res, next) {
         username: 'support',
         icon_emoji: ':support:',
         attachments: [attachment]
-    }
-    // attachment.channel = '#testing';
-    // attachment.username = 'support';
-    // attachment.icon_emoji = ':support:'
+    };
     console.log('Slack Attachment: ' + JSON.stringify(attachmentMessage));
     webhooksBot.sendWebhook(attachmentMessage,function(err,res) {
         if (err) {
