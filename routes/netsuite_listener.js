@@ -15,6 +15,22 @@ var webhooksBot = controller.spawn({
     }
 })
 
+webhooksBot.sendWebhook({
+    fallback: 'Fallback Message',
+    Text: 'Some Text',
+    fields:[
+        {
+            "title": "Hello",
+            "value": "World",
+            "short": true
+        }
+        ]
+},function(err,res) {
+    if (err) {
+        console.log(err)
+    }
+});
+
 /* GET home page. */
 router.post('/', function (req, res, next) {
     var attachment = req.body;
