@@ -59,7 +59,7 @@ router.post('/', function (req, res, next) {
         channel: '#testing',
         username: 'support',
         icon_emoji: ':support:',
-        attachments: attachment
+        attachments: [attachment]
     }
     // attachment.channel = '#testing';
     // attachment.username = 'support';
