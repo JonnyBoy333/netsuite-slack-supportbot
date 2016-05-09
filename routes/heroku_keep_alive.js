@@ -7,7 +7,7 @@ var hour = new Date().getHours();
 console.log("The hour is: " + hour);
 
 setInterval(function() {
-    if (hour <= 24) {
+    if (hour <= 24 && hour >= 6) {
         console.log("Beginning of Looping " + hour);
         http.get("http://slackbot-2.herokuapp.com/");
     }

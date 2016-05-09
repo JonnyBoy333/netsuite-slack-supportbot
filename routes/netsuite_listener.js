@@ -36,7 +36,6 @@ router.post('/', function (req, res, next) {
         } else {
             attachment.fields[2].value = noBlankLinesMessage;
         }
-
     }
     var attachmentMessage = {
         channel: '#support_cases',
