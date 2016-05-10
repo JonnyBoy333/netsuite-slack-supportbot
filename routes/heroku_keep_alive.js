@@ -7,13 +7,12 @@ var hour = new Date().getHours();
 console.log("The hour is: " + hour);
 
 setInterval(function() {
-    if (hour <= 24 && hour >= 6) {
-        console.log("Beginning of Looping " + hour);
+    if (hour <= 24 && hour >= 7) {
         http.get("http://slackbot-2.herokuapp.com/");
     }
     var d = new Date();
     hour = d.getHours();
-    console.log("End of Loop " + d + "-" + hour);
+    console.log("The time is: " + d + "-" + hour);
 }, 600000); // every 5 minutes (3000000)
 
 module.exports = router;
