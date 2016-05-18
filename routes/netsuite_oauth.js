@@ -67,7 +67,7 @@ router.get('/', function (req, res, next) {
         res.write(html);
         console.log(response);
     });
-    //res.end("OAuth Testing");
+    res.end("OAuth Testing");
 });
 
 module.exports = router;
