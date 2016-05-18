@@ -49,7 +49,8 @@ router.get('/', function (req, res, next) {
 
     var headerWithRealm = oauth.toHeader(oauth.authorize(request_data, token));
     headerWithRealm.Authorization += ',realm=' + remoteAccountID;
-
+    console.log(oauth.toHeader(oauth.authorize(request_data, token)));
+    
     request({
         url: request_data.url,
         method: request_data.method,
