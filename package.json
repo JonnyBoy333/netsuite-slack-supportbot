@@ -18,6 +18,7 @@
     "http": "latest",
     "url": "latest",
     "querystring": "latest",
-    "sanitize-html": "latest"
+    "sanitize-html": "latest",
+    "oauth-1.0a": "~1.0.1"
   }
 }
