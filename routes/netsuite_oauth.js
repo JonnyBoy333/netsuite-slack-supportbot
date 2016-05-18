@@ -64,10 +64,13 @@ router.get('/', function (req, res, next) {
             '<br><br>' +
             'Response:<br>' +
             response.body
-        res.write(html);
+        res.end(html);
         console.log(response);
+        if (error){
+            console.log(error);
+        }
     });
-    res.end("OAuth Testing");
+    //res.end("OAuth Testing");
 });
 
 module.exports = router;
