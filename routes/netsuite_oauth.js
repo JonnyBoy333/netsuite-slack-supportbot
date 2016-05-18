@@ -12,7 +12,7 @@ var url = require('url');
 router.get('/', function (req, res, next) {
     console.log("URL: " + req.url);
 
-    var remoteAccountID = '3499441';
+    var remoteAccountID = '"3499441"';
 
     //user token
     var token = {
@@ -37,18 +37,8 @@ router.get('/', function (req, res, next) {
         }
     };
 
-    // var oauth_data = {
-    //     oauth_consumer_key: oauth.consumer.public,
-    //     oauth_nonce: oauth.getNonce(),
-    //     oauth_signature_method: oauth.signature_method,
-    //     oauth_timestamp: oauth.getTimeStamp(),
-    //     oauth_version: '1.0',
-    //     oauth_token: token.public,
-    //     realm: remoteAccountID
-    // };
-
     var headerWithRealm = oauth.toHeader(oauth.authorize(request_data, token));
-    headerWithRealm.Authorization += ',realm=' + remoteAccountID;
+    headerWithRealm.Authorization += ', realm=' + remoteAccountID;
     console.log('Header Authorization: ' + headerWithRealm);
 
     request({
@@ -71,7 +61,6 @@ router.get('/', function (req, res, next) {
             console.log(error);
         }
     });
-    //res.end("OAuth Testing");
 });
 
 module.exports = router;
