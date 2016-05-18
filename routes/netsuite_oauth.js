@@ -59,10 +59,10 @@ router.get('/', function (req, res, next) {
         var html = 'Calling: ' +
             request_data.url +
             '\n' +
-            'Generated OAuth header:<br>' +
+            'Generated OAuth header:\n' +
             headerWithRealm.Authorization +
-            '<br><br>' +
-            'Response:<br>' +
+            '\n\n' +
+            'Response:\n' +
             response.body
         res.end(html);
         console.log(response);
