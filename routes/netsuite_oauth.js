@@ -57,7 +57,7 @@ router.get('/', function (req, res, next) {
         headers: oauth.toHeader(oauth.authorize(request_data, token))
     }, function(error, response, body) {
         var html = 'Calling: ' +
-            restletUrl +
+            request_data.url +
             '<br><br>' +
             'Generated OAuth header:<br>' +
             headerWithRealm.Authorization +
