@@ -16,8 +16,8 @@ router.get('/', function (req, res, next) {
 
     //user token
     var token = {
-        public: '20368a86cee533acfd30f6bc746cbdd38bce00cf94f8f4186fc4b2bdde1c0c22',
-        secret: '5c70b99af53a44fabfe438b2fb51e8cae474255f682cd47e26e1a018f5ad3e03'
+        public: '416bbb923ecf3831811112a205ec6dc44cf8a0c067230dd3a4f6c047c8fd7dae',
+        secret: '3aa761abe62620b76c14f59a13aa2658caf3abb72cd725987f8ba48807517af2'
     };
 
     //app credentials
@@ -39,7 +39,7 @@ router.get('/', function (req, res, next) {
 
     var headerWithRealm = oauth.toHeader(oauth.authorize(request_data, token));
     headerWithRealm.Authorization += ', realm=' + remoteAccountID;
-    console.log('Header Authorization: ' + headerWithRealm);
+    console.log('Header Authorization: ' + JSON.stringify(headerWithRealm));
 
     request({
         url: request_data.url,
