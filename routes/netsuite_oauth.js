@@ -58,7 +58,7 @@ router.get('/', function (req, res, next) {
     }, function(error, response, body) {
         var html = 'Calling: ' +
             request_data.url +
-            '<br><br>' +
+            '\n' +
             'Generated OAuth header:<br>' +
             headerWithRealm.Authorization +
             '<br><br>' +
