@@ -37,25 +37,25 @@ router.get('/', function (req, res, next) {
         }
     };
 
-    var oauth_data = {
-        oauth_consumer_key: oauth.consumer.public,
-        oauth_nonce: oauth.getNonce(),
-        oauth_signature_method: oauth.signature_method,
-        oauth_timestamp: oauth.getTimeStamp(),
-        oauth_version: '1.0',
-        oauth_token: token.public,
-        realm: remoteAccountID
-    };
+    // var oauth_data = {
+    //     oauth_consumer_key: oauth.consumer.public,
+    //     oauth_nonce: oauth.getNonce(),
+    //     oauth_signature_method: oauth.signature_method,
+    //     oauth_timestamp: oauth.getTimeStamp(),
+    //     oauth_version: '1.0',
+    //     oauth_token: token.public,
+    //     realm: remoteAccountID
+    // };
 
     var headerWithRealm = oauth.toHeader(oauth.authorize(request_data, token));
     headerWithRealm.Authorization += ',realm=' + remoteAccountID;
-    console.log(oauth.toHeader(oauth.authorize(request_data, token)));
-    
+    console.log('Header Authorization: ' + headerWithRealm);
+
     request({
         url: request_data.url,
         method: request_data.method,
         form: request_data.data,
-        headers: oauth.toHeader(oauth.authorize(request_data, token))
+        headers: headerWithRealm
     }, function(error, response, body) {
         var html = 'Calling: ' +
             request_data.url +
