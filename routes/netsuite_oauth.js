@@ -23,8 +23,8 @@ router.get('/', function (req, res, next) {
     //app credentials
     var oauth = OAuth({
         consumer: {
-            public: '77b801f04debf911d3e5048a1e381d10aa166485571fdbdbac94f35c00ddf623',
-            secret: 'e03b4a64ee5fe2377851f35090260d1b7714f3d7cd2905134d3e997b364e12dc'
+            public: '2656abe35499cf19402a26de2cdb8875264001ab9493f9a22ecf4ee056030a81',
+            secret: 'df267963aeaa4d8d47e6224131496e9595902eb239d87e692e71963dd4789563'
         },
         signature_method: 'HMAC-SHA1'
     });
