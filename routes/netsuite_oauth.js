@@ -31,21 +31,20 @@ router.get('/', function (req, res, next) {
 
     var request_data = {
         url: 'https://rest.netsuite.com/app/site/hosting/restlet.nl?script=79&deploy=1',
-        method: 'GET'
+        method: 'POST'
     };
 
-    // var headerWithRealm = {
-    //     "Authorization": JSON.stringify(oauth.toHeader(oauth.authorize(request_data, token))) + ', realm=' + remoteAccountID,
-    //     "Content-Type": "application/json"
-    // };
-    var headerWithRealm = oauth.toHeader(oauth.authorize(request_data, token));
+    var headerWithRealm = {
+        "Authorization": oauth.toHeader(oauth.authorize(request_data, token)),
+        "Content-Type": "application/json"
+    };
+    //var headerWithRealm = oauth.toHeader(oauth.authorize(request_data, token));
     headerWithRealm.Authorization += ', realm=' + remoteAccountID;
-    headerWithRealm["Content-Type"] = "application/json";
     console.log('Header Authorization: ' + JSON.stringify(headerWithRealm));
     request({
         url: request_data.url,
         method: request_data.method,
-        form: {data: "Hello World"},
+        data: {data: "Hello World"},
         headers: headerWithRealm
     }, function(error, response, body) {
         var html = 'Calling: ' +
