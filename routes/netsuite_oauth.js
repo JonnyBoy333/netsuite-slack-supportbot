@@ -37,13 +37,11 @@ router.get('/', function (req, res, next) {
     var headerWithRealm = oauth.toHeader(oauth.authorize(request_data, token));
     headerWithRealm.Authorization += ', realm=' + remoteAccountID;
     console.log('Header Authorization: ' + JSON.stringify(headerWithRealm));
-
-    request({
-        url: request_data.url,
-        method: request_data.method,
-        form: request_data.data,
-        headers: headerWithRealm
-    }, function(error, response, body) {
+    request.post({
+            url: request_data.url,
+            headers: headerWithRealm,
+            json: {data: "Hello World"}
+        }, function(error, response, body) {
         var html = 'Calling: ' +
             request_data.url +
             '\n' +
