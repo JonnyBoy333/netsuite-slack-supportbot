@@ -33,11 +33,7 @@ router.get('/', function (req, res, next) {
         url: 'https://rest.netsuite.com/app/site/hosting/restlet.nl?script=79&deploy=1',
         method: 'POST'
     };
-
-    // var headerWithRealm = {
-    //     "Authorization": oauth.toHeader(oauth.authorize(request_data, token)),
-    //     "Content-Type": "application/json"
-    // };
+    
     var headerWithRealm = oauth.toHeader(oauth.authorize(request_data, token));
     headerWithRealm.Authorization += ', realm=' + remoteAccountID;
     headerWithRealm['content-type'] = 'application/json';

@@ -31,11 +31,12 @@ router.post('/', function (req, res, next) {
         var removeBlanks = /[\r\n]{2,}/g;
         var noBlankLinesMessage = trimmedMessage.replace(removeBlanks, '\r\n');
         console.log('No Blanks: ' + noBlankLinesMessage);
-        if (noBlankLinesMessage.length > 500){
-            attachment.fields[2].value = noBlankLinesMessage.substring(0, 500) + "...";
-        } else {
-            attachment.fields[2].value = noBlankLinesMessage;
-        }
+        // if (noBlankLinesMessage.length > 500){
+        //     attachment.fields[2].value = noBlankLinesMessage.substring(0, 500) + "...";
+        // } else {
+        //     attachment.fields[2].value = noBlankLinesMessage;
+        // }
+        attachment.fields[2].value = noBlankLinesMessage;
     }
     var attachmentMessage = {
         channel: '#support_cases',
