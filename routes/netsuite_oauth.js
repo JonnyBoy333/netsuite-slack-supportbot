@@ -34,12 +34,13 @@ router.get('/', function (req, res, next) {
         method: 'POST'
     };
 
-    var headerWithRealm = {
-        "Authorization": JSON.stringify(oauth.toHeader(oauth.authorize(request_data, token))) + ', realm=' + remoteAccountID,
-        "Content-Type": "application/json"
-    };
-    // headerWithRealm.Authorization += ', realm=' + remoteAccountID;
-    // headerWithRealm.Content-Type = "application/json";
+    // var headerWithRealm = {
+    //     "Authorization": JSON.stringify(oauth.toHeader(oauth.authorize(request_data, token))) + ', realm=' + remoteAccountID,
+    //     "Content-Type": "application/json"
+    // };
+    var headerWithRealm = oauth.toHeader(oauth.authorize(request_data, token));
+    headerWithRealm.Authorization += ', realm=' + remoteAccountID;
+    headerWithRealm["Content-Type"] = "application/json";
     console.log('Header Authorization: ' + JSON.stringify(headerWithRealm));
     request({
         url: request_data.url,
