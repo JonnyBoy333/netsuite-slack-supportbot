@@ -45,8 +45,8 @@ router.get('/', function (req, res, next) {
     request({
         url: request_data.url,
         method: request_data.method,
-        json: {data: "Hello World"},
-        headers: headerWithRealm
+        headers: headerWithRealm,
+        json: {message: "netsuite"}
     }, function(error, response, body) {
         var html = 'Calling: ' +
             request_data.url +
