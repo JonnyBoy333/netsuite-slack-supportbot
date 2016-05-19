@@ -31,10 +31,7 @@ router.get('/', function (req, res, next) {
 
     var request_data = {
         url: 'https://rest.netsuite.com/app/site/hosting/restlet.nl?script=79&deploy=1',
-        method: 'POST',
-        data: {
-            status: 'Hello World'
-        }
+        method: 'GET'
     };
 
     var headerWithRealm = oauth.toHeader(oauth.authorize(request_data, token));
