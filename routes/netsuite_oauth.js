@@ -35,7 +35,7 @@ router.get('/', function (req, res, next) {
     };
 
     var headerWithRealm = {
-        "Authorization": oauth.toHeader(oauth.authorize(request_data, token)) + ', realm=' + remoteAccountID,
+        "Authorization": JSON.stringify(oauth.toHeader(oauth.authorize(request_data, token))) + ', realm=' + remoteAccountID,
         "Content-Type": "application/json"
     };
     // headerWithRealm.Authorization += ', realm=' + remoteAccountID;
