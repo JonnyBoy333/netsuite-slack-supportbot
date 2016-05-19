@@ -55,7 +55,7 @@ router.get('/', function (req, res, next) {
             headerWithRealm.Authorization +
             '\n\n' +
             'Response:\n' +
-            response.body
+            JSON.stringify(response.body)
         res.end(html);
         console.log(response);
         if (error){
