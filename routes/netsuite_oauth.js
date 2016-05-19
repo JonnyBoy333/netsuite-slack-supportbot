@@ -45,7 +45,7 @@ router.get('/', function (req, res, next) {
     request({
         url: request_data.url,
         method: request_data.method,
-        data: {data: "Hello World"},
+        json: {data: "Hello World"},
         headers: headerWithRealm
     }, function(error, response, body) {
         var html = 'Calling: ' +
