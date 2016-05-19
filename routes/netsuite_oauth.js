@@ -16,8 +16,8 @@ router.get('/', function (req, res, next) {
 
     //user token
     var token = {
-        public: '416bbb923ecf3831811112a205ec6dc44cf8a0c067230dd3a4f6c047c8fd7dae',
-        secret: '3aa761abe62620b76c14f59a13aa2658caf3abb72cd725987f8ba48807517af2'
+        public: 'e147942fe6de80b50457bf2128410e1792b548775cb6429afa218aa20a50c6b4',
+        secret: 'a10ddd0959e56ec5d0ee85a171f11f0f37b28095e50f9f68192200cf1a7c62e7'
     };
 
     //app credentials
