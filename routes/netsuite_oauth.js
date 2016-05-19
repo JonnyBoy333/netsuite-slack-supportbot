@@ -31,7 +31,7 @@ router.get('/', function (req, res, next) {
 
     var request_data = {
         url: 'https://rest.netsuite.com/app/site/hosting/restlet.nl?script=79&deploy=1',
-        method: 'GET'
+        method: 'POST'
     };
 
     var headerWithRealm = oauth.toHeader(oauth.authorize(request_data, token));
@@ -45,7 +45,7 @@ router.get('/', function (req, res, next) {
     request({
         url: request_data.url,
         method: request_data.method,
-        form: request_data.data,
+        form: {data: "Hello World"},
         headers: headerWithRealm
     }, function(error, response, body) {
         var html = 'Calling: ' +
