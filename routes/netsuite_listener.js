@@ -47,4 +47,10 @@ router.post('/', function (req, res, next) {
     });
     res.end("NetSuite Listener");
 });
+
+/* GET home page. */
+router.get('/', function(req, res, next) {
+    res.render('index', { title: 'Jon\'s Awesome Node App' });
+});
+
 module.exports = router;
