@@ -69,8 +69,8 @@
       <file leaf-file-name="netsuite_email_capture.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/netsuite_email_capture.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
-              <caret line="29" column="11" selection-start-line="29" selection-start-column="11" selection-end-line="29" selection-end-column="11" />
+            <state relative-caret-position="90">
+              <caret line="22" column="49" selection-start-line="22" selection-start-column="49" selection-end-line="22" selection-end-column="49" />
               <folding>
                 <element signature="e#0#40#0" expanded="false" />
               </folding>
@@ -321,12 +321,12 @@
       <workItem from="1462801862804" duration="880000" />
       <workItem from="1462889616114" duration="1118000" />
       <workItem from="1463274114835" duration="464000" />
-      <workItem from="1463354641182" duration="23268000" />
+      <workItem from="1463354641182" duration="23375000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="57554000" />
+    <option name="totallyTimeSpent" value="57661000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -649,8 +649,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/netsuite_email_capture.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="29" column="11" selection-start-line="29" selection-start-column="11" selection-end-line="29" selection-end-column="11" />
+        <state relative-caret-position="90">
+          <caret line="22" column="49" selection-start-line="22" selection-start-column="49" selection-end-line="22" selection-end-column="49" />
           <folding>
             <element signature="e#0#40#0" expanded="false" />
           </folding>
