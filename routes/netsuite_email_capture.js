@@ -17,7 +17,10 @@ var webhooksBot = controller.spawn({
 
 /* GET home page. */
 router.post('/', function (req, res, next) {
-    console.log('data: ' + req);
+    console.log('recipient: ' + req.recipient);
+    console.log('sender: ' + req.sender);
+    console.log('subject: ' + req.subject);
+    console.log('body: ' + req.stripped-text);
     //console.log('headers: ' + JSON.stringify(req.headers));
     var dirtyMessage = attachment.fields[2].value;
     if (dirtyMessage){
