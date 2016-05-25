@@ -4,9 +4,6 @@
     <list default="true" id="2375d191-1f92-44a5-8c0e-2646924adbf9" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/netsuite_email_capture.js" afterPath="$PROJECT_DIR$/routes/netsuite_email_capture.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/netsuite_listener.js" afterPath="$PROJECT_DIR$/routes/netsuite_listener.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/netsuite_oauth.js" afterPath="$PROJECT_DIR$/routes/netsuite_oauth.js" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/slack_listener.js" afterPath="$PROJECT_DIR$/routes/slack_listener.js" />
     </list>
     <ignored path="Slack-2.0.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -69,11 +66,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="netsuite_email_capture.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="netsuite_email_capture.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/netsuite_email_capture.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
-              <caret line="55" column="24" selection-start-line="55" selection-start-column="24" selection-end-line="55" selection-end-column="24" />
+            <state relative-caret-position="120">
+              <caret line="19" column="48" selection-start-line="19" selection-start-column="48" selection-end-line="19" selection-end-column="48" />
               <folding>
                 <element signature="e#0#40#0" expanded="false" />
               </folding>
@@ -81,11 +78,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="netsuite_oauth.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="netsuite_oauth.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/netsuite_oauth.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="62" column="0" selection-start-line="62" selection-start-column="0" selection-end-line="67" selection-end-column="24" />
+            <state relative-caret-position="765">
+              <caret line="65" column="3" selection-start-line="65" selection-start-column="3" selection-end-line="65" selection-end-column="3" />
               <folding>
                 <element signature="e#0#41#0" expanded="false" />
               </folding>
@@ -125,10 +122,11 @@
         <option value="$PROJECT_DIR$/routes/netsuite_oath.js" />
         <option value="$PROJECT_DIR$/app.js" />
         <option value="$PROJECT_DIR$/package.json" />
-        <option value="$PROJECT_DIR$/routes/netsuite_oauth.js" />
-        <option value="$PROJECT_DIR$/routes/netsuite_email_capture.js" />
         <option value="$PROJECT_DIR$/routes/netsuite_listener.js" />
         <option value="$PROJECT_DIR$/routes/slack_listener.js" />
+        <option value="$PROJECT_DIR$/routes/netsuite_oauth.js" />
+        <option value="$PROJECT_DIR$/views/index.ejs" />
+        <option value="$PROJECT_DIR$/routes/netsuite_email_capture.js" />
       </list>
     </option>
   </component>
@@ -323,12 +321,12 @@
       <workItem from="1462801862804" duration="880000" />
       <workItem from="1462889616114" duration="1118000" />
       <workItem from="1463274114835" duration="464000" />
-      <workItem from="1463354641182" duration="22158000" />
+      <workItem from="1463354641182" duration="22823000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="56444000" />
+    <option name="totallyTimeSpent" value="57109000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -613,24 +611,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/views/index.ejs">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/routes/netsuite_email_capture.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="55" column="24" selection-start-line="55" selection-start-column="24" selection-end-line="55" selection-end-column="24" />
-          <folding>
-            <element signature="e#0#40#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/routes/netsuite_listener.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="390">
@@ -651,10 +631,28 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/netsuite_oauth.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="62" column="0" selection-start-line="62" selection-start-column="0" selection-end-line="67" selection-end-column="24" />
+        <state relative-caret-position="765">
+          <caret line="65" column="3" selection-start-line="65" selection-start-column="3" selection-end-line="65" selection-end-column="3" />
           <folding>
             <element signature="e#0#41#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/views/index.ejs">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="165">
+          <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/netsuite_email_capture.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="120">
+          <caret line="19" column="48" selection-start-line="19" selection-start-column="48" selection-end-line="19" selection-end-column="48" />
+          <folding>
+            <element signature="e#0#40#0" expanded="false" />
           </folding>
         </state>
       </provider>
