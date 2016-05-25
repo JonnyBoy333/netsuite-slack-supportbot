@@ -9,6 +9,7 @@ var slack_listener = require('./routes/slack_listener');
 var netsuite_listener = require('./routes/netsuite_listener');
 var heroku_keep_alive = require('./routes/heroku_keep_alive');
 var nsOath = require('./routes/netsuite_oauth');
+var emailCapture = require('./routes/netsuite_email_capture');
 
 var app = express();
 
@@ -27,6 +28,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/slack_listener', slack_listener);
 app.use('/netsuite_listener', netsuite_listener);
 app.use('/netsuite_oauth', nsOath);
+app.use('/netsuite_email_capture', emailCapture);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

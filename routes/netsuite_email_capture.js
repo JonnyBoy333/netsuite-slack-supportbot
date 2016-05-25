@@ -18,7 +18,7 @@ var webhooksBot = controller.spawn({
 /* GET home page. */
 router.post('/', function (req, res, next) {
     var attachment = req.body;
-    console.log('body: ' + JSON.stringify(attachment));
+    console.log('data: ' + JSON.stringify(req));
     //console.log('headers: ' + JSON.stringify(req.headers));
     var dirtyMessage = attachment.fields[2].value;
     if (dirtyMessage){
@@ -40,11 +40,11 @@ router.post('/', function (req, res, next) {
         attachments: [attachment]
     };
     console.log('Slack Attachment: ' + JSON.stringify(attachmentMessage));
-    webhooksBot.sendWebhook(attachmentMessage,function(err,res) {
-        if (err) {
-            console.log(err)
-        }
-    });
+    // webhooksBot.sendWebhook(attachmentMessage,function(err,res) {
+    //     if (err) {
+    //         console.log(err)
+    //     }
+    // });
     res.end("NetSuite Listener");
 });
 module.exports = router;
