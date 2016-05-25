@@ -17,6 +17,7 @@ var webhooksBot = controller.spawn({
 
 /* GET home page. */
 router.post('/', function (req, res, next) {
+    console.log(req);
     console.log('recipient: ' + req.recipient);
     console.log('sender: ' + req.sender);
     console.log('subject: ' + req.subject);
