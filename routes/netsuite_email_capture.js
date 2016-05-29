@@ -45,7 +45,7 @@ router.post('/', function (req, res, next) {
         message: null
     }
     var array = $('td').toArray();
-    console.log(array);
+    console.log(array[0].text());
     $('td').each(function(i, field){
         console.log('Number: ' + i);
         console.log('Other Text' + $(this).text());
