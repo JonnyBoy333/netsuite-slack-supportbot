@@ -95,9 +95,10 @@ router.post('/', function (req, res, next) {
                 break;
             }
         }
+        console.log('Number: ' + number + 1);
         if (i == number + 1){
-            message.keyword.text = $(this).text();
             console.log('Keyword Value: ' + message.keyword.text);
+            message.keyword.text = $(this).text();
         }
     });
     var dirtyMessage = attachment.fields[2].value;
