@@ -84,7 +84,7 @@ router.post('/', function (req, res, next) {
     var keyword;
     $('td').each(function(i, field){
         console.log('Loop: ' + i);
-        console.log('Text: ' + $(this).text());
+        //console.log('Text: ' + $(this).text());
         for (var k in message){
             //console.log(message[k].keyword);
             if ($(this).text() == message[k].keyword){
@@ -94,14 +94,14 @@ router.post('/', function (req, res, next) {
                 break;
             }
         }
-        console.log('Number: ' + (number + 1));
-        console.log('Key: ' + keyword);
+        // console.log('Number: ' + (number + 1));
+        // console.log('Key: ' + keyword);
         if (i == number + 1){
-            console.log('Hello');
             message[keyword].text = $(this).text();
             console.log('Keyword Value: ' + message[keyword].text);
         }
     });
+    console.log('Message: ' + JSON.stringify(message));
     var dirtyMessage = attachment.fields[2].value;
     if (dirtyMessage){
         var cleanMessage = sanitizeHtml(dirtyMessage, {
