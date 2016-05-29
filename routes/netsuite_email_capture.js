@@ -6,10 +6,7 @@ var express = require('express');
 var router = express.Router();
 var Botkit = require('botkit');
 var sanitizeHtml = require('sanitize-html');
-// var cheerio = require('cheerio'),
-//     $ = cheerio.load('<h2 class="title">Hello world</h2>');
-//
-// $('h2.title').text('Hello there!');
+var cheerio = require('cheerio');
 
 //Create Bot
 var controller = Botkit.slackbot();
@@ -26,6 +23,15 @@ router.post('/', function (req, res, next) {
     console.log('subject: ' + req.body.subject);
     //console.log('body: ' + req.body['stripped-text']);
     console.log('HTML: ' + req.body['stripped-html']);
+    var $ = cheerio.load(req.body['stripped-html']);
+    var $cells = $('td');
+    console.log(JSON.stringify($cells));
+    $cells.each(function(i, field){
+        console.log(field.text());
+        // if(fields.eq(i).attr('id') === 'custbody_prevailing_wage_info_fs_lbl'){
+        //     fields.eq(i + 1).css('background-color', 'yellow');
+        // }
+    })
     var dirtyMessage = attachment.fields[2].value;
     if (dirtyMessage){
         var cleanMessage = sanitizeHtml(dirtyMessage, {
