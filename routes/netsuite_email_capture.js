@@ -26,8 +26,8 @@ router.post('/', function (req, res, next) {
     var $ = cheerio.load(req.body['stripped-html']);
     console.log('Hello');
     var $cells = $('td');
-    console.log($cells.text());
-    console.log($cells.length);
+    //console.log($cells.text());
+    console.log('Number of cells: ' + $cells.length);
     // console.log(JSON.stringify($cells));
     var message = {
         lastMessageDate: {
@@ -81,10 +81,11 @@ router.post('/', function (req, res, next) {
     }
     // var array = $('td').toArray();
     // console.log(array[0].text());
-    var number;
+    var number = 0;
     var keyword;
     $('td').each(function(i, field){
-        console.log('Number: ' + i);
+        console.log('Loop: ' + i);
+        console.log('Text: ' + $(this).text());
         for (var k in message){
             if ($(this).text() == message[k].keyword){
                 console.log('Found Keyword: ' + message[k].keyword);
