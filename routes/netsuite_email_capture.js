@@ -22,9 +22,11 @@ router.post('/', function (req, res, next) {
     console.log('sender: ' + req.body.sender);
     console.log('subject: ' + req.body.subject);
     //console.log('body: ' + req.body['stripped-text']);
-    console.log('HTML: ' + req.body['stripped-html']);
+    //console.log('HTML: ' + req.body['stripped-html']);
     var $ = cheerio.load(req.body['stripped-html']);
+    console.log('Hello');
     var $cells = $('td');
+    console.log($cells);
     console.log(JSON.stringify($cells));
     $cells.each(function(i, field){
         console.log(field.text());
