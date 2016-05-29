@@ -24,7 +24,6 @@ router.post('/', function (req, res, next) {
     //console.log('body: ' + req.body['stripped-text']);
     //console.log('HTML: ' + req.body['stripped-html']);
     var $ = cheerio.load(req.body['stripped-html']);
-    console.log('Hello');
     var $cells = $('td');
     //console.log($cells.text());
     console.log('Number of cells: ' + $cells.length);
@@ -97,9 +96,11 @@ router.post('/', function (req, res, next) {
         }
         console.log('Number: ' + (number + 1));
         console.log('Key: ' + keyword);
+        console.log('Key Value: ' + message[keyword]);
         if (i == number + 1){
+            console.log('Hello');
+            message[keyword].text = $(this).text();
             console.log('Keyword Value: ' + message.keyword.text);
-            message.keyword.text = $(this).text();
         }
     });
     var dirtyMessage = attachment.fields[2].value;
