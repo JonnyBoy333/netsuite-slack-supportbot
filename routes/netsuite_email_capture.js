@@ -96,6 +96,7 @@ router.post('/', function (req, res, next) {
             }
         }
         console.log('Number: ' + (number + 1));
+        console.log('Key: ' + keyword);
         if (i == number + 1){
             console.log('Keyword Value: ' + message.keyword.text);
             message.keyword.text = $(this).text();
