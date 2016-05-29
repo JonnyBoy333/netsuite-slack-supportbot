@@ -31,7 +31,7 @@ router.post('/', function (req, res, next) {
     // console.log(JSON.stringify($cells));
     $('td').each(function(i, field){
         console.log('Number: ' + i);
-        console.log('Text' + field.text());
+        //console.log('Text' + field.text());
         console.log('Other Text' + $(this).text);
         // if(fields.eq(i).attr('id') === 'custbody_prevailing_wage_info_fs_lbl'){
         //     fields.eq(i + 1).css('background-color', 'yellow');
