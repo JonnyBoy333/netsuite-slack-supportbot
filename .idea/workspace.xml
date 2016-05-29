@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2375d191-1f92-44a5-8c0e-2646924adbf9" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/netsuite_email_capture.js" afterPath="$PROJECT_DIR$/routes/netsuite_email_capture.js" />
     </list>
     <ignored path="Slack-2.0.iws" />
@@ -69,8 +68,8 @@
       <file leaf-file-name="netsuite_email_capture.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/netsuite_email_capture.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="38" column="6" selection-start-line="38" selection-start-column="6" selection-end-line="38" selection-end-column="6" />
+            <state relative-caret-position="270">
+              <caret line="31" column="36" selection-start-line="31" selection-start-column="36" selection-end-line="31" selection-end-column="36" />
               <folding>
                 <element signature="e#0#40#0" expanded="false" />
               </folding>
@@ -335,12 +334,12 @@
       <workItem from="1463274114835" duration="464000" />
       <workItem from="1463354641182" duration="24255000" />
       <workItem from="1464253290591" duration="702000" />
-      <workItem from="1464298311727" duration="5804000" />
+      <workItem from="1464298311727" duration="5931000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="65047000" />
+    <option name="totallyTimeSpent" value="65174000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -746,8 +745,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/netsuite_email_capture.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="38" column="6" selection-start-line="38" selection-start-column="6" selection-end-line="38" selection-end-column="6" />
+        <state relative-caret-position="270">
+          <caret line="31" column="36" selection-start-line="31" selection-start-column="36" selection-end-line="31" selection-end-column="36" />
           <folding>
             <element signature="e#0#40#0" expanded="false" />
           </folding>
