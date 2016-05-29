@@ -29,36 +29,75 @@ router.post('/', function (req, res, next) {
     console.log($cells.text());
     console.log($cells.length);
     // console.log(JSON.stringify($cells));
-    var number;
     var message = {
-        lastMessageDate: null,
-        internalID: null,
-        number: null,
-        company: null,
-        contact: null,
-        messageDate: null,
-        dateCreated: null,
-        messageAuthor: null,
-        caseURL: null,
-        companyURL: null,
-        contactURL: null,
-        message: null
+        lastMessageDate: {
+            keyword: 'Last Msg, Date',
+            text: null
+        },
+        internalID: {
+            keyword: 'Internal ID',
+            text: null
+        },
+        number: {
+            keyword: 'Number',
+            text: null
+        },
+        company: {
+            keyword: 'Company',
+            text: null
+        },
+        contact: {
+            keyword: 'Contact',
+            text: null
+        },
+        messageDate: {
+            keyword: 'Message Date',
+            text: null
+        },
+        dateCreated: {
+            keyword: 'Date Created',
+            text: null
+        },
+        messageAuthor: {
+            keyword: 'Message Author',
+            text: null
+        },
+        caseURL: {
+            keyword: 'Case URL',
+            text: null
+        },
+        companyURL: {
+            keyword: 'Company URL',
+            text: null
+        },
+        contactURL: {
+            keyword: 'Contact URL',
+            text: null
+        },
+        message: {
+            keyword: 'Message HTML',
+            text: null
+        }
     }
-    var array = $('td').toArray();
-    console.log(array[0]);
+    // var array = $('td').toArray();
+    // console.log(array[0].text());
+    var number;
+    var keyword;
     $('td').each(function(i, field){
         console.log('Number: ' + i);
-        console.log('Other Text' + $(this).text());
-        if ($(this).text() == 'Last Msg. Date'){
-            number = i;
+        for (var k in message){
+            if ($(this).text() == message[k].keyword){
+                console.log('Found Keyword: ' + message[k].keyword);
+                number = i;
+                keyword = k;
+                break;
+            }
         }
-        if (number = i +1){
-            message.lastMessageDate = $(this).text();
+        if (i == number + 1){
+            message.keyword.text = $(this).text();
+            console.log('Keyword Value: ' + message.keyword.text);
         }
-        // if(fields.eq(i).attr('id') === 'custbody_prevailing_wage_info_fs_lbl'){
-        //     fields.eq(i + 1).css('background-color', 'yellow');
-        // }
-    })
+    });
     var dirtyMessage = attachment.fields[2].value;
     if (dirtyMessage){
         var cleanMessage = sanitizeHtml(dirtyMessage, {
