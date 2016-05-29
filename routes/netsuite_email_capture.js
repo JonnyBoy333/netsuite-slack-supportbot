@@ -26,7 +26,8 @@ router.post('/', function (req, res, next) {
     var $ = cheerio.load(req.body['stripped-html']);
     console.log('Hello');
     var $cells = $('td');
-    // console.log($cells);
+    console.log($cells.text());
+    console.log($cells.length);
     // console.log(JSON.stringify($cells));
     $cells.each(function(i, field){
         console.log('Number: ' + i);
