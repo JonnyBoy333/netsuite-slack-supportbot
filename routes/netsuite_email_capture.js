@@ -24,10 +24,7 @@ router.post('/', function (req, res, next) {
     //console.log('body: ' + req.body['stripped-text']);
     //console.log('HTML: ' + req.body['stripped-html']);
     var $ = cheerio.load(req.body['stripped-html']);
-    var $cells = $('td');
-    //console.log($cells.text());
-    console.log('Number of cells: ' + $cells.length);
-    // console.log(JSON.stringify($cells));
+    console.log('Number of cells: ' + $('td').length);
     var message = {
         lastMessageDate: {
             keyword: 'Last Msg. Date',
@@ -61,6 +58,14 @@ router.post('/', function (req, res, next) {
             keyword: 'Message Author',
             text: null
         },
+        subject: {
+            keyword: 'Subject',
+            text: null
+        },
+        priority: {
+            keyword: 'Priority',
+            text: null
+        },
         caseURL: {
             keyword: 'Case URL',
             text: null
@@ -83,12 +88,12 @@ router.post('/', function (req, res, next) {
     var number = 0;
     var keyword;
     $('td').each(function(i, field){
-        console.log('Loop: ' + i);
+        //console.log('Loop: ' + i);
         //console.log('Text: ' + $(this).text());
         for (var k in message){
             //console.log(message[k].keyword);
             if ($(this).text() == message[k].keyword){
-                console.log('Found Keyword: ' + message[k].keyword);
+                //console.log('Found Keyword: ' + message[k].keyword);
                 number = i;
                 keyword = k;
                 break;
@@ -98,11 +103,11 @@ router.post('/', function (req, res, next) {
         // console.log('Key: ' + keyword);
         if (i == number + 1){
             message[keyword].text = $(this).text();
-            console.log('Keyword Value: ' + message[keyword].text);
+            //console.log('Keyword Value: ' + message[keyword].text);
         }
     });
     console.log('Message: ' + JSON.stringify(message));
-    var dirtyMessage = attachment.fields[2].value;
+    var dirtyMessage = message.message.text;
     if (dirtyMessage){
         var cleanMessage = sanitizeHtml(dirtyMessage, {
             allowedTags: [ ],
@@ -113,20 +118,56 @@ router.post('/', function (req, res, next) {
         var removeBlanks = /[\r\n]{2,}/g;
         var noBlankLinesMessage = trimmedMessage.replace(removeBlanks, '\r\n');
         console.log('No Blanks: ' + noBlankLinesMessage);
-        attachment.fields[2].value = noBlankLinesMessage;
+        message.message.text = noBlankLinesMessage;
     }
+
+    //Assign the color of the attachment based on priority
+    var priority = message.priority.text;
+    var color = '#F1BA21';
+    if(priority){
+        if(priority == 'High'){
+            color = '#F15115';
+        } else if(priority == 'Medium') {
+            color = '#F1BA21';
+        } else {
+            color = '#7CD197';
+        }
+    }
+
+    //Construct the attachment
     var attachmentMessage = {
-        channel: '#support_cases',
+        channel: '#testing',
         username: 'support',
         icon_emoji: ':support:',
-        attachments: [attachment]
+        attachments: [{
+            "fallback": "New ticket from " + message.company.text + " - Case #" + message.number.text,
+            "title": "Case #" + message.number.text + ": " + message.subject.text,
+            "title_link": message.caseURL.text,
+            "fields": [
+                {
+                    "title": "Company",
+                    "value": "<" + message.companyURL.text + "|" + message.company.text + ">",
+                    "short": true
+                },
+                {
+                    "title": "Contact",
+                    "value": "<" + message.contactURL.text + "|" + message.contact.text + ">",
+                    "short": true
+                },
+                {
+                    "title": "Message",
+                    "value": message.message.text
+                }
+            ],
+            "color": color
+        }]
     };
     console.log('Slack Attachment: ' + JSON.stringify(attachmentMessage));
-    // webhooksBot.sendWebhook(attachmentMessage,function(err,res) {
-    //     if (err) {
-    //         console.log(err)
-    //     }
-    // });
+    webhooksBot.sendWebhook(attachmentMessage,function(err,res) {
+        if (err) {
+            console.log(err)
+        }
+    });
     res.end("NetSuite Listener");
 });
 
