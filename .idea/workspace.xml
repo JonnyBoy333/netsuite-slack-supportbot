@@ -70,7 +70,7 @@
         <entry file="file://$PROJECT_DIR$/routes/netsuite_email_capture.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="375">
-              <caret line="29" column="31" selection-start-line="29" selection-start-column="31" selection-end-line="29" selection-end-column="31" />
+              <caret line="38" column="6" selection-start-line="38" selection-start-column="6" selection-end-line="38" selection-end-column="6" />
               <folding>
                 <element signature="e#0#40#0" expanded="false" />
               </folding>
@@ -335,12 +335,12 @@
       <workItem from="1463274114835" duration="464000" />
       <workItem from="1463354641182" duration="24255000" />
       <workItem from="1464253290591" duration="702000" />
-      <workItem from="1464298311727" duration="5549000" />
+      <workItem from="1464298311727" duration="5804000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="64792000" />
+    <option name="totallyTimeSpent" value="65047000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -747,7 +747,7 @@
     <entry file="file://$PROJECT_DIR$/routes/netsuite_email_capture.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="375">
-          <caret line="29" column="31" selection-start-line="29" selection-start-column="31" selection-end-line="29" selection-end-column="31" />
+          <caret line="38" column="6" selection-start-line="38" selection-start-column="6" selection-end-line="38" selection-end-column="6" />
           <folding>
             <element signature="e#0#40#0" expanded="false" />
           </folding>
