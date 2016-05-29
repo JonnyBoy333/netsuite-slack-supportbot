@@ -26,10 +26,12 @@ router.post('/', function (req, res, next) {
     var $ = cheerio.load(req.body['stripped-html']);
     console.log('Hello');
     var $cells = $('td');
-    console.log($cells);
-    console.log(JSON.stringify($cells));
+    // console.log($cells);
+    // console.log(JSON.stringify($cells));
     $cells.each(function(i, field){
-        console.log(field.text());
+        console.log('Number: ' + i);
+        console.log('Text' + field.text());
+        console.log('Other Text' + $(this).text);
         // if(fields.eq(i).attr('id') === 'custbody_prevailing_wage_info_fs_lbl'){
         //     fields.eq(i + 1).css('background-color', 'yellow');
         // }
