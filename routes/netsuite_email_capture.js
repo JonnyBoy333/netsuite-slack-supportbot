@@ -29,10 +29,32 @@ router.post('/', function (req, res, next) {
     console.log($cells.text());
     console.log($cells.length);
     // console.log(JSON.stringify($cells));
+    var number;
+    var message = {
+        lastMessageDate: null,
+        internalID: null,
+        number: null,
+        company: null,
+        contact: null,
+        messageDate: null,
+        dateCreated: null,
+        messageAuthor: null,
+        caseURL: null,
+        companyURL: null,
+        contactURL: null,
+        message: null
+    }
+    var array = $('td').toArray();
+    console.log(array);
     $('td').each(function(i, field){
         console.log('Number: ' + i);
-        //console.log('Text' + field.text());
         console.log('Other Text' + $(this).text());
+        if ($(this).text() == 'Last Msg. Date'){
+            number = i;
+        }
+        if (number = i +1){
+            message.lastMessageDate = $(this).text();
+        }
         // if(fields.eq(i).attr('id') === 'custbody_prevailing_wage_info_fs_lbl'){
         //     fields.eq(i + 1).css('background-color', 'yellow');
         // }
