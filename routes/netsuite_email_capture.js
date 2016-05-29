@@ -6,6 +6,10 @@ var express = require('express');
 var router = express.Router();
 var Botkit = require('botkit');
 var sanitizeHtml = require('sanitize-html');
+// var cheerio = require('cheerio'),
+//     $ = cheerio.load('<h2 class="title">Hello world</h2>');
+//
+// $('h2.title').text('Hello there!');
 
 //Create Bot
 var controller = Botkit.slackbot();
@@ -17,12 +21,11 @@ var webhooksBot = controller.spawn({
 
 /* GET home page. */
 router.post('/', function (req, res, next) {
-    console.log(req);
     console.log('recipient: ' + req.body.recipient);
     console.log('sender: ' + req.body.sender);
     console.log('subject: ' + req.body.subject);
-    console.log('body: ' + req.body['stripped-text']);
-    //console.log('headers: ' + JSON.stringify(req.headers));
+    //console.log('body: ' + req.body['stripped-text']);
+    console.log('HTML: ' + req.body['stripped-html']);
     var dirtyMessage = attachment.fields[2].value;
     if (dirtyMessage){
         var cleanMessage = sanitizeHtml(dirtyMessage, {

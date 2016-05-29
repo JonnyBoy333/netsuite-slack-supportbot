@@ -19,6 +19,7 @@
     "url": "latest",
     "querystring": "latest",
     "sanitize-html": "latest",
-    "oauth-1.0a": "~1.0.1"
+    "oauth-1.0a": "~1.0.1",
+    "cheerio": "~0.20.0"
   }
 }
