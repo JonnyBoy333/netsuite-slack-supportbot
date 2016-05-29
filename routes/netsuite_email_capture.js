@@ -31,7 +31,7 @@ router.post('/', function (req, res, next) {
     // console.log(JSON.stringify($cells));
     var message = {
         lastMessageDate: {
-            keyword: 'Last Msg, Date',
+            keyword: 'Last Msg. Date',
             text: null
         },
         internalID: {
@@ -87,7 +87,7 @@ router.post('/', function (req, res, next) {
         console.log('Loop: ' + i);
         console.log('Text: ' + $(this).text());
         for (var k in message){
-            console.log(message[k].keyword);
+            //console.log(message[k].keyword);
             if ($(this).text() == message[k].keyword){
                 console.log('Found Keyword: ' + message[k].keyword);
                 number = i;
