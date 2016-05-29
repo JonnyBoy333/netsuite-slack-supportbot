@@ -96,11 +96,10 @@ router.post('/', function (req, res, next) {
         }
         console.log('Number: ' + (number + 1));
         console.log('Key: ' + keyword);
-        console.log('Key Value: ' + message[keyword]);
         if (i == number + 1){
             console.log('Hello');
             message[keyword].text = $(this).text();
-            console.log('Keyword Value: ' + message.keyword.text);
+            console.log('Keyword Value: ' + message[keyword].text);
         }
     });
     var dirtyMessage = attachment.fields[2].value;
