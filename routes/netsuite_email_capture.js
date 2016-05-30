@@ -21,7 +21,6 @@ router.post('/', function (req, res, next) {
     console.log('recipient: ' + req.body.recipient);
     console.log('sender: ' + req.body.sender);
     console.log('subject: ' + req.body.subject);
-    //console.log('body: ' + req.body['stripped-text']);
     //console.log('HTML: ' + req.body['stripped-html']);
     var $ = cheerio.load(req.body['stripped-html']);
     console.log('Number of cells: ' + $('td').length);
@@ -44,6 +43,10 @@ router.post('/', function (req, res, next) {
         },
         contact: {
             keyword: 'Contact',
+            text: null
+        },
+        assignedTo: {
+            keyword: 'Assigned To',
             text: null
         },
         messageDate: {
@@ -82,31 +85,28 @@ router.post('/', function (req, res, next) {
             keyword: 'Message HTML',
             text: null
         }
-    }
-    // var array = $('td').toArray();
-    // console.log(array[0].text());
+    };
+
+    //Fill the object based on the message values
     var number = 0;
     var keyword;
     $('td').each(function(i, field){
         //console.log('Loop: ' + i);
         //console.log('Text: ' + $(this).text());
         for (var k in message){
-            //console.log(message[k].keyword);
             if ($(this).text() == message[k].keyword){
-                //console.log('Found Keyword: ' + message[k].keyword);
                 number = i;
                 keyword = k;
                 break;
             }
         }
-        // console.log('Number: ' + (number + 1));
-        // console.log('Key: ' + keyword);
         if (i == number + 1){
             message[keyword].text = $(this).text();
-            //console.log('Keyword Value: ' + message[keyword].text);
         }
     });
     console.log('Message: ' + JSON.stringify(message));
+
+    //Sanitize the html message
     var dirtyMessage = message.message.text;
     if (dirtyMessage){
         var cleanMessage = sanitizeHtml(dirtyMessage, {
@@ -134,9 +134,22 @@ router.post('/', function (req, res, next) {
         }
     }
 
+    //Determine who to send to
+    var assignedTo = message.assignedTo.text;
+    var respondTo;
+    if (assignedTo == 'Jon Lamb'){
+        respondTo = '@jonlamb';
+    } else if (assignedTo == 'Zack Billiet'){
+        respondTo = '@zbilliet';
+    } else if (assignedTo == 'Paul Thielen'){
+        respondTo = '@pault';
+    } else {
+        respondTo = '#support';
+    }
+
     //Construct the attachment
     var attachmentMessage = {
-        channel: '#testing',
+        channel: respondTo,
         username: 'support',
         icon_emoji: ':support:',
         attachments: [{

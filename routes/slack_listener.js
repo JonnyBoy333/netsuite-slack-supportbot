@@ -2,6 +2,7 @@ var express = require('express');
 var router = express.Router();
 var request = require("request");
 var Botkit = require('botkit');
+var OAuth   = require('oauth-1.0a');
 var controller = Botkit.slackbot();
 var bot = controller.spawn({
     token: 'xoxb-15323778418-BRvb2hDVdIcyNwLL0Oi9iju4'
@@ -51,12 +52,41 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
         getUser(message.user)
         .then(function(response){
             postData.user = response.user.real_name;
-            request.post({
-                url: "https://rest.netsuite.com/app/site/hosting/restlet.nl?script=79&deploy=1",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": "NLAuth nlauth_account=3499441,nlauth_email=jlamb@kdv.com,nlauth_signature=Re397Zt#^jJ7,nlauth_role=3"
+
+            //Authentication
+            var remoteAccountID = '"3499441"';
+            //user token
+            var token = {
+                public: 'e147942fe6de80b50457bf2128410e1792b548775cb6429afa218aa20a50c6b4',
+                secret: 'a10ddd0959e56ec5d0ee85a171f11f0f37b28095e50f9f68192200cf1a7c62e7'
+            };
+
+            //app credentials
+            var oauth = OAuth({
+                consumer: {
+                    public: '2656abe35499cf19402a26de2cdb8875264001ab9493f9a22ecf4ee056030a81',
+                    secret: 'df267963aeaa4d8d47e6224131496e9595902eb239d87e692e71963dd4789563'
                 },
+                signature_method: 'HMAC-SHA1'
+            });
+
+            var request_data = {
+                url: 'https://rest.netsuite.com/app/site/hosting/restlet.nl?script=79&deploy=1',
+                method: 'POST'
+            };
+
+            var headerWithRealm = oauth.toHeader(oauth.authorize(request_data, token));
+            headerWithRealm.Authorization += ', realm=' + remoteAccountID;
+            headerWithRealm['content-type'] = 'application/json';
+            console.log('Header Authorization: ' + JSON.stringify(headerWithRealm));
+            // headers: {
+            //     "Content-Type": "application/json",
+            //         "Authorization": "NLAuth nlauth_account=3499441,nlauth_email=jlamb@kdv.com,nlauth_signature=Re397Zt#^jJ7,nlauth_role=3"
+            // }
+            request({
+                url: "https://rest.netsuite.com/app/site/hosting/restlet.nl?script=79&deploy=1",
+                method: request_data.method,
+                headers: headerWithRealm,
                 json: postData
             }, function(error, response, body) {
                 var returnData = JSON.parse(JSON.stringify(body));
