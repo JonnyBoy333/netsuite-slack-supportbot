@@ -138,7 +138,7 @@ router.post('/', function (req, res, next) {
     var assignedTo = message.assignedTo.text;
     var respondTo;
     if (assignedTo == 'Jon Lamb'){
-        respondTo = '@jonlamb';
+        respondTo = '#U04E1T1PT';
     } else if (assignedTo == 'Zack Billiet'){
         respondTo = '@zbilliet';
     } else if (assignedTo == 'Paul Thielen'){
