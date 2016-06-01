@@ -144,7 +144,7 @@ router.post('/', function (req, res, next) {
     } else if (assignedTo == 'Paul Thielen'){
         respondTo = '@pault';
     } else {
-        respondTo = '#support';
+        respondTo = '#support_cases';
     }
 
     //Construct the attachment
