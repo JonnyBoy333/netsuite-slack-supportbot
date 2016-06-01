@@ -179,6 +179,8 @@ router.post('/', function (req, res, next) {
     webhooksBot.sendWebhook(attachmentMessage,function(err,res) {
         if (err) {
             console.log(err)
+        } else {
+            console.log(res);
         }
     });
     res.end("NetSuite Listener");
