@@ -92,6 +92,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                 var returnData = JSON.parse(JSON.stringify(body));
                 var data = returnData.message;
                 var list = JSON.stringify(returnData.list);
+                console.log('Return Message: ' + list);
                 var simpleMessage = list ? data + "\n" + list : data;
                 console.log(JSON.stringify(returnData.attachments));
                 if (returnData.attachments){
