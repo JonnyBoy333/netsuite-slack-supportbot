@@ -136,16 +136,16 @@ router.post('/', function (req, res, next) {
 
     //Determine who to send to
     var assignedTo = message.assignedTo.text;
-    var respondTo;
-    if (assignedTo == 'Jon Lamb'){
-        respondTo = '@jonlamb';
-    } else if (assignedTo == 'Zack Billiet'){
-        respondTo = '@zbilliet';
-    } else if (assignedTo == 'Paul Thielen'){
-        respondTo = '@pault';
-    } else {
-        respondTo = '#testing';
-    }
+    var respondTo = '#testing';
+    // if (assignedTo == 'Jon Lamb'){
+    //     respondTo = '@jonlamb';
+    // } else if (assignedTo == 'Zack Billiet'){
+    //     respondTo = '@zbilliet';
+    // } else if (assignedTo == 'Paul Thielen'){
+    //     respondTo = '@pault';
+    // } else {
+    //     respondTo = '#testing';
+    // }
 
     //Construct the attachment
     var attachmentMessage = {

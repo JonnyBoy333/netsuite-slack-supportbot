@@ -81,7 +81,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
             console.log('Header Authorization: ' + JSON.stringify(headerWithRealm));
             // headers: {
             //     "Content-Type": "application/json",
-            //         "Authorization": "NLAuth nlauth_account=3499441,nlauth_email=jlamb@kdv.com,nlauth_signature=Re397Zt#^jJ7,nlauth_role=3"
+            //         "Authorization": "NLAuth nlauth_account=3499441,nlauth_email=jlamb@kdv.com,nlauth_signature=8Gf1yfu2a^,nlauth_role=3"
             // }
             request({
                 url: "https://rest.netsuite.com/app/site/hosting/restlet.nl?script=79&deploy=1",
