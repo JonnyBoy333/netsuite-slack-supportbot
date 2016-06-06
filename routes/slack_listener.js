@@ -89,6 +89,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                 headers: headerWithRealm,
                 json: postData
             }, function(error, response, body) {
+                console.log('Response: ' + body);
                 var returnData = JSON.parse(JSON.stringify(body));
                 var data = returnData.message;
                 var list = JSON.stringify(returnData.list);

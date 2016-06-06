@@ -82,7 +82,7 @@
         <entry file="file://$PROJECT_DIR$/routes/slack_listener.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="270">
-              <caret line="94" column="55" selection-start-line="94" selection-start-column="55" selection-end-line="94" selection-end-column="55" />
+              <caret line="94" column="56" selection-start-line="94" selection-start-column="56" selection-end-line="94" selection-end-column="56" />
               <folding />
             </state>
           </provider>
@@ -315,12 +315,12 @@
       <workItem from="1464253290591" duration="702000" />
       <workItem from="1464298311727" duration="22121000" />
       <workItem from="1465231241567" duration="183000" />
-      <workItem from="1465246573141" duration="1310000" />
+      <workItem from="1465246573141" duration="1439000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="82857000" />
+    <option name="totallyTimeSpent" value="82986000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -767,7 +767,7 @@
     <entry file="file://$PROJECT_DIR$/routes/slack_listener.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="270">
-          <caret line="94" column="55" selection-start-line="94" selection-start-column="55" selection-end-line="94" selection-end-column="55" />
+          <caret line="94" column="56" selection-start-line="94" selection-start-column="56" selection-end-line="94" selection-end-column="56" />
           <folding />
         </state>
       </provider>
