@@ -94,8 +94,8 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                 } else {
                     //console.log('Error: ' + body.error);
                     console.log('Response: ' + body);
-                    console.log(typeof body);
                     var parsedBody = JSON.parse(body);
+                    console.log(typeof parsedBody);
                     console.log(Object.keys(body));
                     console.log(parsedBody);
                     for (var key in parsedBody){
@@ -103,24 +103,26 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                     }
                     var returnData = JSON.parse(JSON.stringify(body));
                     console.log('Error 2: ' + returnData + ', another: ' + returnData.error);
-                    var data = returnData.message;
-                    var list = JSON.stringify(returnData.list);
-                    console.log('Return Message: ' + list);
-                    var simpleMessage = list ? data + "\n" + list : data;
-                    console.log(JSON.stringify(returnData.attachments));
-                    if (returnData.attachments){
-                        var slackAttachment = {
-                            "attachments": returnData.attachments,
-                            "username": "support",
-                            "icon_emoji": ":support:"
-                        };
-                        bot.reply(message,slackAttachment);
-                    } else {
-                        bot.reply(message,simpleMessage);
+                    if (returnData.message || returnData.list){
+                        var data = returnData.message;
+                        var list = JSON.stringify(returnData.list);
+                        console.log('Return Message: ' + list);
+                        var simpleMessage = list ? data + "\n" + list : data;
+                        console.log(JSON.stringify(returnData.attachments));
+                        if (returnData.attachments){
+                            var slackAttachment = {
+                                "attachments": returnData.attachments,
+                                "username": "support",
+                                "icon_emoji": ":support:"
+                            };
+                            bot.reply(message,slackAttachment);
+                        } else {
+                            bot.reply(message,simpleMessage);
+                        }
+                        console.log("body: " + JSON.stringify(returnData));
+                        //console.log("Header: " + JSON.stringify(response.headers));
+                        console.log("attachments: " + JSON.stringify(slackAttachment));
                     }
-                    console.log("body: " + JSON.stringify(returnData));
-                    //console.log("Header: " + JSON.stringify(response.headers));
-                    console.log("attachments: " + JSON.stringify(slackAttachment));
                 }
             });
         })
