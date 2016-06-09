@@ -89,7 +89,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                 headers: headerWithRealm,
                 json: postData
             }, function(error, response, body) {
-                if (body.error){
+                if (error){
                     console.log(body.error);
                 } else {
                     //console.log('Error: ' + body.error);
