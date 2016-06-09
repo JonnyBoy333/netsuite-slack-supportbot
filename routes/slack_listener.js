@@ -84,31 +84,35 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
             //         "Authorization": "NLAuth nlauth_account=3499441,nlauth_email=jlamb@kdv.com,nlauth_signature=8Gf1yfu2a^,nlauth_role=3"
             // }
             request({
-                url: "https://rest.netsuite.com/app/site/hosting/restlet.nl?script=79&deploy=1",
+                url: request_data.url,
                 method: request_data.method,
                 headers: headerWithRealm,
                 json: postData
             }, function(error, response, body) {
-                console.log('Response: ' + body);
-                var returnData = JSON.parse(JSON.stringify(body));
-                var data = returnData.message;
-                var list = JSON.stringify(returnData.list);
-                console.log('Return Message: ' + list);
-                var simpleMessage = list ? data + "\n" + list : data;
-                console.log(JSON.stringify(returnData.attachments));
-                if (returnData.attachments){
-                    var slackAttachment = {
-                        "attachments": returnData.attachments,
-                        "username": "support",
-                        "icon_emoji": ":support:"
-                    };
-                    bot.reply(message,slackAttachment);
+                if (body.error){
+                    console.log(body.error);
                 } else {
-                    bot.reply(message,simpleMessage);
+                    console.log('Response: ' + body);
+                    var returnData = JSON.parse(JSON.stringify(body));
+                    var data = returnData.message;
+                    var list = JSON.stringify(returnData.list);
+                    console.log('Return Message: ' + list);
+                    var simpleMessage = list ? data + "\n" + list : data;
+                    console.log(JSON.stringify(returnData.attachments));
+                    if (returnData.attachments){
+                        var slackAttachment = {
+                            "attachments": returnData.attachments,
+                            "username": "support",
+                            "icon_emoji": ":support:"
+                        };
+                        bot.reply(message,slackAttachment);
+                    } else {
+                        bot.reply(message,simpleMessage);
+                    }
+                    console.log("body: " + JSON.stringify(returnData));
+                    //console.log("Header: " + JSON.stringify(response.headers));
+                    console.log("attachments: " + JSON.stringify(slackAttachment));
                 }
-                console.log("body: " + JSON.stringify(returnData));
-                //console.log("Header: " + JSON.stringify(response.headers));
-                console.log("attachments: " + JSON.stringify(slackAttachment));
             });
         })
         .catch(function(reason){
