@@ -95,8 +95,8 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                     //console.log('Error: ' + body.error);
                     console.log('Response: ' + body);
                     var parsedBody = JSON.parse(body);
-                    console.log(typeof parsedBody);
-                    console.log(Object.keys(body));
+                    console.log('Type: ' + typeof parsedBody);
+                    console.log('Keys: ' + Object.keys(body));
                     console.log(parsedBody);
                     for (var key in parsedBody){
                         console.log(key + ', ' + parsedBody[key]);
