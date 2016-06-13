@@ -96,13 +96,13 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                     console.log('Response: ' + body);
                     var parsedBody = JSON.parse(body);
                     console.log('Type: ' + typeof parsedBody);
-                    console.log('Keys: ' + Object.keys(body));
-                    console.log(parsedBody);
-                    for (var key in parsedBody){
-                        console.log(key + ', ' + parsedBody[key]);
-                    }
+                    // console.log('Keys: ' + Object.keys(body));
+                    // console.log(parsedBody);
+                    // for (var key in parsedBody){
+                    //     console.log(key + ', ' + parsedBody[key]);
+                    // }
                     var returnData = JSON.parse(JSON.stringify(body));
-                    console.log('Error 2: ' + returnData + ', another: ' + returnData.error);
+                    //console.log('Error 2: ' + returnData + ', another: ' + returnData.error);
                     if (returnData.message || returnData.list){
                         var data = returnData.message;
                         var list = JSON.stringify(returnData.list);
