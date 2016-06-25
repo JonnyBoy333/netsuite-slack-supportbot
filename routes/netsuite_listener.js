@@ -50,7 +50,7 @@ router.post('/', function (req, res, next) {
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    console.log('Request: ' + JSON.stringify(req));
+    console.log(req);
     res.render('index', { title: 'Jon\'s Awesome Node App' });
 });
 
