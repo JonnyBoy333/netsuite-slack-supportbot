@@ -94,17 +94,15 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                 } else {
                     if (body.indexOf('error') === 2){
                         console.log('Error :' + body);
-                    };
-                    var returnData = body;
-                    if (returnData.message || returnData.list){
-                        var data = returnData.message;
-                        var list = JSON.stringify(returnData.list);
+                    } else if (body.message || body.list){
+                        var data = body.message;
+                        var list = JSON.stringify(body.list);
                         console.log('Return Message: ' + list);
                         var simpleMessage = list ? data + "\n" + list : data;
-                        console.log(JSON.stringify(returnData.attachments));
-                        if (returnData.attachments){
+                        console.log(JSON.stringify(body.attachments));
+                        if (body.attachments){
                             var slackAttachment = {
-                                "attachments": returnData.attachments,
+                                "attachments": body.attachments,
                                 "username": "support",
                                 "icon_emoji": ":support:"
                             };
@@ -112,7 +110,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                         } else {
                             bot.reply(message,simpleMessage);
                         }
-                        console.log("body: " + JSON.stringify(returnData));
+                        console.log("body: " + JSON.stringify(body));
                         //console.log("Header: " + JSON.stringify(response.headers));
                         console.log("attachments: " + JSON.stringify(slackAttachment));
                     }
