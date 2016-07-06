@@ -92,15 +92,11 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                 if (error){
                     console.log(error);
                 } else {
-                    console.log(body);
+                    //console.log(body);
                     if (typeof body == 'string' && body.indexOf('error') === 2){
                         console.log('Error :' + body);
                     } else if (body.message || body.attachments){
                         var simpleMessage = body.message;
-                        //var list = JSON.stringify(body.message);
-                        //console.log('Return Message: ' + list);
-                        //var simpleMessage = list ? data + "\n" + list : data;
-                        //console.log(JSON.stringify(body.attachments));
                         if (body.attachments){
                             var slackAttachment = {
                                 "attachments": body.attachments,
@@ -111,9 +107,9 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                         } else {
                             bot.reply(message,simpleMessage);
                         }
-                        console.log("body: " + JSON.stringify(body));
+                        //console.log("body: " + JSON.stringify(body));
                         //console.log("Header: " + JSON.stringify(response.headers));
-                        console.log("attachments: " + JSON.stringify(slackAttachment));
+                        //console.log("attachments: " + JSON.stringify(slackAttachment));
                     }
                 }
             });
