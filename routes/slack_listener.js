@@ -96,10 +96,10 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                     if (typeof body == 'string' && body.indexOf('error') === 2){
                         console.log('Error :' + body);
                     } else if (body.message || body.attachments){
-                        var data = body.message;
-                        var list = JSON.stringify(body.message);
+                        var simpleMessage = body.message;
+                        //var list = JSON.stringify(body.message);
                         //console.log('Return Message: ' + list);
-                        var simpleMessage = list ? data + "\n" + list : data;
+                        //var simpleMessage = list ? data + "\n" + list : data;
                         //console.log(JSON.stringify(body.attachments));
                         if (body.attachments){
                             var slackAttachment = {
