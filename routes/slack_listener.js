@@ -95,7 +95,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                     if (parsedBody.indexOf('error') === 2){
                         console.log('Error :' + body);
                     };
-                    var returnData = body);
+                    var returnData = body;
                     if (returnData.message || returnData.list){
                         var data = returnData.message;
                         var list = JSON.stringify(returnData.list);
