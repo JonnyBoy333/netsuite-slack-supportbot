@@ -92,7 +92,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                 if (error){
                     console.log(error);
                 } else {
-                    if (body.indexOf('error') === 2){
+                    if (typeof body == 'string' && body.indexOf('error') === 2){
                         console.log('Error :' + body);
                     } else if (body.message || body.list){
                         var data = body.message;
