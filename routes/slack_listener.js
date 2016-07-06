@@ -92,18 +92,10 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                 if (error){
                     console.log(error);
                 } else {
-                    //console.log('Error: ' + body.error);
-                    console.log('Response: ' + body);
-                    var parsedBody = body;
-                    console.log('Type: ' + typeof parsedBody);
-                    console.log(parsedBody.indexOf('error'));
-                    // console.log('Keys: ' + Object.keys(body));
-                    // console.log(parsedBody);
-                    // for (var key in parsedBody){
-                    //     console.log(key + ', ' + parsedBody[key]);
-                    // }
-                    var returnData = JSON.parse(JSON.stringify(body));
-                    //console.log('Error 2: ' + returnData + ', another: ' + returnData.error);
+                    if (parsedBody.indexOf('error') === 2){
+                        console.log('Error :' + body);
+                    };
+                    var returnData = body);
                     if (returnData.message || returnData.list){
                         var data = returnData.message;
                         var list = JSON.stringify(returnData.list);
