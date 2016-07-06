@@ -90,12 +90,13 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                 json: postData
             }, function(error, response, body) {
                 if (error){
-                    console.log(body.error);
+                    console.log(error);
                 } else {
                     //console.log('Error: ' + body.error);
                     console.log('Response: ' + body);
-                    var parsedBody = JSON.parse(body);
+                    var parsedBody = body;
                     console.log('Type: ' + typeof parsedBody);
+                    console.log(parsedBody.indexOf('error'));
                     // console.log('Keys: ' + Object.keys(body));
                     // console.log(parsedBody);
                     // for (var key in parsedBody){
