@@ -29,16 +29,16 @@ function getUser (id){
 var searchTerms = [
     /open cases/i,
     /my cases/i,
-    /grab case/i,
+    /grab/i,
     /last message/i,
-    /escalate case/i,
+    /escalate/i,
     /help/i,
     /netsuite/i,
     /it going/i,
     /would you like to do/i,
-    /close case/i,
-    /reply to case/i,
-    /reassign case/i,
+    /close/i,
+    /reply/i,
+    /reassign/i,
     /hello/i
 ];
 
@@ -48,7 +48,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
     var foundTerm = message.match[0].toLowerCase();
     bot.startTyping(message);
     //Responses to send to NetSuite
-    if (foundTerm === "netsuite" || foundTerm === "open cases" || foundTerm === "my cases" || foundTerm === "grab case" || foundTerm === "last message" || foundTerm === "escalate case" || foundTerm === "close case" || foundTerm === "reply to case" || foundTerm === "reassign case") {
+    if (foundTerm === "netsuite" || foundTerm === "open cases" || foundTerm === "my cases" || foundTerm === "grab" || foundTerm === "last message" || foundTerm === "escalate" || foundTerm === "close" || foundTerm === "reply" || foundTerm === "reassign") {
         var postData = {};
         postData.searchTerm = foundTerm;
         postData.message = message.text;
@@ -145,12 +145,12 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                     "1. [help] Lists all commands available to Support Bot.\n" +
                     "2. [open cases] Lists all open cases.\n" +
                     "3. [my cases] Shows all cases assigned to you.\n" +
-                    "4. [grab case #] Reassignes a case to you.\n" +
-                    "5. [last message #] Shows the last customer message for the specified case.\n" +
-                    "6. [escalate case # *escalatee*] Escalates the case to the escalatee.\n" +
-                    "7. [reassign case # *reassignee*] Reassigns the case to the reassignee.\n" +
-                    "8. [reply to case # *message*] Sends a message to the customer for the specified case.\n" +
-                    "9. [close case #] Closes the specified case.```";
+                    "4. [grab (case #)] Reassignes a case to you.\n" +
+                    "5. [last message (case #)] Shows the last customer message for the specified case.\n" +
+                    "6. [escalate (case #) *escalatee*] Escalates the case to the escalatee.\n" +
+                    "7. [reassign (case #) *reassignee*] Reassigns the case to the reassignee.\n" +
+                    "8. [reply (case #) *message*] Sends a message to the customer for the specified case.\n" +
+                    "9. [close (case #)] Closes the specified case.```";
                 break;
 
             default:
