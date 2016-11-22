@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2375d191-1f92-44a5-8c0e-2646924adbf9" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/slack_listener.js" afterPath="$PROJECT_DIR$/routes/slack_listener.js" />
     </list>
     <ignored path="Slack-2.0.iws" />
@@ -69,8 +70,8 @@
       <file leaf-file-name="slack_listener.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/slack_listener.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="135">
-              <caret line="29" column="26" lean-forward="false" selection-start-line="29" selection-start-column="26" selection-end-line="29" selection-end-column="26" />
+            <state relative-caret-position="375">
+              <caret line="52" column="40" lean-forward="false" selection-start-line="52" selection-start-column="40" selection-end-line="52" selection-end-column="40" />
               <folding />
             </state>
           </provider>
@@ -322,12 +323,12 @@
       <workItem from="1477619476887" duration="650000" />
       <workItem from="1477672627039" duration="928000" />
       <workItem from="1479767075533" duration="1707000" />
-      <workItem from="1479787966148" duration="6642000" />
+      <workItem from="1479787966148" duration="7339000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="111266000" />
+    <option name="totallyTimeSpent" value="111963000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -767,8 +768,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/slack_listener.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="135">
-          <caret line="29" column="26" lean-forward="false" selection-start-line="29" selection-start-column="26" selection-end-line="29" selection-end-column="26" />
+        <state relative-caret-position="375">
+          <caret line="52" column="40" lean-forward="false" selection-start-line="52" selection-start-column="40" selection-end-line="52" selection-end-column="40" />
           <folding />
         </state>
       </provider>

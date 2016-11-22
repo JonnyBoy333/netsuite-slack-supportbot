@@ -27,20 +27,19 @@ function getUser (id){
 }
 
 var searchTerms = [
-    /(?=open).*(?=cases)/i,
+    /open cases/i,
     /my cases/i,
-    /(?=SomETHinG).*(?=FooBar)/i,
-    'grab case',
-    'last message',
-    'escalate case',
-    'help',
-    '/netsuite/i',
-    'it going',
-    'would you like to do',
-    'close case',
-    'reply to case',
-    'reassign case',
-    'hello'
+    /grab case/i,
+    /last message/i,
+    /escalate case/i,
+    /help/i,
+    /netsuite/i,
+    /it going/i,
+    /would you like to do/i,
+    /close case/i,
+    /reply to case/i,
+    /reassign case/i,
+    /hello/i
 ];
 
 controller.hears(searchTerms,['direct_message','direct_mention','mention'],function(bot,message) {
@@ -51,6 +50,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
     //Responses to send to NetSuite
     if (foundTerm === "netsuite" || foundTerm === "open cases" || foundTerm === "my cases" || foundTerm === "grab case" || foundTerm === "last message" || foundTerm === "escalate case" || foundTerm === "close case" || foundTerm === "reply to case" || foundTerm === "reassign case") {
         var postData = {};
+        postData.searchTerm = foundTerm;
         postData.message = message.text;
         getUser(message.user)
         .then(function(response){
