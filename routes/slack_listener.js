@@ -27,8 +27,8 @@ function getUser (id){
 }
 
 var searchTerms = [
-    /(?i)open cases/,
-    /(?i)my cases/,
+    new RegExp('open cases', 'i'),
+    /my cases/,
     /grab case/i,
     /last message/i,
     /escalate case/i,
@@ -39,7 +39,7 @@ var searchTerms = [
     /close case/i,
     /reply to case/i,
     /reassign case/i,
-    /(?i)Hello/
+    /hello/i
 ];
 
 controller.hears(searchTerms,['direct_message','direct_mention','mention'],function(bot,message) {
