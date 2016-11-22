@@ -27,27 +27,28 @@ function getUser (id){
 }
 
 var searchTerms = [
-    "/open cases/i",
+    /open cases/i,
     /my cases/i,
-    "grab case/i",
-    "case message/i",
-    "escalate case/i",
-    "(?i)help",
-    "netsuite/i",
-    "it going/i",
-    "would you like to do/i",
-    "close case/i",
-    "message case/i",
-    "reassign case/i",
-    "/Hello/i"
+    /grab case/i,
+    /last message/i,
+    /escalate case/i,
+    /help/i,
+    /netsuite/i,
+    /it going/i,
+    /would you like to do/i,
+    /close case/i,
+    /reply to case/i,
+    /reassign case/i,
+    /Hello/i
 ];
 
 controller.hears(searchTerms,['direct_message','direct_mention','mention'],function(bot,message) {
     console.log(message.match[0]);
     console.log(message.user);
     var foundTerm = message.match[0];
+    bot.startTyping(message);
     //Responses to send to NetSuite
-    if (foundTerm === "netsuite" || foundTerm === "open cases" || foundTerm === "my cases" || foundTerm === "grab case" || foundTerm === "case message" || foundTerm === "escalate case" || foundTerm === "close case" || foundTerm === "message case" || foundTerm === "reassign case") {
+    if (foundTerm === "netsuite" || foundTerm === "open cases" || foundTerm === "my cases" || foundTerm === "grab case" || foundTerm === "last message" || foundTerm === "escalate case" || foundTerm === "close case" || foundTerm === "reply to case" || foundTerm === "reassign case") {
         var postData = {};
         postData.message = message.text;
         getUser(message.user)
@@ -80,6 +81,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
             headerWithRealm.Authorization += ', realm=' + remoteAccountID;
             headerWithRealm['content-type'] = 'application/json';
             console.log('Header Authorization: ' + JSON.stringify(headerWithRealm));
+
             // headers: {
             //     "Content-Type": "application/json",
             //         "Authorization": "NLAuth nlauth_account=3499441,nlauth_email=jlamb@kdv.com,nlauth_signature=8Gf1yfu2a^,nlauth_role=3"
@@ -139,10 +141,10 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                     "2. [open cases] Lists all open cases.\n" +
                     "3. [my cases] Shows all cases assigned to you.\n" +
                     "4. [grab case #] Reassignes a case to you.\n" +
-                    "5. [case message #] Shows the last customer message for the specified case.\n" +
+                    "5. [last message #] Shows the last customer message for the specified case.\n" +
                     "6. [escalate case # *escalatee*] Escalates the case to the escalatee.\n" +
                     "7. [reassign case # *reassignee*] Reassigns the case to the reassignee.\n" +
-                    "8. [message case # *message*] Sends a message to the customer for the specified case.\n" +
+                    "8. [reply to case # *message*] Sends a message to the customer for the specified case.\n" +
                     "9. [close case #] Closes the specified case.```";
                 break;
 
