@@ -110,6 +110,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                         } else {
                             bot.reply(message,simpleMessage);
                         }
+                        bot.startTyping(message);
                         //console.log("body: " + JSON.stringify(body));
                         //console.log("Header: " + JSON.stringify(response.headers));
                         //console.log("attachments: " + JSON.stringify(slackAttachment));
