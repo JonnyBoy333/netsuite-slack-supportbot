@@ -27,8 +27,8 @@ function getUser (id){
 }
 
 var searchTerms = [
-    /open cases/i,
-    /my cases/i,
+    /(?i)open cases/,
+    (?i)my cases,
     /grab case/i,
     /last message/i,
     /escalate case/i,
@@ -39,7 +39,7 @@ var searchTerms = [
     /close case/i,
     /reply to case/i,
     /reassign case/i,
-    /Hello/i
+    /(?i)Hello/
 ];
 
 controller.hears(searchTerms,['direct_message','direct_mention','mention'],function(bot,message) {
@@ -110,7 +110,6 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                         } else {
                             bot.reply(message,simpleMessage);
                         }
-                        bot.startTyping(message);
                         //console.log("body: " + JSON.stringify(body));
                         //console.log("Header: " + JSON.stringify(response.headers));
                         //console.log("attachments: " + JSON.stringify(slackAttachment));
