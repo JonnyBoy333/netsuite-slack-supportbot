@@ -42,10 +42,10 @@ var searchTerms = [
     /hello/i
 ];
 
-controller.hears('hello',['direct_message','direct_mention','mention'],function(bot,message) {
+controller.hears(['hello'],['direct_message','direct_mention','mention'],function(bot,message) {
     console.log(message.match[0]);
     console.log(message.user);
-    var foundTerm = message.match[0];
+    var foundTerm = message.match[0].toLowerCase();
     bot.startTyping(message);
     //Responses to send to NetSuite
     if (foundTerm === "netsuite" || foundTerm === "open cases" || foundTerm === "my cases" || foundTerm === "grab case" || foundTerm === "last message" || foundTerm === "escalate case" || foundTerm === "close case" || foundTerm === "reply to case" || foundTerm === "reassign case") {
@@ -126,6 +126,10 @@ controller.hears('hello',['direct_message','direct_mention','mention'],function(
     } else {
         var newMessage = '';
         switch (foundTerm) {
+            case "hello":
+                newMessage = "Hello to you too.";
+                break;
+
             case "it going":
                 newMessage = "Not too bad " + message.user + ".";
                 break;
