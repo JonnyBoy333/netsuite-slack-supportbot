@@ -26,19 +26,19 @@ function getUser (id){
     })
 }
 
-var searchTerms = ["open cases",
-    "my cases",
-    "grab case",
-    "case message",
-    "escalate case",
-    "help",
-    "netsuite",
-    "it going",
-    "would you like to do",
-    "close case",
-    "message case",
-    "reassign case",
-    "Hello"
+var searchTerms = ["(?i)open cases",
+    "(?i)my cases",
+    "(?i)grab case",
+    "(?i)case message",
+    "(?i)escalate case",
+    "(?i)help",
+    "(?i)netsuite",
+    "(?i)it going",
+    "(?i)would you like to do",
+    "(?i)close case",
+    "(?i)message case",
+    "(?i)reassign case",
+    "(?i)Hello"
 ];
 
 controller.hears(searchTerms,['direct_message','direct_mention','mention'],function(bot,message) {
