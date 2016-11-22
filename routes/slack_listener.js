@@ -32,14 +32,14 @@ var searchTerms = [
     "grab case/i",
     "case message/i",
     "escalate case/i",
-    "help/i",
+    "(?i)help",
     "netsuite/i",
     "it going/i",
     "would you like to do/i",
     "close case/i",
     "message case/i",
     "reassign case/i",
-    "Hello/i"
+    "/Hello/i"
 ];
 
 controller.hears(searchTerms,['direct_message','direct_mention','mention'],function(bot,message) {
