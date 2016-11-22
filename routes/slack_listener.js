@@ -42,7 +42,7 @@ var searchTerms = [
     /hello/i
 ];
 
-controller.hears(searchTerms,['direct_message','direct_mention','mention'],function(bot,message) {
+controller.hears('hello',['direct_message','direct_mention','mention'],function(bot,message) {
     console.log(message.match[0]);
     console.log(message.user);
     var foundTerm = message.match[0];
