@@ -27,22 +27,22 @@ function getUser (id){
 }
 
 var searchTerms = [
-    new RegExp('open cases', 'i'),
-    /my cases/,
-    /grab case/i,
-    /last message/i,
-    /escalate case/i,
-    /help/i,
-    /netsuite/i,
-    /it going/i,
-    /would you like to do/i,
-    /close case/i,
-    /reply to case/i,
-    /reassign case/i,
-    /hello/i
+    'open cases',
+    'my cases',
+    'grab case',
+    'last message',
+    'escalate case',
+    'help',
+    'netsuite',
+    'it going',
+    'would you like to do',
+    'close case',
+    'reply to case',
+    'reassign case',
+    'hello'
 ];
 
-controller.hears(['hello'],['direct_message','direct_mention','mention'],function(bot,message) {
+controller.hears(searchTerms,['direct_message','direct_mention','mention'],function(bot,message) {
     console.log(message.match[0]);
     console.log(message.user);
     var foundTerm = message.match[0].toLowerCase();
