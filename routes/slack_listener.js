@@ -27,8 +27,8 @@ function getUser (id){
 }
 
 var searchTerms = [
-    "open cases/i",
-    "my cases/i",
+    "/open cases/i",
+    /my cases/i,
     "grab case/i",
     "case message/i",
     "escalate case/i",
