@@ -27,13 +27,13 @@ function getUser (id){
 }
 
 var searchTerms = [
-    'open cases',
-    'my cases',
+    '/(?=open).*(?=cases)/i',
+    /my cases/i,
     'grab case',
     'last message',
     'escalate case',
     'help',
-    'netsuite',
+    '/netsuite/i',
     'it going',
     'would you like to do',
     'close case',
