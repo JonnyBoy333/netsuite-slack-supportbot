@@ -43,10 +43,10 @@ var searchTerms = [
 ];
 
 controller.hears(searchTerms,['direct_message','direct_mention','mention'],function(bot,message) {
+    bot.startTyping(message);
     console.log(message.match[0]);
     console.log(message.user);
     var foundTerm = message.match[0].toLowerCase();
-    bot.startTyping(message);
     //Responses to send to NetSuite
     if (foundTerm === "netsuite" || foundTerm === "open cases" || foundTerm === "my cases" || foundTerm === "grab" || foundTerm === "last message" || foundTerm === "escalate" || foundTerm === "close" || foundTerm === "reply" || foundTerm === "reassign") {
         var postData = {};
