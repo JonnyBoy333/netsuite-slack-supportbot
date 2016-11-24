@@ -45,6 +45,10 @@ var searchTerms = [
     /hello/i
 ];
 
+controller.hears('aloha',['direct_message','direct_mention','mention'],function(bot,message) {
+    bot.replyWithTyping(message,'Hello yourself.');
+});
+
 controller.hears(searchTerms,['direct_message','direct_mention','mention'],function(bot,message) {
     bot.startTyping(message);
     console.log(message.match[0]);
