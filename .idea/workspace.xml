@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="2375d191-1f92-44a5-8c0e-2646924adbf9" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/package.json" afterPath="$PROJECT_DIR$/package.json" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/slack_listener.js" afterPath="$PROJECT_DIR$/routes/slack_listener.js" />
     </list>
     <ignored path="Slack-2.0.iws" />
@@ -67,11 +68,21 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="slack_listener.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="slack_listener.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/slack_listener.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="405">
-              <caret line="50" column="0" lean-forward="true" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
+            <state relative-caret-position="-885">
+              <caret line="45" column="2" lean-forward="false" selection-start-line="45" selection-start-column="2" selection-end-line="45" selection-end-column="2" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="package.json" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/package.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="225">
+              <caret line="15" column="21" lean-forward="false" selection-start-line="15" selection-start-column="21" selection-end-line="15" selection-end-column="21" />
               <folding />
             </state>
           </provider>
@@ -110,8 +121,8 @@
         <option value="$PROJECT_DIR$/routes/netsuite_email_capture.js" />
         <option value="$PROJECT_DIR$/public/stylesheets/style.css" />
         <option value="$PROJECT_DIR$/routes/netsuite_listener.js" />
-        <option value="$PROJECT_DIR$/package.json" />
         <option value="$PROJECT_DIR$/routes/slack_listener.js" />
+        <option value="$PROJECT_DIR$/package.json" />
       </list>
     </option>
   </component>
@@ -332,12 +343,12 @@
       <workItem from="1477672627039" duration="928000" />
       <workItem from="1479767075533" duration="1707000" />
       <workItem from="1479787966148" duration="11491000" />
-      <workItem from="1480004274572" duration="698000" />
+      <workItem from="1480004274572" duration="1542000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="116813000" />
+    <option name="totallyTimeSpent" value="117657000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -746,14 +757,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/package.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="15" column="21" lean-forward="false" selection-start-line="15" selection-start-column="21" selection-end-line="15" selection-end-column="21" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/node_modules/botkit/lib/Slackbot_worker.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="166">
@@ -774,8 +777,16 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/routes/slack_listener.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="405">
-          <caret line="50" column="0" lean-forward="true" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
+        <state relative-caret-position="-885">
+          <caret line="45" column="2" lean-forward="false" selection-start-line="45" selection-start-column="2" selection-end-line="45" selection-end-column="2" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="15" column="21" lean-forward="false" selection-start-line="15" selection-start-column="21" selection-end-line="15" selection-end-column="21" />
           <folding />
         </state>
       </provider>

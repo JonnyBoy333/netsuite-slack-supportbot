@@ -45,10 +45,6 @@ var searchTerms = [
     /hello/i
 ];
 
-controller.hears('aloha',['direct_message','direct_mention','mention'],function(bot,message) {
-    bot.replyWithTyping(message,'Hello yourself.');
-});
-
 controller.hears(searchTerms,['direct_message','direct_mention','mention'],function(bot,message) {
     bot.startTyping(message);
     console.log(message.match[0]);
@@ -114,9 +110,9 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                                 "username": "support",
                                 "icon_emoji": ":support:"
                             };
-                            bot.replyWithTyping(message,slackAttachment);
+                            bot.reply(message,slackAttachment);
                         } else {
-                            bot.replyWithTyping(message,simpleMessage);
+                            bot.reply(message,simpleMessage);
                         }
                         //console.log("body: " + JSON.stringify(body));
                         //console.log("Header: " + JSON.stringify(response.headers));
@@ -163,7 +159,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
             default:
                 newMessage = "Sorry, I don't know how to answer that. If you need help please type: ```@support: help```";
         }
-        bot.replyWithTyping(message,newMessage);
+        bot.reply(message,newMessage);
     }
 });
 
