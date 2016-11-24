@@ -110,9 +110,9 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                                 "username": "support",
                                 "icon_emoji": ":support:"
                             };
-                            bot.reply(message,slackAttachment);
+                            bot.replyWithTyping(message,slackAttachment);
                         } else {
-                            bot.reply(message,simpleMessage);
+                            bot.replyWithTyping(message,simpleMessage);
                         }
                         //console.log("body: " + JSON.stringify(body));
                         //console.log("Header: " + JSON.stringify(response.headers));
@@ -159,7 +159,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
             default:
                 newMessage = "Sorry, I don't know how to answer that. If you need help please type: ```@support: help```";
         }
-        bot.reply(message,newMessage);
+        bot.replyWithTyping(message,newMessage);
     }
 });
 
