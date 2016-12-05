@@ -57,6 +57,7 @@ router.post('/', function (req, res, next) {
     if (attachment.assigned){
         getUserId(attachment.assigned)
         .then(function(userId) {
+            console.log(userId);
             delete attachment.assigned;
             var slackAttachment = {
                 "attachments": [attachment],
