@@ -14,6 +14,26 @@ var webhooksBot = controller.spawn({
         url: 'https://hooks.slack.com/services/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'
     }
 });
+var rtmBot = controller.spawn({
+    token: 'xoxb-15323778418-BRvb2hDVdIcyNwLL0Oi9iju4'
+});
+
+//Retrieves the user's ID from slack
+function getUserId (name){
+    return new Promise(function(resolve, reject){
+        rtmBot.api.users.list({},function(err,response) {
+            console.log(JSON.stringify(response));
+            for (var i = 0, userId; i < response.members.length; i++){
+                var member = response.members[i];
+                if (name == member.real_name){userId = member.id}
+            }
+            resolve(userId);
+            if (err){
+                reject(err);
+            }
+        })
+    })
+}
 
 /* GET home page. */
 router.post('/', function (req, res, next) {
@@ -33,18 +53,34 @@ router.post('/', function (req, res, next) {
         console.log('No Blanks: ' + noBlankLinesMessage);
         attachment.fields[2].value = noBlankLinesMessage;
     }
-    var attachmentMessage = {
-        channel: '#support_cases',
-        username: 'support',
-        icon_emoji: ':support:',
-        attachments: [attachment]
-    };
-    console.log('Slack Attachment: ' + JSON.stringify(attachmentMessage));
-    webhooksBot.sendWebhook(attachmentMessage,function(err,res) {
-        if (err) {
-            console.log(err)
-        }
-    });
+
+    if (attachment.assigned){
+        getUserId(attachment.assigned)
+        .then(function(userId) {
+            delete attachment.assigned;
+            var slackAttachment = {
+                "attachments": [attachment],
+                "username": "support",
+                "icon_emoji": ":support:",
+                "channel": userId
+            };
+            console.log('Slack Attachment: ' + JSON.stringify(slackAttachment));
+            rtmBot.say(slackAttachment);
+        })
+    } else {
+        var attachmentMessage = {
+            channel: '#support_cases',
+            username: 'support',
+            icon_emoji: ':support:',
+            attachments: [attachment]
+        };
+        console.log('Slack Attachment: ' + JSON.stringify(attachmentMessage));
+        webhooksBot.sendWebhook(attachmentMessage,function(err,res) {
+            if (err) {
+                console.log(err)
+            }
+        });
+    }
     res.end("NetSuite Listener");
 });
 
