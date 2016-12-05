@@ -65,7 +65,7 @@ router.post('/', function (req, res, next) {
                 "icon_emoji": ":support:",
                 "channel": userId
             };
-            console.log('Slack Attachment: ' + JSON.stringify(slackAttachment));
+            console.log('RTM Slack Attachment: ' + JSON.stringify(slackAttachment));
             rtmBot.say(slackAttachment);
         })
     } else {
@@ -75,7 +75,7 @@ router.post('/', function (req, res, next) {
             icon_emoji: ':support:',
             attachments: [attachment]
         };
-        console.log('Slack Attachment: ' + JSON.stringify(attachmentMessage));
+        console.log('Webhooks Slack Attachment: ' + JSON.stringify(attachmentMessage));
         webhooksBot.sendWebhook(attachmentMessage,function(err,res) {
             if (err) {
                 console.log(err)
