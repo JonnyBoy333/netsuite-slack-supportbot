@@ -60,6 +60,7 @@ router.post('/', function (req, res, next) {
             console.log(userId);
             delete attachment.assigned;
             var slackAttachment = {
+                "username": "support",
                 "attachments": [attachment],
                 "channel": userId
             };
