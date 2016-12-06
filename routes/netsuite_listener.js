@@ -75,6 +75,10 @@ router.post('/', function (req, res, next) {
             icon_emoji: ':support:',
             attachments: [attachment]
         };
+        attachmentMessage = {
+            text: 'my message text',
+            channel: 'U04E1T1PT' // a valid slack channel, group, mpim, or im ID
+        }
         console.log('Webhooks Slack Attachment: ' + JSON.stringify(attachmentMessage));
         webhooksBot.sendWebhook(attachmentMessage,function(err,res) {
             if (err) {
