@@ -65,7 +65,7 @@ router.post('/', function (req, res, next) {
                 "icon_emoji": ":support:",
                 "channel": userId
             };
-            attachmentMessage = {
+            slackAttachment = {
                 text: 'my message text',
                 channel: 'U04E1T1PT' // a valid slack channel, group, mpim, or im ID
             }
