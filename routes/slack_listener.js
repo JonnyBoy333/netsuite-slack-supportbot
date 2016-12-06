@@ -4,6 +4,7 @@ var request = require("request");
 var Botkit = require('botkit');
 var OAuth   = require('oauth-1.0a');
 var controller = Botkit.slackbot({
+    send_via_rtm: true
     // debug: false,
     // logLevel: 7 // verbose logging
 });

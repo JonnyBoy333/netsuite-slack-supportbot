@@ -63,10 +63,6 @@ router.post('/', function (req, res, next) {
                 "attachments": [attachment],
                 "channel": userId
             };
-            // slackAttachment = {
-            //     text: 'my message text',
-            //     channel: 'U04E1T1PT' // a valid slack channel, group, mpim, or im ID
-            // }
             console.log('RTM Slack Attachment: ' + JSON.stringify(slackAttachment));
             rtmBot.say(slackAttachment);
         })
