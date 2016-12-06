@@ -111,6 +111,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                                 "username": "support",
                                 "icon_emoji": ":support:"
                             };
+                            bot.startTyping(message);
                             bot.reply(message,slackAttachment);
                         } else {
                             bot.reply(message,simpleMessage);
@@ -129,6 +130,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
 
         //Used for default responses
     } else {
+        bot.startTyping(message);
         var newMessage = '';
         switch (foundTerm) {
             case "hello":
