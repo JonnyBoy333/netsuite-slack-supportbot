@@ -61,14 +61,12 @@ router.post('/', function (req, res, next) {
             delete attachment.assigned;
             var slackAttachment = {
                 "attachments": [attachment],
-                "username": "support",
-                "icon_emoji": ":support:",
                 "channel": userId
             };
-            slackAttachment = {
-                text: 'my message text',
-                channel: 'U04E1T1PT' // a valid slack channel, group, mpim, or im ID
-            }
+            // slackAttachment = {
+            //     text: 'my message text',
+            //     channel: 'U04E1T1PT' // a valid slack channel, group, mpim, or im ID
+            // }
             console.log('RTM Slack Attachment: ' + JSON.stringify(slackAttachment));
             rtmBot.say(slackAttachment);
         })
