@@ -105,22 +105,8 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                         console.log('Error :' + body);
                     } else if (body.message || body.attachments){
                         var reply = body.attachments ? {attachments: body.attachments} : body.message;
-                        console.log('Reply: ' + reply);
+                        console.log('Reply: ' + JSON.stringify(reply));
                         bot.reply(message, reply);
-                        // var simpleMessage = body.message;
-                        // if (body.attachments){
-                        //     var slackAttachment = {
-                        //         "attachments": body.attachments,
-                        //         // "username": "support",
-                        //         // "icon_emoji": ":support:"
-                        //     };
-                        //     bot.reply(message,slackAttachment);
-                        // } else {
-                        //     bot.reply(message,simpleMessage);
-                        // }
-                        //console.log("body: " + JSON.stringify(body));
-                        //console.log("Header: " + JSON.stringify(response.headers));
-                        //console.log("attachments: " + JSON.stringify(slackAttachment));
                     }
                 }
             });
