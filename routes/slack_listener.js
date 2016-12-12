@@ -112,7 +112,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                                 "username": "support",
                                 "icon_emoji": ":support:"
                             };
-                            bot.reply(message, 'Hello');
+                            bot.reply(message, ' ');
                             bot.reply(message,slackAttachment);
                         } else {
                             bot.reply(message,simpleMessage);
