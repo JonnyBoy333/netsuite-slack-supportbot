@@ -105,13 +105,14 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                         console.log('Error :' + body);
                     } else if (body.message || body.attachments){
                         var simpleMessage = body.message;
+                        console.log('Simple Message: ' + simpleMessage);
                         if (body.attachments){
                             var slackAttachment = {
                                 "attachments": body.attachments,
                                 "username": "support",
                                 "icon_emoji": ":support:"
                             };
-                            bot.startTyping(message);
+                            bot.reply(message, '');
                             bot.reply(message,slackAttachment);
                         } else {
                             bot.reply(message,simpleMessage);
