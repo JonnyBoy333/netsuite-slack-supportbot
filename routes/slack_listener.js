@@ -109,10 +109,10 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                         if (body.attachments){
                             var slackAttachment = {
                                 "attachments": body.attachments,
-                                "username": "support",
-                                "icon_emoji": ":support:"
+                                // "username": "support",
+                                // "icon_emoji": ":support:"
                             };
-                            bot.reply(message, ' ');
+                            // bot.reply(message, ' ');
                             bot.reply(message,slackAttachment);
                         } else {
                             bot.reply(message,simpleMessage);
