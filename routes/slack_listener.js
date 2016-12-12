@@ -104,19 +104,20 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                     if (typeof body == 'string' && body.indexOf('error') === 2){
                         console.log('Error :' + body);
                     } else if (body.message || body.attachments){
-                        var simpleMessage = body.message;
-                        console.log('Simple Message: ' + simpleMessage);
-                        if (body.attachments){
-                            var slackAttachment = {
-                                "attachments": body.attachments,
-                                // "username": "support",
-                                // "icon_emoji": ":support:"
-                            };
-                            // bot.reply(message, ' ');
-                            bot.reply(message,slackAttachment);
-                        } else {
-                            bot.reply(message,simpleMessage);
-                        }
+                        var reply = body.attachments ? {attachments: body.attachments} : body.message;
+                        console.log('Reply: ' + reply);
+                        bot.reply(message, reply);
+                        // var simpleMessage = body.message;
+                        // if (body.attachments){
+                        //     var slackAttachment = {
+                        //         "attachments": body.attachments,
+                        //         // "username": "support",
+                        //         // "icon_emoji": ":support:"
+                        //     };
+                        //     bot.reply(message,slackAttachment);
+                        // } else {
+                        //     bot.reply(message,simpleMessage);
+                        // }
                         //console.log("body: " + JSON.stringify(body));
                         //console.log("Header: " + JSON.stringify(response.headers));
                         //console.log("attachments: " + JSON.stringify(slackAttachment));
