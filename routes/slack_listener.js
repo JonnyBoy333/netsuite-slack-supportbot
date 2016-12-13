@@ -43,6 +43,8 @@ var searchTerms = [
     /close/i,
     /reply/i,
     /reassign/i,
+    /increase priority/i,
+    /decrease priority/i,
     /hello/i
 ];
 
@@ -52,7 +54,42 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
     console.log(message.user);
     var foundTerm = message.match[0].toLowerCase();
     //Responses to send to NetSuite
-    if (foundTerm === "netsuite" || foundTerm === "open cases" || foundTerm === "my cases" || foundTerm === "grab" || foundTerm === "last message" || foundTerm === "escalate" || foundTerm === "close" || foundTerm === "reply" || foundTerm === "reassign") {
+    if (foundTerm === "hello" || foundTerm === "it going" || foundTerm === "would you like to" || foundTerm === "help") {
+        bot.startTyping(message);
+        var newMessage = '';
+        switch (foundTerm) {
+            case "hello":
+                newMessage = "Hello to you too.";
+                break;
+
+            case "it going":
+                newMessage = "Not too bad " + message.user + ".";
+                break;
+
+            case "would you like to do":
+                newMessage = "Let's ride a bike!";
+                break;
+
+            case "help":
+                newMessage = "Hello, I am the Support Bot and I can help you manage your support cases in NetSuite. " +
+                    "To interact with me type \"@support\" followed by one of the phrases below. ```" +
+                    "1. [help] Lists all commands available to Support Bot.\n" +
+                    "2. [open cases] Lists all open cases.\n" +
+                    "3. [my cases] Shows all cases assigned to you.\n" +
+                    "4. [grab (case #)] Reassignes a case to you.\n" +
+                    "5. [last message (case #)] Shows the last customer message for the specified case.\n" +
+                    "6. [escalate (case #) *escalatee*] Escalates the case to the escalatee.\n" +
+                    "7. [reassign (case #) *reassignee*] Reassigns the case to the reassignee.\n" +
+                    "8. [reply (case #) *message*] Sends a message to the customer for the specified case.\n" +
+                    "9. [close (case #)] Closes the specified case.```";
+                break;
+
+            default:
+                newMessage = "Sorry, I don't know how to answer that. If you need help please type: ```@support: help```";
+        }
+        bot.reply(message,newMessage);
+        //Used for default responses
+    } else {
         var postData = {};
         postData.searchTerm = foundTerm;
         postData.message = message.text;
@@ -114,43 +151,6 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
         .catch(function(reason){
             console.log(reason);
         })
-
-
-        //Used for default responses
-    } else {
-        bot.startTyping(message);
-        var newMessage = '';
-        switch (foundTerm) {
-            case "hello":
-                newMessage = "Hello to you too.";
-                break;
-
-            case "it going":
-                newMessage = "Not too bad " + message.user + ".";
-                break;
-
-            case "would you like to do":
-                newMessage = "Let's ride a bike!";
-                break;
-
-            case "help":
-                newMessage = "Hello, I am the Support Bot and I can help you manage your support cases in NetSuite. " +
-                    "To interact with me type \"@support\" followed by one of the phrases below. ```" +
-                    "1. [help] Lists all commands available to Support Bot.\n" +
-                    "2. [open cases] Lists all open cases.\n" +
-                    "3. [my cases] Shows all cases assigned to you.\n" +
-                    "4. [grab (case #)] Reassignes a case to you.\n" +
-                    "5. [last message (case #)] Shows the last customer message for the specified case.\n" +
-                    "6. [escalate (case #) *escalatee*] Escalates the case to the escalatee.\n" +
-                    "7. [reassign (case #) *reassignee*] Reassigns the case to the reassignee.\n" +
-                    "8. [reply (case #) *message*] Sends a message to the customer for the specified case.\n" +
-                    "9. [close (case #)] Closes the specified case.```";
-                break;
-
-            default:
-                newMessage = "Sorry, I don't know how to answer that. If you need help please type: ```@support: help```";
-        }
-        bot.reply(message,newMessage);
     }
 });
 
