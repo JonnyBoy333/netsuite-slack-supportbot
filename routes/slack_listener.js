@@ -32,6 +32,7 @@ function getUser (id){
 
 var searchTerms = [
     /open cases/i,
+    /unassigned cases/i,
     /my cases/i,
     /grab/i,
     /last message/i,
@@ -75,14 +76,15 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                     "To interact with me type \"@support\" followed by one of the phrases below. ```" +
                     "1. [help] Lists all commands available to Support Bot.\n" +
                     "2. [open cases] Lists all open cases.\n" +
-                    "3. [my cases] Shows all cases assigned to you.\n" +
-                    "4. [grab (case #)] Reassignes a case to you.\n" +
-                    "5. [last message (case #)] Shows the last customer message for the specified case.\n" +
-                    "6. [escalate (case #) *escalatee*] Escalates the case to the escalatee.\n" +
-                    "7. [increase/decrease priority (case #)] Increases or decreases the priority of the case.\n" +
-                    "8. [reassign (case #) *reassignee*] Reassigns the case to the reassignee.\n" +
-                    "9. [reply (case #) *message*] Sends a message to the customer for the specified case.\n" +
-                    "10. [close (case #)] Closes the specified case.```";
+                    "3. [unassigned cases] Lists all unassigned cases.\n" +
+                    "4. [my cases] Shows all cases assigned to you.\n" +
+                    "5. [grab (case #)] Reassignes a case to you.\n" +
+                    "6. [last message (case #)] Shows the last customer message for the specified case.\n" +
+                    "7. [escalate (case #) *escalatee*] Escalates the case to the escalatee.\n" +
+                    "8. [increase/decrease priority (case #)] Increases or decreases the priority of the case.\n" +
+                    "9. [reassign (case #) *reassignee*] Reassigns the case to the reassignee.\n" +
+                    "10.[reply (case #) *message*] Sends a message to the customer for the specified case.\n" +
+                    "11.[close (case #)] Closes the specified case.```";
                 break;
 
             default:
