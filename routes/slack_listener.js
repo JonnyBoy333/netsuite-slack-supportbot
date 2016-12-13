@@ -79,9 +79,10 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                     "4. [grab (case #)] Reassignes a case to you.\n" +
                     "5. [last message (case #)] Shows the last customer message for the specified case.\n" +
                     "6. [escalate (case #) *escalatee*] Escalates the case to the escalatee.\n" +
-                    "7. [reassign (case #) *reassignee*] Reassigns the case to the reassignee.\n" +
-                    "8. [reply (case #) *message*] Sends a message to the customer for the specified case.\n" +
-                    "9. [close (case #)] Closes the specified case.```";
+                    "7. [increase/decrease priority (case #)] Increases or decreases the priority of the case.\n" +
+                    "8. [reassign (case #) *reassignee*] Reassigns the case to the reassignee.\n" +
+                    "9. [reply (case #) *message*] Sends a message to the customer for the specified case.\n" +
+                    "10. [close (case #)] Closes the specified case.```";
                 break;
 
             default:
