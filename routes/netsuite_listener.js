@@ -22,17 +22,19 @@ var rtmBot = controller.spawn({
 //Retrieves the user's ID from slack
 function getUserId (name){
     return new Promise(function(resolve, reject){
+        console.log('Name: ', name);
+        var userId;
+        if (!name) {userId = '#testing'}
         rtmBot.api.users.list({},function(err,response) {
             //console.log(JSON.stringify(response));
-            for (var i = 0, userId; i < response.members.length; i++){
+            for (var i = 0; i < response.members.length; i++){
                 var member = response.members[i];
                 if (name == member.real_name){
                     userId = member.id;
                     break;
                 }
             }
-            userId = userId ? userId : '#testing'
-            console.log('User ID', userId);
+            console.log('User ID: ', userId);
             resolve(userId);
             if (err){
                 reject(err);
