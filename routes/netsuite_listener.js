@@ -18,6 +18,7 @@ var rtmBot = controller.spawn({
     token: 'xoxb-15323778418-BRvb2hDVdIcyNwLL0Oi9iju4'
 });
 
+
 //Retrieves the user's ID from slack
 function getUserId (name){
     return new Promise(function(resolve, reject){
@@ -34,6 +35,35 @@ function getUserId (name){
         })
     })
 }
+
+// Promise.prototype.thenReturn = function(value) {
+//     return this.then(function() {
+//         return value;
+//     });
+// };
+//
+// function sendMessage(index) {
+//     return new Promise(function(resolve) {
+//         setTimeout(function() {
+//             console.log("Read file number " + (index +1));
+//             resolve();
+//         }, 500);
+//     });
+// }
+//
+// // The loop initialization
+// var len = slackMessages.length;
+// Promise.resolve(0).then(function loop(i) {
+//     // The loop check
+//     if (i < len) { // The post iteration increment
+//         return sendMessage(i).thenReturn(i + 1).then(loop);
+//     }
+// }).then(function() {
+//     console.log("All messages sent");
+// }).catch(function(e) {
+//     console.log("error", e);
+// });
+
 
 /* GET home page. */
 router.post('/', function (req, res, next) {
