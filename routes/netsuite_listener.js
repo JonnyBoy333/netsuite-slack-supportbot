@@ -24,22 +24,25 @@ function getUserId (name){
     return new Promise(function(resolve, reject){
         console.log('Name: ', name);
         var userId;
-        if (!name) {userId = '#testing'}
-        rtmBot.api.users.list({},function(err,response) {
-            //console.log(JSON.stringify(response));
-            for (var i = 0; i < response.members.length; i++){
-                var member = response.members[i];
-                if (name == member.real_name){
-                    userId = member.id;
-                    break;
-                }
-            }
-            console.log('User ID: ', userId);
+        if (!name) {
+            userId = '#testing';
             resolve(userId);
-            if (err){
-                reject(err);
-            }
-        })
+        } else {
+            rtmBot.api.users.list({},function(err,response) {
+                //console.log(JSON.stringify(response));
+                for (var i = 0; i < response.members.length; i++){
+                    var member = response.members[i];
+                    if (name == member.real_name){
+                        userId = member.id;
+                        break;
+                    }
+                }
+                resolve(userId);
+                if (err){
+                    reject(err);
+                }
+            })
+        }
     })
 }
 
@@ -99,7 +102,7 @@ router.post('/', function (req, res, next) {
         if (message.type === 'casereply'){
             getUserId(message.assigned)
             .then(function(userId) {
-                //console.log(userId);
+                console.log('User ID: ', userId);
                 var slackAttachment = {
                     "attachments": [attachment],
                     "channel": userId
