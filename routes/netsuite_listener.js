@@ -22,10 +22,10 @@ var rtmBot = controller.spawn({
 //Retrieves the user's ID from slack
 function getUserId (name){
     return new Promise(function(resolve, reject){
-        console.log('Name: ', name);
         var userId;
         if (!name) {
-            userId = '#testing';
+            userId = '#support_cases';
+            //userId = '#testing';
             resolve(userId);
         } else {
             rtmBot.api.users.list({},function(err,response) {
@@ -113,7 +113,7 @@ router.post('/', function (req, res, next) {
         } else if (message.type === 'newcase') {
             var attachmentMessage = {
                 channel: '#support_cases',
-                channel: '#testing',
+                //channel: '#testing',
                 username: 'support',
                 icon_emoji: ':support:',
                 attachments: [attachment]
