@@ -106,6 +106,7 @@ router.post('/', function (req, res, next) {
 
     function sendMessage(i) {
         return new Promise(function(resolve) {
+            console.log('Loop index', i);
             var attachment = slackMessages[i];
             if (i === 0) {
                 var dirtyMessage = attachment.fields[2].value;
