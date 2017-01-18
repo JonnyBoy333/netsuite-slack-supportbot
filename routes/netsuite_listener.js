@@ -57,52 +57,6 @@ router.post('/', function (req, res, next) {
     var message = req.body;
     console.log('body: ' + JSON.stringify(message));
     var slackMessages = message['slack_messages']
-    //console.log('headers: ' + JSON.stringify(req.headers));
-    // for (var i = 0; i < slackMessages.length; i++) {
-    //     var attachment = slackMessages[i];
-    //     if (i === 0) {
-    //         var dirtyMessage = attachment.fields[2].value;
-    //         if (dirtyMessage) {
-    //             var cleanMessage = sanitizeHtml(dirtyMessage, {
-    //                 allowedTags: [],
-    //                 allowedAttributes: []
-    //             });
-    //             //console.log('Clean message: ' + cleanMessage);
-    //             var trimmedMessage = cleanMessage.trim();
-    //             var removeBlanks = /[\r\n]{2,}/g;
-    //             var noBlankLinesMessage = trimmedMessage.replace(removeBlanks, '\r\n');
-    //             console.log('No Blanks: ' + noBlankLinesMessage);
-    //             attachment.fields[2].value = noBlankLinesMessage;
-    //         }
-    //     }
-    //
-    //     if (message.type === 'casereply'){
-    //         getUserId(message.assigned)
-    //         .then(function(userId) {
-    //             console.log('User ID: ', userId);
-    //             var slackAttachment = {
-    //                 "attachments": [attachment],
-    //                 "channel": userId
-    //             };
-    //             console.log('RTM Slack Attachment: ' + JSON.stringify(slackAttachment));
-    //             rtmBot.say(slackAttachment);
-    //         })
-    //     } else if (message.type === 'newcase') {
-    //         var attachmentMessage = {
-    //             channel: '#support_cases',
-    //             //channel: '#testing',
-    //             username: 'support',
-    //             icon_emoji: ':support:',
-    //             attachments: [attachment]
-    //         };
-    //         console.log('Webhooks Slack Attachment: ' + JSON.stringify(attachmentMessage));
-    //         webhooksBot.sendWebhook(attachmentMessage,function(err,res) {
-    //             if (err) {
-    //                 console.log(err)
-    //             }
-    //         });
-    //     }
-    // }
 
     function sendMessage(i) {
         return new Promise(function(resolve) {
@@ -141,8 +95,8 @@ router.post('/', function (req, res, next) {
             } else if (message.type === 'newcase') {
                 var attachmentMessage = {
                     channel: '#support_cases',
-                    channel: '#testing',
-                    //username: 'support',
+                    //channel: '#testing',
+                    username: 'support',
                     icon_emoji: ':support:',
                     attachments: [attachment]
                 };
