@@ -133,8 +133,10 @@ router.post('/', function (req, res, next) {
                             "channel": userId
                         };
                         console.log('RTM Slack Attachment: ' + JSON.stringify(slackAttachment));
-                        rtmBot.say(slackAttachment);
-                        resolve();
+                        rtmBot.say(slackAttachment, function (err,res) {
+                            if (err) {console.log(err)}
+                            resolve();
+                        });
                     })
             } else if (message.type === 'newcase') {
                 var attachmentMessage = {
@@ -146,9 +148,7 @@ router.post('/', function (req, res, next) {
                 };
                 console.log('Webhooks Slack Attachment: ' + JSON.stringify(attachmentMessage));
                 webhooksBot.sendWebhook(attachmentMessage,function(err,res) {
-                    if (err) {
-                        console.log(err)
-                    }
+                    if (err) {console.log(err)}
                     resolve();
                 });
             }
