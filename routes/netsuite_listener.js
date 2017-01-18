@@ -139,8 +139,8 @@ router.post('/', function (req, res, next) {
             } else if (message.type === 'newcase') {
                 var attachmentMessage = {
                     channel: '#support_cases',
-                    //channel: '#testing',
-                    username: 'support',
+                    channel: '#testing',
+                    //username: 'support',
                     icon_emoji: ':support:',
                     attachments: [attachment]
                 };
