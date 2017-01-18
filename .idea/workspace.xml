@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="2375d191-1f92-44a5-8c0e-2646924adbf9" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/netsuite_listener.js" afterPath="$PROJECT_DIR$/routes/netsuite_listener.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/routes/slack_listener.js" afterPath="$PROJECT_DIR$/routes/slack_listener.js" />
     </list>
     <ignored path="Slack-2.0.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -43,7 +43,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="netsuite_listener.js" pinned="false" current-in-tab="true">
+      <file leaf-file-name="netsuite_listener.js" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/routes/netsuite_listener.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="495">
@@ -67,11 +67,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="slack_listener.js" pinned="false" current-in-tab="false">
+      <file leaf-file-name="slack_listener.js" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/routes/slack_listener.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1230">
-              <caret line="114" column="93" lean-forward="false" selection-start-line="114" selection-start-column="29" selection-end-line="114" selection-end-column="93" />
+            <state relative-caret-position="395">
+              <caret line="84" column="25" lean-forward="false" selection-start-line="84" selection-start-column="25" selection-end-line="84" selection-end-column="25" />
               <folding />
             </state>
           </provider>
@@ -115,8 +115,8 @@
         <option value="$PROJECT_DIR$/routes/netsuite_email_capture.js" />
         <option value="$PROJECT_DIR$/public/stylesheets/style.css" />
         <option value="$PROJECT_DIR$/package.json" />
-        <option value="$PROJECT_DIR$/routes/slack_listener.js" />
         <option value="$PROJECT_DIR$/routes/netsuite_listener.js" />
+        <option value="$PROJECT_DIR$/routes/slack_listener.js" />
       </list>
     </option>
   </component>
@@ -323,12 +323,12 @@
       <workItem from="1484372671486" duration="32000" />
       <workItem from="1484449050809" duration="10867000" />
       <workItem from="1484531394361" duration="7000" />
-      <workItem from="1484610726136" duration="3491000" />
+      <workItem from="1484610726136" duration="5041000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="143784000" />
+    <option name="totallyTimeSpent" value="145334000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -770,14 +770,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/routes/slack_listener.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1230">
-          <caret line="114" column="93" lean-forward="false" selection-start-line="114" selection-start-column="29" selection-end-line="114" selection-end-column="93" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/routes/netsuite_listener.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="495">
@@ -785,6 +777,14 @@
           <folding>
             <element signature="e#0#40#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/routes/slack_listener.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="395">
+          <caret line="84" column="25" lean-forward="false" selection-start-line="84" selection-start-column="25" selection-end-line="84" selection-end-column="25" />
+          <folding />
         </state>
       </provider>
     </entry>
