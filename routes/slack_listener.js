@@ -140,7 +140,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                 if (error){
                     console.log(error);
                 } else {
-                    /onsole.log(body);
+                    console.log(body);
                     if (typeof body == 'string' && body.indexOf('error') === 2){
                         console.log('Error :' + body);
                     } else {
