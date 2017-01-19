@@ -140,13 +140,15 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                 if (error){
                     console.log(error);
                 } else {
-                    //console.log(body);
+                    /onsole.log(body);
                     if (typeof body == 'string' && body.indexOf('error') === 2){
                         console.log('Error :' + body);
-                    } else if (body.message || body.attachments){
-                        var reply = body.attachments ? {attachments: body.attachments} : body.message;
-                        console.log('Reply: ' + JSON.stringify(reply));
-                        bot.reply(message, reply);
+                    } else {
+                        for (var i = 0; i < body.length; i++) {
+                            var reply = body[i].attachments ? {attachments: body[i].attachments} : body[i].message;
+                            console.log('Reply: ' + JSON.stringify(reply));
+                            bot.reply(message, reply);
+                        }
                     }
                 }
             });
