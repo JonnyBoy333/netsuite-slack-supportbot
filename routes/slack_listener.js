@@ -88,7 +88,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                     "6. [last message (case #)] Shows the last customer message for the specified case.\n" +
                     "7. [escalate (case #) *escalatee*] Escalates the case to the escalatee.\n" +
                     "8. [increase/decrease priority (case #)] Increases or decreases the priority of the case.\n" +
-                    "9. [assign (case #) *reassignee*] Reassigns the case to the reassignee.\n" +
+                    "9. [assign (case #) *reassignee*] Reassigns the case to the assignee.\n" +
                     "10.[reply (case #) *message*] Sends a message to the customer for the specified case.\n" +
                     "11.[close (case #)] Closes the specified case.```";
                 break;
@@ -154,7 +154,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                                 if (err) {console.log(err)}
                                 resolve();
                             });
-                            if (i < body.length - 1) {bot.startTyping(message)}
+                            if (i <= (body.length - 1)) {bot.startTyping(message)}
                         })
                     }
 
