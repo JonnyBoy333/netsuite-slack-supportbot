@@ -148,7 +148,6 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                             var reply = body[i].attachments ? {attachments: body[i].attachments} : body[i].message;
                             console.log('Reply: ' + JSON.stringify(reply));
                             bot.reply(message, reply);
-                            bot.reply(message, reply);
                         }
                     }
                 }
