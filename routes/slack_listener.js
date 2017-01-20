@@ -140,13 +140,14 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                 if (error){
                     console.log(error);
                 } else {
-                    console.log(body);
+                    console.log('Body:', body);
                     if (typeof body == 'string' && body.indexOf('error') === 2){
                         console.log('Error :' + body);
                     } else {
                         for (var i = 0; i < body.length; i++) {
                             var reply = body[i].attachments ? {attachments: body[i].attachments} : body[i].message;
                             console.log('Reply: ' + JSON.stringify(reply));
+                            bot.reply(message, reply);
                             bot.reply(message, reply);
                         }
                     }
