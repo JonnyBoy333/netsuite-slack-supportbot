@@ -18,6 +18,12 @@ bot.startRTM(function(err, bot, payload){
     }
 });
 
+Promise.prototype.thenReturn = function(value) {
+    return this.then(function() {
+        return value;
+    });
+};
+
 //Retrieves the user's name from slack
 function getUser (id){
     return new Promise(function(resolve, reject){
@@ -140,15 +146,43 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                 if (error){
                     console.log(error);
                 } else {
+                    function sendMessage(i) {
+                        return new Promise(function(resolve) {
+                            var reply = body[i].attachments ? {attachments: body[i].attachments} : body[i].message;
+                            console.log('Reply: ' + JSON.stringify(reply));
+                            bot.reply(message, reply, function (err, res) {
+                                if (err) {console.log(err)}
+                                resolve();
+                            });
+                        })
+                    }
+
+
                     console.log('Body:', body);
                     if (typeof body == 'string' && body.indexOf('error') === 2){
                         console.log('Error :' + body);
                     } else {
-                        for (var i = 0; i < body.length; i++) {
-                            var reply = body[i].attachments ? {attachments: body[i].attachments} : body[i].message;
-                            console.log('Reply: ' + JSON.stringify(reply));
-                            bot.reply(message, reply);
-                        }
+
+                        // The loop initialization
+                        var len = body.length;
+                        Promise.resolve(0).then(function loop(i) {
+                            // The loop check
+                            if (i < len) { // The post iteration increment
+                                return sendMessage(i).thenReturn(i + 1).then(loop);
+                            }
+                        }).then(function() {
+                            console.log("All messages sent");
+                        }).catch(function(e) {
+                            console.log("error", e);
+                        });
+                        res.end("NetSuite Listener");
+
+
+                        // for (var i = 0; i < body.length; i++) {
+                        //     var reply = body[i].attachments ? {attachments: body[i].attachments} : body[i].message;
+                        //     console.log('Reply: ' + JSON.stringify(reply));
+                        //     bot.reply(message, reply);
+                        // }
                     }
                 }
             });
