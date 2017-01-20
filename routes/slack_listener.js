@@ -154,6 +154,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                                 if (err) {console.log(err)}
                                 resolve();
                             });
+                            if (i < body.length - 1) {bot.startTyping(message)}
                         })
                     }
 
@@ -174,12 +175,6 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                         }).catch(function(e) {
                             console.log("error", e);
                         });
-
-                        // for (var i = 0; i < body.length; i++) {
-                        //     var reply = body[i].attachments ? {attachments: body[i].attachments} : body[i].message;
-                        //     console.log('Reply: ' + JSON.stringify(reply));
-                        //     bot.reply(message, reply);
-                        // }
                     }
                 }
             });
