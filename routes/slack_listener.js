@@ -162,7 +162,6 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                     if (typeof body == 'string' && body.indexOf('error') === 2){
                         console.log('Error :' + body);
                     } else {
-
                         // The loop initialization
                         var len = body.length;
                         Promise.resolve(0).then(function loop(i) {
@@ -175,8 +174,6 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                         }).catch(function(e) {
                             console.log("error", e);
                         });
-                        res.end("NetSuite Listener");
-
 
                         // for (var i = 0; i < body.length; i++) {
                         //     var reply = body[i].attachments ? {attachments: body[i].attachments} : body[i].message;
