@@ -49,7 +49,7 @@ var searchTerms = [
     /would you like to do/i,
     /close/i,
     /reply/i,
-    /reassign/i,
+    /assign/i,
     /increase priority/i,
     /decrease priority/i,
     /hello/i
