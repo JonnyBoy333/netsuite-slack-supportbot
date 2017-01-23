@@ -52,6 +52,8 @@ var searchTerms = [
     /assign/i,
     /increase priority/i,
     /decrease priority/i,
+    /all messages/i,
+    /all attachments/i,
     /hello/i
 ];
 
@@ -84,13 +86,15 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                     "2. [open cases] Lists all open cases.\n" +
                     "3. [unassigned cases] Lists all unassigned cases.\n" +
                     "4. [my cases] Shows all cases assigned to you.\n" +
-                    "5. [grab (case #)] Reassignes a case to you.\n" +
+                    "5. [grab (case #)] Assignes a case to you.\n" +
                     "6. [last message (case #)] Shows the last customer message for the specified case.\n" +
-                    "7. [escalate (case #) *escalatee*] Escalates the case to the escalatee.\n" +
-                    "8. [increase/decrease priority (case #)] Increases or decreases the priority of the case.\n" +
-                    "9. [assign (case #) *reassignee*] Reassigns the case to the assignee.\n" +
-                    "10.[reply (case #) *message*] Sends a message to the customer for the specified case.\n" +
-                    "11.[close (case #)] Closes the specified case.```";
+                    "7. [all messages (case #)] Shows all messages for the specified case.\n" +
+                    "8. [all attachments (case #)] Shows all attachments for the specified case.\n" +
+                    "9. [escalate (case #) *escalatee*] Escalates the case to the escalatee.\n" +
+                    "10. [increase/decrease priority (case #)] Increases or decreases the priority of the case.\n" +
+                    "11. [assign (case #) *assignee*] Assigns the case to the assignee.\n" +
+                    "12.[reply (case #) *message*] Sends a message to the customer for the specified case.\n" +
+                    "13.[close (case #)] Closes the specified case.```";
                 break;
 
             default:
