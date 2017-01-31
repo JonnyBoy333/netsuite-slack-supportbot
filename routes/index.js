@@ -17,7 +17,8 @@ router.get('/', function(req, res, next) {
         hour = d.getHours();
         console.log("End of Loop " + d + "-" + hour);
     }, 600000); // every 5 minutes (3000000)
-  res.render('index', { title: 'Express' });
+  //res.render('index', { title: 'Express' });
+    res.send('Support Bot is up and running!');
 });
 
 module.exports = router;
