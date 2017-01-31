@@ -107,11 +107,4 @@ router.post('/', function (req, res, next) {
     res.end("NetSuite Listener");
 });
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-    console.log('Body: ' + JSON.stringify(req.body));
-    console.log('Headers: ' + JSON.stringify(req.headers));
-    res.render('index', { title: 'Jon\'s Awesome Node App' });
-});
-
 module.exports = router;

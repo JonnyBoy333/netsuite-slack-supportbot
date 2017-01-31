@@ -188,3 +188,5 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
         })
     }
 });
+
+module.exports = router;
