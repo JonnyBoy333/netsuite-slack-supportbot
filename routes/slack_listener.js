@@ -189,4 +189,10 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
     }
 });
 
+
+/* GET home page. */
+router.get('/', function(req, res, next) {
+    res.render('index', { title: 'Jon\'s Awesome Node App' });
+});
+
 module.exports = router;

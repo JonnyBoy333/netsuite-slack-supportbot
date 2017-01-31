@@ -30,7 +30,7 @@ app.use('/slack_listener', slack_listener);
 app.use('/netsuite_listener', netsuite_listener);
 app.use('/netsuite_oauth', nsOath);
 app.use('/netsuite_email_capture', emailCapture);
-app.use('/index', index);
+app.use('/', index);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
