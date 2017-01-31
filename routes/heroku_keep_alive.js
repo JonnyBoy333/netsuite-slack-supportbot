@@ -1,6 +1,4 @@
-var express = require('express');
 var http = require("http");
-var router = express.Router();
 
 //Heroku keep alive
 var hour = new Date().getHours();
@@ -14,5 +12,3 @@ setInterval(function() {
     hour = d.getHours();
     console.log("The time is: " + d + "-" + hour);
 }, 600000); // every 5 minutes (3000000)
-
-module.exports = router;
