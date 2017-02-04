@@ -1,9 +1,9 @@
 var Botkit = require('botkit');
 
-if (!process.env.clientId || !process.env.clientSecret || !process.env.port) {
-    console.log('Error: Specify clientId clientSecret and port in environment');
-    process.exit(1);
-}
+// if (!process.env.clientId || !process.env.clientSecret || !process.env.port) {
+//     console.log('Error: Specify clientId clientSecret and port in environment');
+//     process.exit(1);
+// }
 
 
 var controller = Botkit.slackbot({
