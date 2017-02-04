@@ -11,6 +11,7 @@ var heroku_keep_alive = require('./routes/heroku_keep_alive');
 var nsOath = require('./routes/netsuite_oauth');
 var emailCapture = require('./routes/netsuite_email_capture');
 var index = require('./routes/index');
+require('./routes/slack_button');
 
 var app = express();
 
