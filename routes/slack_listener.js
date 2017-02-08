@@ -196,7 +196,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.post('/', function(req, res, next) {
-    res.send('You just sent: \n' + req.body);
+    res.send('You just sent: \n' + JSON.stringify(req.body));
 });
 
 module.exports = router;
