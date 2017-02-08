@@ -29,10 +29,11 @@ function getUserId (name){
             resolve(userId);
         } else {
             rtmBot.api.users.list({},function(err,response) {
-                //console.log(JSON.stringify(response));
+                console.log(JSON.stringify(response));
                 for (var i = 0; i < response.members.length; i++){
                     var member = response.members[i];
-                    if (name == member.real_name){
+                    var cleanName = member.real_name.replace(/ /g,'').toLowerCase().trim();
+                    if (name == cleanName){
                         userId = member.id;
                         break;
                     }
