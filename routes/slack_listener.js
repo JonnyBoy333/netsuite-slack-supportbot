@@ -195,4 +195,8 @@ router.get('/', function(req, res, next) {
     res.render('index', { title: 'Jon\'s Awesome Node App' });
 });
 
+router.post('/', function(req, res, next) {
+    res.send('You just sent: \n' + req.body);
+});
+
 module.exports = router;
