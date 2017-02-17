@@ -1,6 +1,7 @@
 var express  = require('express'),
     router = express.Router(),
-    SlackModel = require('../models/schemas').teams,
+    teamModel = require('../models/schemas').teams,
+    channelModel = require('../models/schemas').channels,
     controller = require('../modules/bot_controller'),
     _bots = require('../modules/track_bot').bots;
 
@@ -11,7 +12,7 @@ router.post('/addaccount/:accountid', function(req, res) {
     //console.log(req.body);
     if (accountId && req.body.token && req.body.bot.token) {
         var newUserName = '';
-        var newAccount = new SlackModel;
+        var newAccount = new teamModel;
         newAccount.id = accountId;
         if (req.body.default_channel) newAccount.default_channel = req.body.default_channel;
         if (req.body.netsuite) newAccount.netsuite = {
@@ -23,6 +24,7 @@ router.post('/addaccount/:accountid', function(req, res) {
         if (req.body.users) newAccount.users = req.body.users;
         if (req.body.user) newUserName = req.body.user.replace(/ /g,'').toLowerCase().trim();
         console.log('New Account', newAccount);
+
         newAccount.save()
         .then(function(savedObject) {
             res.send(savedObject);
@@ -32,17 +34,17 @@ router.post('/addaccount/:accountid', function(req, res) {
                 } else {
                     console.log('Bot added for first time:', bot.team_info.name);
 
-                    //Get the user list and save to db
-                    function getUserIdList (bot){
+
+                    //Get the account information and save to db
+                    function getAccountInfo(bot) {
                         return new Promise(function(resolve, reject){
-                            bot.api.users.list({},function(err,response) {
-                                console.log(response);
-                                var members = response.members;
-                                for (var i = 0; i < members.length; i++){
-                                    controller.storage.users.save(members[i], function (err) {
-                                        if (err) console.log('Error saving user to db', err);
-                                    })
-                                }
+                            bot.api.team.info({},function(err,response) {
+                                console.log('Team Info', response);
+
+                                var accountInfo = response.team;
+                                controller.storage.teams.save(accountInfo, function (err) {
+                                    if (err) console.log('Error updating team info', err);
+                                });
                                 resolve();
                                 if (err){
                                     reject(err);
@@ -51,22 +53,37 @@ router.post('/addaccount/:accountid', function(req, res) {
                         })
                     }
 
-                    getUserIdList(bot)
-                    .then(function () {
-                        if (newUserName) {
 
-                            //Find the user from storage
-                            var userId = '';
-                            controller.storage.users.all(function (err, users) {
-                                if (err) console.log ('Could not find user', err);
-                                for (var i = 0; i < users.length; i++) {
-                                    var existingUserName = users[i].profile.first_name + users[i].profile.last_name;
+                    //Get the user list and save to db
+                    function getUserIdList(bot) {
+                        var userId = '';
+                        return new Promise(function(resolve, reject){
+                            bot.api.users.list({},function(err,response) {
+                                console.log('User List', response);
+                                var members = response.members;
+                                for (var i = 0; i < members.length; i++){
+                                    controller.storage.users.save(members[i], function (err) {
+                                        if (err) console.log('Error saving user to db', err);
+                                    });
+                                    var existingUserName = members[i].profile.first_name + members[i].profile.last_name;
                                     existingUserName = existingUserName.replace(/ /g,'').toLowerCase().trim();
                                     if (newUserName == existingUserName) {
-                                        userId = users[i].id;
+                                        userId = members[i].id;
                                     }
                                 }
-                            });
+                                resolve();
+                                if (err){
+                                    reject(err);
+                                }
+                            })
+                        })
+                    }
+                    getAccountInfo(bot).catch(function(e){console.log("error", e)});
+                    getUserIdList(bot)
+                    .then(function (userId) {
+
+                        //Send a message to the new account
+                        if (newUserName) {
 
                             //If the user is found send them an intro message, otherwise send the message to the general channel
                             if (userId) {
@@ -110,9 +127,11 @@ router.put('/updateaccount/:accountid', function(req, res) {
     console.log(accountId);
     console.log(req.body);
     if (accountId && req.body.users && req.body.default_channel) {
+
+        //Add users to the team and update default channel
         var userArray = req.body.users,
             update = {
-                $set : { 'users' : userArray, 'default_channel': req.body.default_channel }
+                $set : { 'users' : userArray, 'default_channel': req.body.default_channel_id }
             },
             search = {
                 id: accountId
@@ -121,14 +140,25 @@ router.put('/updateaccount/:accountid', function(req, res) {
                 new: true
             };
 
-        SlackModel.findOneAndUpdate(search, update, options).exec()
+        teamModel.findOneAndUpdate(search, update, options).exec()
             .then(function (updatedAccount) {
                 res.status(200).send(updatedAccount);
             })
             .catch(function(err) {
                 console.log(err);
                 res.status(404).send(err);
-            })
+            });
+
+        //Create a new channel
+        var channelData = {
+            id: req.body.default_channel_id,
+            team_id: accountId,
+            name: req.body.default_channel_name
+        };
+        controller.storage.channels.save(channelData, function (err) {
+            if (err) console.log('Error saving channel data', err)
+        });
+
     } else {
         res.status(500).send();
     }
@@ -138,7 +168,7 @@ router.put('/updateaccount/:accountid', function(req, res) {
 router.delete('/delete/:accountid', function (req, res) {
     var accountId = req.params.accountid;
     if (accountId) {
-        SlackModel.findOneAndRemove({ id: accountId }, function (err) {
+        teamModel.findOneAndRemove({ id: accountId }, function (err) {
             if (err) {
                 console.log(err);
                 res.status(500).send(err);

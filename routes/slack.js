@@ -78,6 +78,22 @@ var searchTerms = [
 
 controller.hears(searchTerms,['direct_message','direct_mention','mention'],function(bot,message) {
     if (message.user == bot.identity.id) return;
+
+    //Store message data in db
+    var messageData = {
+        id: message.user,
+        $push: {
+            messages: {
+                keyword: message.match[0],
+                message: message.text
+            }
+        }
+    };
+    controller.storage.users.save(messageData, function (err) {
+        if (err) console.log('Error saving message', err)
+    });
+
+
     //console.log('bots', _bots);
     //console.log('Controller Object', controller);
     //console.log('Bot Object', bot);
@@ -105,6 +121,11 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                 newMessage = "Let's ride a bike!";
                 break;
 
+            case "about":
+                newMessage = "Netsuite Support Bot version 1.0.\n" +
+                    "For questions or to report bugs please email us at erpsupport@bergankdv.com";
+                break;
+
             case "help":
                 newMessage = "Hello, I am the Support Bot and I can help you manage your support cases in NetSuite. " +
                     "To interact with me type \"@support\" followed by one of the phrases below. ```" +
@@ -121,7 +142,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                     "11.[assign (case #) *assignee*] Assigns the case to the assignee.\n" +
                     "12.[reply (case #) *message*] Sends a message to the customer for the specified case.\n" +
                     "13.[close (case #)] Closes the specified case.``` " +
-                    "For questions or to report bugs please email us at erpsupport@bergankdv.com";
+                    "14.[about] Information about the bot and how to contact us.";
                 break;
 
             default:
@@ -134,112 +155,111 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
         postData.searchTerm = foundTerm;
         postData.message = message.text;
         getUser(message.user, bot)
-            .then(function(response){
-                var realName = response.user.real_name.replace(/ /g,'').toLowerCase().trim();
-                postData.user = response.user.real_name;
+        .then(function(response){
+            var realName = response.user.real_name.replace(/ /g,'').toLowerCase().trim();
+            postData.user = response.user.real_name;
 
-                //Authentication
-                var teamId = bot.identifyTeam();
-                console.log('Team ID', teamId);
-                controller.storage.teams.get(teamId, function (err, team) {
-                    if (err) {
-                        throw new Error(err);
-                    }
+            //Authentication
+            var teamId = bot.identifyTeam();
+            console.log('Team ID', teamId);
+            controller.storage.teams.get(teamId, function (err, team) {
+                if (err) {
+                    throw new Error(err);
+                }
 
-                    //console.log('Team', team);
-                    //var remoteAccountID = '"3499441"';
-                    var remoteAccountID = team.netsuite.account_id;
-                    var users = team.users;
-                    console.log('Users', users);
-                    //Loop through users and find the matching one
-                    for (var i = 0, token = null; i < users.length; i++) {
-                        var user = users[i];
-                        var userName = user.name.replace(/ /g,'').toLowerCase().trim();
-                        if (userName == realName) {
-                            //user token
-                            token = {
-                                public: user.token,
-                                secret: user.secret
-                            };
-                            break;
-                        }
-                    }
-
-                    //If no user found use default
-                    if (!token) {
-                        var defaultIndex = users.map(function(user){return user.is_default}).indexOf(true);
+                //console.log('Team', team);
+                var remoteAccountID = team.netsuite.account_id;
+                var users = team.users;
+                console.log('Users', users);
+                //Loop through users and find the matching one
+                for (var i = 0, token = null; i < users.length; i++) {
+                    var user = users[i];
+                    var userName = user.name.replace(/ /g,'').toLowerCase().trim();
+                    if (userName == realName) {
+                        //user token
                         token = {
-                            public: users[defaultIndex].token,
-                            secret: users[defaultIndex].secret
+                            public: user.token,
+                            secret: user.secret
                         };
+                        break;
                     }
+                }
 
-
-                    //app credentials
-                    var oauth = OAuth({
-                        consumer: {
-                            public: process.env.NETSUITE_KEY,
-                            secret: process.env.NETSUITE_SECRET
-                        },
-                        signature_method: 'HMAC-SHA1'
-                    });
-
-                    var request_data = {
-                        url: team.netsuite.slack_listener_uri,
-                        method: 'POST'
+                //If no user found use default
+                if (!token) {
+                    var defaultIndex = users.map(function(user){return user.is_default}).indexOf(true);
+                    token = {
+                        public: users[defaultIndex].token,
+                        secret: users[defaultIndex].secret
                     };
-
-                    var headerWithRealm = oauth.toHeader(oauth.authorize(request_data, token));
-                    headerWithRealm.Authorization += ', realm=' + remoteAccountID;
-                    headerWithRealm['content-type'] = 'application/json';
-                    console.log('Header Authorization: ' + JSON.stringify(headerWithRealm));
-
-                    request({
-                        url: request_data.url,
-                        method: request_data.method,
-                        headers: headerWithRealm,
-                        json: postData
-                    }, function(error, response, body) {
-                        if (error){
-                            console.log(error);
-                        } else {
-                            function sendMessage(i) {
-                                return new Promise(function(resolve) {
-                                    var reply = body[i].attachments ? {attachments: body[i].attachments} : body[i].message;
-                                    console.log('Reply: ' + JSON.stringify(reply));
-                                    bot.reply(message, reply, function (err, res) {
-                                        if (err) {console.log(err)}
-                                        resolve();
-                                    });
-                                    if (i <= (body.length - 1)) {bot.startTyping(message)}
-                                })
-                            }
+                }
 
 
-                            console.log('Body:', body);
-                            if (typeof body == 'string' && body.indexOf('error') === 2){
-                                console.log('Error :' + body);
-                            } else {
-                                // The loop initialization
-                                var len = body.length;
-                                Promise.resolve(0).then(function loop(i) {
-                                    // The loop check
-                                    if (i < len) { // The post iteration increment
-                                        return sendMessage(i).thenReturn(i + 1).then(loop);
-                                    }
-                                }).then(function() {
-                                    console.log("All messages sent");
-                                }).catch(function(e) {
-                                    console.log("error", e);
+                //app credentials
+                var oauth = OAuth({
+                    consumer: {
+                        public: process.env.NETSUITE_KEY,
+                        secret: process.env.NETSUITE_SECRET
+                    },
+                    signature_method: 'HMAC-SHA1'
+                });
+
+                var request_data = {
+                    url: team.netsuite.slack_listener_uri,
+                    method: 'POST'
+                };
+
+                var headerWithRealm = oauth.toHeader(oauth.authorize(request_data, token));
+                headerWithRealm.Authorization += ', realm=' + remoteAccountID;
+                headerWithRealm['content-type'] = 'application/json';
+                console.log('Header Authorization: ' + JSON.stringify(headerWithRealm));
+
+                request({
+                    url: request_data.url,
+                    method: request_data.method,
+                    headers: headerWithRealm,
+                    json: postData
+                }, function(error, response, body) {
+                    if (error){
+                        console.log(error);
+                    } else {
+                        function sendMessage(i) {
+                            return new Promise(function(resolve) {
+                                var reply = body[i].attachments ? {attachments: body[i].attachments} : body[i].message;
+                                console.log('Reply: ' + JSON.stringify(reply));
+                                bot.reply(message, reply, function (err, res) {
+                                    if (err) {console.log(err)}
+                                    resolve();
                                 });
-                            }
+                                if (i <= (body.length - 1)) {bot.startTyping(message)}
+                            })
                         }
-                    });
-                })
-                .catch(function(reason){
-                    console.log(reason);
-                })
-            });
+
+
+                        console.log('Body:', body);
+                        if (typeof body == 'string' && body.indexOf('error') === 2){
+                            console.log('Error :' + body);
+                        } else {
+                            // The loop initialization
+                            var len = body.length;
+                            Promise.resolve(0).then(function loop(i) {
+                                // The loop check
+                                if (i < len) { // The post iteration increment
+                                    return sendMessage(i).thenReturn(i + 1).then(loop);
+                                }
+                            }).then(function() {
+                                console.log("All messages sent");
+                            }).catch(function(e) {
+                                console.log("error", e);
+                            });
+                        }
+                    }
+                });
+            })
+            .catch(function(reason){
+                console.log(reason);
+            })
+        });
     }
 });
 
@@ -273,14 +293,7 @@ function getUserIdList (name, bot, defaultChannel){
     })
 }
 
-/* GET home page. */
-router.post('/', function (req, res, next) {
-    var message = req.body;
-    console.log('body:', message);
-    var slackMessages = message['slack_messages'];
-    var teamId = message.team_id;
-    var bot = _bots[teamId];
-    //console.log('headers: ' + JSON.stringify(req.headers));
+function getAttachments(slackMessages) {
     for (var i = 0, attachments = []; i < slackMessages.length; i++) {
         var attachment = slackMessages[i];
         if (i === 0) {
@@ -300,29 +313,26 @@ router.post('/', function (req, res, next) {
         }
         attachments.push(attachment);
     }
+}
+//Post new cases
+router.post('/newcase', function (req, res, next) {
+    var message = req.body;
+    console.log('body:', message);
+    var slackMessages = message['slack_messages'];
+    var teamId = message.team_id;
+    var bot = _bots[teamId];
+    //console.log('headers: ' + JSON.stringify(req.headers));
+    var attachments = getAttachments(slackMessages);
 
     var slackAttachment = {};
     controller.storage.teams.get(teamId, function(err, team) {
         if (err) console.log(err);
-        if (message.type === 'casereply'){
-            getUserIdList(message.assigned, bot, team.default_channel)
-            .then(function(userId) {
-                console.log(userId);
-                slackAttachment = {
-                    attachments: attachments,
-                    channel: userId
-                };
-                console.log('RTM Slack Attachment:', slackAttachment);
-            })
-        } else if (message.type === 'newcase') {
-
-                slackAttachment = {
-                    channel: team.default_channel,
-                    //channel: '#testing',
-                    attachments: attachments
-                };
-                console.log('Webhooks Slack Attachment:', slackAttachment);
-        }
+        slackAttachment = {
+            channel: team.default_channel,
+            //channel: '#testing',
+            attachments: attachments
+        };
+        console.log('Webhooks Slack Attachment:', slackAttachment);
         bot.say(slackAttachment, function(err,res) {
             if (err) {
                 console.log('Error sending new case', err);
@@ -332,6 +342,41 @@ router.post('/', function (req, res, next) {
                 })
             }
         });
+    });
+    res.end("NetSuite Listener");
+});
+
+//Post case replies
+router.post('/casereply', function (req, res, next) {
+    var message = req.body;
+    console.log('body:', message);
+    var slackMessages = message['slack_messages'];
+    var teamId = message.team_id;
+    var bot = _bots[teamId];
+    //console.log('headers: ' + JSON.stringify(req.headers));
+    var attachments = getAttachments(slackMessages);
+    var slackAttachment = {};
+    controller.storage.teams.get(teamId, function(err, team) {
+        if (err) console.log(err);
+        getUserIdList(message.assigned, bot, team.default_channel)
+        .then(function(userId) {
+            console.log(userId);
+            slackAttachment = {
+                attachments: attachments,
+                //channel: '#testing',
+                channel: userId
+            };
+            console.log('RTM Slack Attachment:', slackAttachment);
+            bot.say(slackAttachment, function(err,res) {
+                if (err) {
+                    console.log('Error sending new case', err);
+                    slackAttachment.channel = '#general';
+                    bot.say(slackAttachment,function(err,res) {
+                        if (err) console.log('Error sending new case to general channel', err);
+                    })
+                }
+            });
+        })
     });
     res.end("NetSuite Listener");
 });

@@ -46,6 +46,20 @@ var teamSchema = mongoose.Schema({
     date_created: { type: Date, default: Date.now }
 });
 
+var channelSchema = mongoose.Schema({
+    id: { type: String, unique: true, index: true },
+    name: String,
+    team_id: String,
+    messages: [
+        {
+            date: { type: Date, default: Date.now },
+            type: String,
+            message: String
+        }
+    ],
+    date_created: { type: Date, default: Date.now }
+});
+
 var userSchema = mongoose.Schema({
     id: {type: String, unique: true, index: true },
     team_id: String,
@@ -80,13 +94,12 @@ var userSchema = mongoose.Schema({
     ],
     is_admin: Boolean,
     is_owner: Boolean,
-    messages_received: Number,
     has_2fa: Boolean,
     date_created: { type: Date, default: Date.now }
 });
 
 module.exports = {
     teams: mongoose.model('teams', teamSchema),
-    channels: mongoose.model('channels', teamSchema),
+    channels: mongoose.model('channels', channelSchema),
     users: mongoose.model('users', userSchema)
 };
