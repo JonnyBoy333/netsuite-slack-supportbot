@@ -90,6 +90,11 @@ router.post('/addaccount/:accountid', function(req, res) {
 
                         //Send a message to the new account
                         if (newUserName) {
+                            function sendMessage (message) {
+                                return new Promise (function (resolve, reject) {
+                                    resolve(bot.say(message));
+                                })
+                            }
 
                             //If the user is found send them an intro message, otherwise send the message to the general channel
                             if (userId) {
@@ -105,12 +110,15 @@ router.post('/addaccount/:accountid', function(req, res) {
                                 var message1 = { channel: userId, text: 'Hello and thank you for adding NetSuite Support Bot to your team!' },
                                     message2 = { channel: userId, text: 'Please make sure you finish the setup inside of NetSuite so that I can be of use.' },
                                     message3 = { channel: userId, text: 'Then, invite me to your support channel using /invite so that I can help everyone :smiley:.' };
-                                new Promise(function(resolve, reject) {
-                                    resolve(bot.say(message1));
-                                })
-                                .then(function () {return bot.say(message2)})
-                                .then(function () {return bot.say(message3)})
-                                .catch(function (err) {console.log(err)})
+                                // var promise = new Promise(function(resolve, reject) {
+                                //     resolve(bot.say(message1));
+                                // });
+                                // promise.then(function () {return bot.say(message2)});
+                                // promise.then(function () {return bot.say(message3)});
+                                sendMessage(message1)
+                                    .then(sendMessage(message2))
+                                    .then(sendMessage(message3))
+                                    .catch(function (err) {console.log(err)});
                             } else {
                                 var message = { channel: '#general', text: 'Hello and thank you for adding NetSuite Support Bot to your team!' };
                                 bot.say(message);

@@ -1,5 +1,5 @@
 var express = require('express');
-var http = require("https");
+var https = require("https");
 var router = express.Router();
 
 //Heroku keep alive
@@ -8,9 +8,9 @@ console.log("The hour is: " + hour);
 
 setInterval(function() {
     if (process.env.NODE_ENV === 'Production') {
-        http.get("https://netsuite-slack-supportbot.herokuapp.com/");
+        https.get("https://netsuite-slack-supportbot.herokuapp.com/");
     } else {
-        //http.get("https://netsuite-slack-supportbot-dev.herokuapp.com/");
+        https.get("https://netsuite-slack-supportbot-dev.herokuapp.com/");
     }
     var d = new Date();
     hour = d.getHours();
