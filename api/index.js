@@ -136,8 +136,9 @@ router.post('/addaccount/:accountid', function(req, res) {
             });
         })
         .catch(function(err) {
-            console.log(err);
-            res.status(500).send(err);
+            console.log('Error adding a new account', err);
+            if (err.code === 11000) res.status(500).send('Account already added');
+            else res.status(500).send(err);
         })
     } else {
         res.status(500).send();
