@@ -92,7 +92,10 @@ router.post('/addaccount/:accountid', function(req, res) {
                         if (newUserName) {
                             function sendMessage (message) {
                                 return new Promise (function (resolve, reject) {
-                                    resolve(bot.say(message));
+                                    bot.say(message, function (response) {
+                                        console.log('Send message response', response);
+                                        resolve(response);
+                                    });
                                 })
                             }
 
