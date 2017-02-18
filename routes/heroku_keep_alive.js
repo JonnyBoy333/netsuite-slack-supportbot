@@ -7,9 +7,11 @@ var hour = new Date().getHours();
 console.log("The hour is: " + hour);
 
 setInterval(function() {
-    //if (hour <= 24 && hour >= 7) {
-        http.get("http://slackbot-2.herokuapp.com/");
-    //}
+    if (process.env.NODE_ENV === 'Production') {
+        http.get("https://netsuite-slack-supportbot.herokuapp.com/");
+    } else {
+        http.get("https://netsuite-slack-supportbot-dev.herokuapp.com/");
+    }
     var d = new Date();
     hour = d.getHours();
     console.log("The time is: " + d + "-" + hour);
