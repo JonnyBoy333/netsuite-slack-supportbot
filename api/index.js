@@ -30,6 +30,7 @@ router.post('/addaccount/:accountid', function(req, res) {
             controller.spawn(savedObject.bot).startRTM(function(err, bot) {
                 if (err) {
                     console.log('Error connecting bot to Slack:', err);
+                    bot.closeRTM();
                 } else {
                     console.log('Bot added for first time:', bot.team_info.name);
 
@@ -202,9 +203,11 @@ router.delete('/delete/:accountid', function (req, res) {
             } else {
                 res.status(200).send(accountId + ' successfully deleted.');
                 var bot = _bots[accountId];
-                bot.destroy(function(err) {
-                    console.log('Error destroying bot', err);
-                })
+                if (bot) {
+                    bot.destroy(function(err) {
+                        console.log('Error destroying bot', err);
+                    })
+                }
             }
         })
     }
