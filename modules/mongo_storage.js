@@ -1,4 +1,4 @@
-var SlackModel = require('./schemas');
+var SlackModel = require('./../models/schemas');
 var mongoose = require('mongoose');
 
 /**

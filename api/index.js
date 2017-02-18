@@ -14,7 +14,7 @@ router.post('/addaccount/:accountid', function(req, res) {
         var newUserName = '';
         var newAccount = new teamModel;
         newAccount.id = accountId;
-        if (req.body.default_channel) newAccount.default_channel = req.body.default_channel;
+        if (req.body.default_channel_id) newAccount.default_channel = req.body.default_channel_id;
         if (req.body.netsuite) newAccount.netsuite = {
             slack_listener_uri: req.body.netsuite.slack_listener_uri,
             account_id: req.body.netsuite.account_id
@@ -27,7 +27,6 @@ router.post('/addaccount/:accountid', function(req, res) {
 
         newAccount.save()
         .then(function(savedObject) {
-            res.send(savedObject);
             controller.spawn(savedObject.bot).startRTM(function(err, bot) {
                 if (err) {
                     console.log('Error connecting bot to Slack:', err);
@@ -39,11 +38,12 @@ router.post('/addaccount/:accountid', function(req, res) {
                     function getAccountInfo(bot) {
                         return new Promise(function(resolve, reject){
                             bot.api.team.info({},function(err,response) {
-                                console.log('Team Info', response);
+                                //console.log('Team Info', response);
 
                                 var accountInfo = response.team;
-                                controller.storage.teams.save(accountInfo, function (err) {
+                                controller.storage.teams.save(accountInfo, function (err, account) {
                                     if (err) console.log('Error updating team info', err);
+                                    res.send(account);
                                 });
                                 resolve();
                                 if (err){
@@ -62,16 +62,21 @@ router.post('/addaccount/:accountid', function(req, res) {
                                 console.log('User List', response);
                                 var members = response.members;
                                 for (var i = 0; i < members.length; i++){
-                                    controller.storage.users.save(members[i], function (err) {
-                                        if (err) console.log('Error saving user to db', err);
-                                    });
-                                    var existingUserName = members[i].profile.first_name + members[i].profile.last_name;
+                                    var firstName = members[i].profile.first_name ? members[i].profile.first_name : '';
+                                    var lastName = members[i].profile.last_name ? members[i].profile.last_name : '';
+                                    var existingUserName = firstName + lastName;
                                     existingUserName = existingUserName.replace(/ /g,'').toLowerCase().trim();
+                                    //console.log('Existing User Name', existingUserName);
                                     if (newUserName == existingUserName) {
                                         userId = members[i].id;
                                     }
+                                    if (existingUserName.indexOf('bot') === -1) {
+                                        controller.storage.users.save(members[i], function (err) {
+                                            if (err) console.log('Error saving user to db', err);
+                                        });
+                                    }
                                 }
-                                resolve();
+                                resolve(userId);
                                 if (err){
                                     reject(err);
                                 }
@@ -81,21 +86,31 @@ router.post('/addaccount/:accountid', function(req, res) {
                     getAccountInfo(bot).catch(function(e){console.log("error", e)});
                     getUserIdList(bot)
                     .then(function (userId) {
+                        console.log('Found User ID', userId);
 
                         //Send a message to the new account
                         if (newUserName) {
 
                             //If the user is found send them an intro message, otherwise send the message to the general channel
                             if (userId) {
-                                bot.startPrivateConversation({user: userId},function(err,convo) {
-                                    if (err) {
-                                        console.log(err);
-                                    } else {
-                                        convo.say('Hello and thank you for adding NetSuite Support Bot to your team!');
-                                        convo.say('Please make sure you finish the setup inside of NetSuite so that I can be of use.');
-                                        convo.say('Then, invite me to your support channel using /invite so that I can help everyone :smiley:.');
-                                    }
-                                });
+                                // bot.startPrivateConversation({user: userId},function(err,convo) {
+                                //     if (err) {
+                                //         console.log(err);
+                                //     } else {
+                                //         convo.say('Hello and thank you for adding NetSuite Support Bot to your team!');
+                                //         convo.say('Please make sure you finish the setup inside of NetSuite so that I can be of use.');
+                                //         convo.say('Then, invite me to your support channel using /invite so that I can help everyone :smiley:.');
+                                //     }
+                                // });
+                                var message1 = { channel: userId, text: 'Hello and thank you for adding NetSuite Support Bot to your team!' },
+                                    message2 = { channel: userId, text: 'Please make sure you finish the setup inside of NetSuite so that I can be of use.' },
+                                    message3 = { channel: userId, text: 'Then, invite me to your support channel using /invite so that I can help everyone :smiley:.' };
+                                new Promise(function(resolve, reject) {
+                                    resolve(bot.say(message1));
+                                })
+                                .then(function () {return bot.say(message2)})
+                                .then(function () {return bot.say(message3)})
+                                .catch(function (err) {console.log(err)})
                             } else {
                                 var message = { channel: '#general', text: 'Hello and thank you for adding NetSuite Support Bot to your team!' };
                                 bot.say(message);
@@ -126,7 +141,7 @@ router.put('/updateaccount/:accountid', function(req, res) {
     var accountId = req.params.accountid;
     console.log(accountId);
     console.log(req.body);
-    if (accountId && req.body.users && req.body.default_channel) {
+    if (accountId && req.body.users && req.body.default_channel_id) {
 
         //Add users to the team and update default channel
         var userArray = req.body.users,
@@ -181,6 +196,10 @@ router.delete('/delete/:accountid', function (req, res) {
             }
         })
     }
+});
+
+router.get('/', function(req, res, next) {
+    res.render('index', { title: 'You\'ve reached the Support Bot api interface' });
 });
 
 module.exports = router;

@@ -12,22 +12,18 @@ if (!process.env.SLACK_KEY || !process.env.SLACK_SECRET || !process.env.NETSUITE
 }
 
 mongoose.Promise = global.Promise;
-var mongodbUri = process.env.MONGODB_URI;
+
+var mongodbUri = process.env.NODE_ENV === 'Production' ? process.env.MONGODB_URI : process.env.MONGODB_URI_DEV;
 var options = {
     server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } },
     replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } }
 };
 mongoose.connect(mongodbUri, options);
 
-//var slack_listener = require('./routes/slack_listener');
-//var netsuite_listener = require('./routes/netsuite_listener');
 var slack = require('./routes/slack');
 var heroku_keep_alive = require('./routes/heroku_keep_alive');
-//var nsOath = require('./routes/netsuite_oauth');
-//var emailCapture = require('./routes/netsuite_email_capture');
 var index = require('./routes/index');
 var apiRouter = require('./api');
-//require('./routes/slack_button');
 
 var app = express();
 
@@ -44,10 +40,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/slack', slack);
-//app.use('/slack_listener', slack_listener);
-//app.use('/netsuite_listener', netsuite_listener);
-//app.use('/netsuite_oauth', nsOath);
-//app.use('/netsuite_email_capture', emailCapture);
 app.use('/api', apiRouter);
 app.use('/', index);
 

@@ -7,15 +7,6 @@ var controller = require('../modules/bot_controller');
 var trackBot = require('../modules/track_bot').trackBot;
 var _bots = require('../modules/track_bot').bots;
 
-// var mongodbStorage = require('../models/mongo_storage')({mongoUri: process.env.MONGODB_URI});
-// var Botkit = require('botkit');
-// controller = Botkit.slackbot({
-//     clientId: process.env.SLACK_KEY,
-//     clientSecret: process.env.SLACK_SECRET,
-//     require_delivery: true,
-//     storage: mongodbStorage
-// });
-
 controller.storage.teams.all(function(err,teams) {
     if (err) {
         throw new Error(err);
@@ -73,7 +64,8 @@ var searchTerms = [
     /decrease priority/i,
     /all messages/i,
     /all attachments/i,
-    /hello/i
+    /hello/i,
+    /about/i
 ];
 
 controller.hears(searchTerms,['direct_message','direct_mention','mention'],function(bot,message) {
@@ -87,9 +79,23 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                 keyword: message.match[0],
                 message: message.text
             }
+        },
+        $inc: {
+            quantity: 1, "message_count": 1
         }
     };
     controller.storage.users.save(messageData, function (err) {
+        if (err) console.log('Error saving message', err)
+    });
+
+    //Increment team message count
+    var teamCountInc = {
+        id: bot.identifyTeam(),
+        $inc: {
+            quantity: 1, "message_count": 1
+        }
+    };
+    controller.storage.teams.save(teamCountInc, function (err) {
         if (err) console.log('Error saving message', err)
     });
 
@@ -105,7 +111,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
     console.log('team', bot.identifyTeam());
     var foundTerm = message.match[0].toLowerCase();
     //Responses to send to NetSuite
-    if (foundTerm === "hello" || foundTerm === "it going" || foundTerm === "would you like to" || foundTerm === "help") {
+    if (foundTerm === "hello" || foundTerm === "it going" || foundTerm === "would you like to" || foundTerm === "help" || foundTerm === 'about') {
         bot.startTyping(message);
         var newMessage = '';
         switch (foundTerm) {
@@ -122,7 +128,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                 break;
 
             case "about":
-                newMessage = "Netsuite Support Bot version 1.0.\n" +
+                newMessage = "Netsuite Support Bot `v 1.0`.\n" +
                     "For questions or to report bugs please email us at erpsupport@bergankdv.com";
                 break;
 
@@ -141,8 +147,8 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                     "10.[increase/decrease priority (case #)] Increases or decreases the priority of the case.\n" +
                     "11.[assign (case #) *assignee*] Assigns the case to the assignee.\n" +
                     "12.[reply (case #) *message*] Sends a message to the customer for the specified case.\n" +
-                    "13.[close (case #)] Closes the specified case.``` " +
-                    "14.[about] Information about the bot and how to contact us.";
+                    "13.[close (case #)] Closes the specified case.\n" +
+                    "14.[about] Information about the bot and how to contact us.``` ";
                 break;
 
             default:
@@ -341,6 +347,34 @@ router.post('/newcase', function (req, res, next) {
                     if (err) console.log('Error sending new case to general channel', err);
                 })
             }
+
+            //Store the message info
+            var teamCountInc = {
+                id: teamId,
+                $inc: {
+                    quantity: 1, "message_count": 1
+                }
+            };
+
+            controller.storage.teams.save(teamCountInc, function (err) {
+                if (err) console.log('Error incrementing team message count', err);
+            });
+
+            var channelData = {
+                id: team.default_channel,
+                $push: {
+                    messages: {
+                        type: 'newcase',
+                        message: slackAttachment
+                    }
+                },
+                $inc: {
+                    quantity: 1, "message_count": 1
+                }
+            };
+            controller.storage.channels.save(channelData, function (err) {
+                if (err) console.log('Error adding message to channel storage', err);
+            });
         });
     });
     res.end("NetSuite Listener");
@@ -375,6 +409,34 @@ router.post('/casereply', function (req, res, next) {
                         if (err) console.log('Error sending new case to general channel', err);
                     })
                 }
+
+                //Store the message info
+                var teamCountInc = {
+                    id: teamId,
+                    $inc: {
+                        quantity: 1, "message_count": 1
+                    }
+                };
+
+                controller.storage.teams.save(teamCountInc, function (err) {
+                    if (err) console.log('Error incrementing team message count', err);
+                });
+
+                var channelData = {
+                    id: team.default_channel,
+                    $push: {
+                        messages: {
+                            type: 'casereply',
+                            message: slackAttachment
+                        }
+                    },
+                    $inc: {
+                        quantity: 1, "message_count": 1
+                    }
+                };
+                controller.storage.channels.save(channelData, function (err) {
+                    if (err) console.log('Error adding message to channel storage', err);
+                });
             });
         })
     });

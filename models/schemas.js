@@ -42,6 +42,7 @@ var teamSchema = mongoose.Schema({
             is_default: Boolean
         }
     ],
+    message_count: Number,
     active: Boolean,
     date_created: { type: Date, default: Date.now }
 });
@@ -57,6 +58,7 @@ var channelSchema = mongoose.Schema({
             message: String
         }
     ],
+    message_count: Number,
     date_created: { type: Date, default: Date.now }
 });
 
@@ -92,6 +94,7 @@ var userSchema = mongoose.Schema({
             message: String
         }
     ],
+    message_count: Number,
     is_admin: Boolean,
     is_owner: Boolean,
     has_2fa: Boolean,

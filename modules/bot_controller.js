@@ -4,7 +4,7 @@ if (!process.env.SLACK_KEY || !process.env.SLACK_SECRET) {
 }
 
 var Botkit = require('botkit');
-var mongodbStorage = require('../models/mongo_storage')({mongoUri: process.env.MONGODB_URI});
+var mongodbStorage = require('../modules/mongo_storage')({mongoUri: process.env.MONGODB_URI});
 
 controller = Botkit.slackbot({
     clientId: process.env.SLACK_KEY,
