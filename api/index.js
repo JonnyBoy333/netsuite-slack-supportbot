@@ -60,7 +60,7 @@ router.post('/addaccount/:accountid', function(req, res) {
                         var userId = '';
                         return new Promise(function(resolve, reject){
                             bot.api.users.list({},function(err,response) {
-                                console.log('User List', response);
+                                //console.log('User List', response);
                                 var members = response.members;
                                 for (var i = 0; i < members.length; i++){
                                     var firstName = members[i].profile.first_name ? members[i].profile.first_name : '';
@@ -111,24 +111,29 @@ router.post('/addaccount/:accountid', function(req, res) {
                                 //         convo.say('Then, invite me to your support channel using /invite so that I can help everyone :smiley:.');
                                 //     }
                                 // });
-                                var message1 = { channel: userId, text: 'Hello and thank you for adding NetSuite Support Bot to your team!' },
-                                    message2 = { channel: userId, text: 'Please make sure you finish the setup inside of NetSuite so that I can be of use.' },
-                                    message3 = { channel: userId, text: 'Then, invite me to your support channel using /invite so that I can help everyone :smiley:.' };
+                                var message = {
+                                    channel: userId,
+                                    text: 'Hello and thank you for adding NetSuite Support Bot to your team!\n' +
+                                        'Please make sure you finish the setup inside of NetSuite so that I can be of use.\n' +
+                                        'Then, invite me to your support channel using /invite so that I can help everyone :smiley:.'
+                                };
                                 // var promise = new Promise(function(resolve, reject) {
                                 //     resolve(bot.say(message1));
                                 // });
                                 // promise.then(function () {return bot.say(message2)});
                                 // promise.then(function () {return bot.say(message3)});
-                                sendMessage(message1)
-                                    .then(sendMessage(message2))
-                                    .then(sendMessage(message3))
-                                    .catch(function (err) {console.log(err)});
+                                // sendMessage(message1)
+                                //     .then(sendMessage(message2))
+                                //     .then(sendMessage(message3))
+                                //     .catch(function (err) {console.log(err)});
+                                bot.say(message);
                             } else {
-                                var message = { channel: '#general', text: 'Hello and thank you for adding NetSuite Support Bot to your team!' };
-                                bot.say(message);
-                                message = { channel: '#general', text: 'Please make sure you finish the setup inside of NetSuite so that I can be of use.' };
-                                bot.say(message);
-                                message = { channel: '#general', text: 'Then, invite me to your support channel using /invite so that I can help everyone :smiley:.' };
+                                var message = {
+                                    channel: userId,
+                                    text: 'Hello and thank you for adding NetSuite Support Bot to your team!\n' +
+                                    'Please make sure you finish the setup inside of NetSuite so that I can be of use.\n' +
+                                    'Then, invite me to your support channel using /invite so that I can help everyone :smiley:.'
+                                };
                                 bot.say(message);
                             }
                         }
