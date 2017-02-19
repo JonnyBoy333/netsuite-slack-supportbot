@@ -17,6 +17,7 @@
     "mongoose": "^4.8.1",
     "mongoose-observer": "^0.2.1",
     "morgan": "~1.6.1",
+    "nodemon": "^1.11.0",
     "oauth-1.0a": "~1.0.1",
     "querystring": "latest",
     "request": "2.x.x",

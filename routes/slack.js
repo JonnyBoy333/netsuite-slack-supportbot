@@ -47,28 +47,30 @@ function getUser(id, bot) {
 }
 
 var searchTerms = [
-    /open cases/i,
-    /unassigned cases/i,
-    /my cases/i,
-    /grab/i,
-    /last message/i,
-    /escalate/i,
-    /help/i,
-    /netsuite/i,
-    /it going/i,
-    /would you like to do/i,
-    /close/i,
-    /reply/i,
-    /assign/i,
-    /increase priority/i,
-    /decrease priority/i,
-    /all messages/i,
-    /all attachments/i,
-    /hello/i,
-    /about/i
-];
+    'open cases',
+    'unassigned cases',
+    'my cases',
+    'grab',
+    'last message',
+    'escalate',
+    'help',
+    'netsuite',
+    'it going',
+    'would you like to do',
+    'close',
+    'reply',
+    'assign',
+    'increase priority',
+    'decrease priority',
+    'all messages',
+    'all attachments',
+    'hello',
+    'about'
+].join('|');
 
-controller.hears(searchTerms,['direct_message','direct_mention','mention'],function(bot,message) {
+var searchReg = new RegExp(searchTerms, 'gi');
+
+controller.hears([searchReg],['direct_message','direct_mention','mention'],function(bot,message) {
     if (message.user == bot.identity.id) return;
 
     //Store message data in db
@@ -109,6 +111,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
     console.log('User', message.user);
     console.log('bot', bot.identity.id);
     console.log('team', bot.identifyTeam());
+
     var foundTerm = message.match[0].toLowerCase();
     //Responses to send to NetSuite
     if (foundTerm === "hello" || foundTerm === "it going" || foundTerm === "would you like to" || foundTerm === "help" || foundTerm === 'about') {
@@ -179,6 +182,12 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                 console.log('NetSuite Account ID', remoteAccountID);
                 var users = team.users;
                 console.log('Users', users);
+                if (users.length === 0) {
+                    bot.reply(message, 'Sorry, I can\'t connect to NetSuite if no users have been setup. Please visit the Slack setup page again in NetSuite and complete the user setup at the bottom of the page.', function (err, res) {
+                        if (err) {console.log(err)}
+                    });
+                    return
+                }
                 //Loop through users and find the matching one
                 for (var i = 0, token = null; i < users.length; i++) {
                     var user = users[i];
