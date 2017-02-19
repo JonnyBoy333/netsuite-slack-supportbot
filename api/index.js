@@ -146,7 +146,10 @@ router.post('/addaccount/:accountid', function(req, res) {
         })
         .catch(function(err) {
             console.log('Error adding a new account', err);
-            if (err.code === 11000) res.status(500).send('Account already added');
+            if (err.code === 11000) {
+                res.status(500).send('Account already added');
+                //TODO reinstantiate bot
+            }
             else res.status(500).send(err);
         })
     } else {

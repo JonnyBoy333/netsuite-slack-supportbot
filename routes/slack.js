@@ -175,6 +175,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
 
                 //console.log('Team', team);
                 var remoteAccountID = team.netsuite.account_id;
+                console.log('NetSuite Account ID', remoteAccountID);
                 var users = team.users;
                 console.log('Users', users);
                 //Loop through users and find the matching one
