@@ -54,7 +54,7 @@ var channelSchema = mongoose.Schema({
     messages: [
         {
             date: { type: Date, default: Date.now },
-            type: String,
+            message_type: String,
             message: String
         }
     ],
