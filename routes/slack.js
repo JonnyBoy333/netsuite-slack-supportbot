@@ -233,7 +233,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                     } else {
                         function sendMessage(i) {
                             return new Promise(function(resolve) {
-                                var reply = body[i].attachments ? {attachments: body[i].attachments} : body[i].message;
+                                var reply = body[i].attachments && body[i].attachments.length > 0 ? {attachments: body[i].attachments} : body[i].message;
                                 console.log('Reply: ' + JSON.stringify(reply));
                                 bot.reply(message, reply, function (err, res) {
                                     if (err) {console.log(err)}
