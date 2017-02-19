@@ -348,7 +348,7 @@ router.post('/newcase', function (req, res, next) {
     var slackAttachment = {};
     controller.storage.teams.get(teamId, function(err, team) {
         if (err) console.log(err);
-        var slackAttachment = {
+        slackAttachment = {
             channel: team.default_channel,
             //channel: '#testing',
             attachments: attachments
@@ -388,6 +388,8 @@ router.post('/newcase', function (req, res, next) {
                     quantity: 1, "message_count": 1
                 }
             };
+
+            console.log('Channel data to save:', channelData);
             controller.storage.channels.save(channelData, function (err) {
                 if (err) console.log('Error adding message to channel storage', err);
             });
@@ -443,7 +445,7 @@ router.post('/casereply', function (req, res, next) {
                     $push: {
                         messages: {
                             type: 'casereply',
-                            message: slackAttachment
+                            message: slackAttachment.attachments[0].title
                         }
                     },
                     $inc: {
