@@ -1,6 +1,7 @@
 {
-  "name": "Slack-2.0",
-  "version": "0.0.0",
+  "name": "Slack SupportBot for NetSuite",
+  "description": "Provides a way for slack users to interact with NetSuite support cases",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "start": "node ./bin/www"
@@ -17,12 +18,14 @@
     "mongoose": "^4.8.1",
     "mongoose-observer": "^0.2.1",
     "morgan": "~1.6.1",
-    "nodemon": "^1.11.0",
     "oauth-1.0a": "~1.0.1",
     "querystring": "latest",
     "request": "2.x.x",
     "sanitize-html": "latest",
     "serve-favicon": "~2.3.0",
-    "url": "latest"
+    "url": "latest",
+  },
+  "devDependencies": {
+    "nodemon": "^1.11.0"
   }
 }
