@@ -347,7 +347,7 @@ router.post('/newcase', function (req, res, next) {
     var slackAttachment = {};
     controller.storage.teams.get(teamId, function(err, team) {
         if (err) console.log(err);
-        slackAttachment = {
+        var slackAttachment = {
             channel: team.default_channel,
             //channel: '#testing',
             attachments: attachments
@@ -380,7 +380,7 @@ router.post('/newcase', function (req, res, next) {
                 $push: {
                     messages: {
                         type: 'newcase',
-                        message: slackAttachment
+                        message: JSON.stringify(slackAttachment)
                     }
                 },
                 $inc: {
