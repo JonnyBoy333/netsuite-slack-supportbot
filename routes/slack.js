@@ -173,7 +173,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                     throw new Error(err);
                 }
 
-                //console.log('Team', team);
+                console.log('Team', team);
                 var remoteAccountID = team.netsuite.account_id;
                 console.log('NetSuite Account ID', remoteAccountID);
                 var users = team.users;

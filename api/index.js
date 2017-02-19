@@ -167,7 +167,10 @@ router.put('/updateaccount/:accountid', function(req, res) {
         //Add users to the team and update default channel
         var userArray = req.body.users,
             update = {
-                $set : { 'users' : userArray, 'default_channel': req.body.default_channel_id }
+                $set : {
+                    'users' : userArray,
+                    'default_channel': req.body.default_channel_id
+                }
             },
             search = {
                 id: accountId
