@@ -381,7 +381,7 @@ router.post('/newcase', function (req, res, next) {
                 $push: {
                     messages: {
                         type: 'newcase',
-                        message: slackAttachment
+                        message: slackAttachment.attachments[0].title
                     }
                 },
                 $inc: {
