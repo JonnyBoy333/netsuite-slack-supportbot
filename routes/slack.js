@@ -333,6 +333,7 @@ function getAttachments(slackMessages) {
         }
         attachments.push(attachment);
     }
+    return attachments;
 }
 //Post new cases
 router.post('/newcase', function (req, res, next) {
@@ -380,7 +381,7 @@ router.post('/newcase', function (req, res, next) {
                 $push: {
                     messages: {
                         type: 'newcase',
-                        message: JSON.stringify(slackAttachment)
+                        message: slackAttachment
                     }
                 },
                 $inc: {
