@@ -5,19 +5,44 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var mongooseDB = mongoose.connection;
 
 if (!process.env.SLACK_KEY || !process.env.SLACK_SECRET || !process.env.NETSUITE_KEY || !process.env.NETSUITE_SECRET) {
     console.log('Error: Specify clientId and clientSecret in environment');
     process.exit(1);
 }
 
-mongoose.Promise = global.Promise;
 
+//Connect to database and handle errors
+mongoose.Promise = global.Promise;
 var mongodbUri = process.env.NODE_ENV === 'Production' ? process.env.MONGODB_URI : process.env.MONGODB_URI_DEV;
 var options = {
-    server: { socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 } },
+    server: {
+        socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 },
+        server: { auto_reconnect:true }
+    },
     replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } }
 };
+mongooseDB.on('connecting', function() {
+    console.log('connecting to MongoDB...');
+});
+mongooseDB.on('error', function(error) {
+    console.error('Error in MongoDb connection: ' + error);
+    mongoose.disconnect();
+});
+mongooseDB.on('connected', function() {
+    console.log('MongoDB connected!');
+});
+mongooseDB.once('open', function() {
+    console.log('MongoDB connection opened!');
+});
+mongooseDB.on('reconnected', function () {
+    console.log('MongoDB reconnected!');
+});
+mongooseDB.on('disconnected', function() {
+    console.log('MongoDB disconnected!');
+    mongoose.connect(mongodbUri, options);
+});
 mongoose.connect(mongodbUri, options);
 
 var slack = require('./routes/slack');

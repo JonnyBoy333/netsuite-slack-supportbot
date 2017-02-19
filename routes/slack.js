@@ -182,12 +182,15 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                 console.log('NetSuite Account ID', remoteAccountID);
                 var users = team.users;
                 console.log('Users', users);
+
+                //Handle error if no users are found
                 if (users.length === 0) {
                     bot.reply(message, 'Sorry, I can\'t connect to NetSuite if no users have been setup. Please visit the Slack setup page again in NetSuite and complete the user setup at the bottom of the page.', function (err, res) {
                         if (err) {console.log(err)}
                     });
                     return
                 }
+
                 //Loop through users and find the matching one
                 for (var i = 0, token = null; i < users.length; i++) {
                     var user = users[i];
