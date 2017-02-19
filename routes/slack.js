@@ -164,6 +164,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
         .then(function(response){
             var realName = response.user.real_name.replace(/ /g,'').toLowerCase().trim();
             postData.user = response.user.real_name;
+            console.log('User Real Name', postData.user);
 
             //Authentication
             var teamId = bot.identifyTeam();
