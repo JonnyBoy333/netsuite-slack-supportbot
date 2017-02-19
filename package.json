@@ -23,7 +23,7 @@
     "request": "2.x.x",
     "sanitize-html": "latest",
     "serve-favicon": "~2.3.0",
-    "url": "latest",
+    "url": "latest"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"
