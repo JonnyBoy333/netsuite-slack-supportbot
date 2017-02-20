@@ -287,6 +287,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
 
 //Retrieves the user's ID from slack
 function getUserIdList (name, bot, defaultChannel){
+    name = name.replace(/ /g,'').toLowerCase().trim();
     return new Promise(function(resolve, reject){
         var userId;
         if (!name) {
@@ -299,7 +300,7 @@ function getUserIdList (name, bot, defaultChannel){
                 for (var i = 0; i < response.members.length; i++){
                     var member = response.members[i];
                     var cleanName = member.real_name.replace(/ /g,'').toLowerCase().trim();
-                    console.log('Evaluating Name: ', cleanName);
+                    console.log('Name : Slack Name', name + ' : ' + cleanName);
                     if(name == cleanName) {
                         userId = member.id;
                         break;
@@ -421,7 +422,7 @@ router.post('/casereply', function (req, res, next) {
             console.log('RTM Slack Attachment:', slackAttachment);
             bot.say(slackAttachment, function(err,res) {
                 if (err) {
-                    console.log('Error sending new case', err);
+                    console.log('Error sending case reply', err);
                     slackAttachment.channel = '#general';
                     bot.say(slackAttachment,function(err,res) {
                         if (err) console.log('Error sending new case to general channel', err);
