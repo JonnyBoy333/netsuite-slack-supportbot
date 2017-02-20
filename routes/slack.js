@@ -299,6 +299,7 @@ function getUserIdList (name, bot, defaultChannel){
                 for (var i = 0; i < response.members.length; i++){
                     var member = response.members[i];
                     var cleanName = member.real_name.replace(/ /g,'').toLowerCase().trim();
+                    console.log('Evaluating Name: ', cleanName);
                     if(name == cleanName) {
                         userId = member.id;
                         break;
@@ -389,7 +390,6 @@ router.post('/newcase', function (req, res, next) {
                 }
             };
 
-            console.log('Channel data to save:', channelData);
             controller.storage.channels.save(channelData, function (err) {
                 if (err) console.log('Error adding message to channel storage', err);
             });
@@ -412,7 +412,7 @@ router.post('/casereply', function (req, res, next) {
         if (err) console.log(err);
         getUserIdList(message.assigned, bot, team.default_channel)
         .then(function(userId) {
-            console.log(userId);
+            console.log('User ID', userId);
             slackAttachment = {
                 attachments: attachments,
                 //channel: '#testing',
