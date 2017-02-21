@@ -1,5 +1,5 @@
 {
-  "name": "Slack SupportBot for NetSuite",
+  "name": "Slack-SupportBot-for-NetSuite",
   "description": "Provides a way for slack users to interact with NetSuite support cases",
   "version": "0.1.0",
   "private": true,
@@ -11,6 +11,7 @@
     "botkit": "~0.4.x",
     "cheerio": "~0.20.0",
     "cookie-parser": "~1.3.5",
+    "crypto": "0.0.3",
     "debug": "~2.2.0",
     "ejs": "~2.3.3",
     "express": "~4.13.1",

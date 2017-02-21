@@ -1,8 +1,9 @@
 var express  = require('express'),
     router = express.Router(),
     teamModel = require('../models/schemas').teams,
-    channelModel = require('../models/schemas').channels,
     controller = require('../modules/bot_controller'),
+    tokenSchema = require('../models/schemas').tokens,
+    crypto = require('crypto'),
     _bots = require('../modules/track_bot').bots;
 
 //Add a new account
@@ -91,41 +92,15 @@ router.post('/addaccount/:accountid', function(req, res) {
 
                         //Send a message to the new account
                         if (newUserName) {
-                            function sendMessage (message) {
-                                return new Promise (function (resolve, reject) {
-                                    bot.say(message, function (response) {
-                                        console.log('Send message response', response);
-                                        resolve(response);
-                                    });
-                                })
-                            }
 
                             //If the user is found send them an intro message, otherwise send the message to the general channel
                             if (userId) {
-                                // bot.startPrivateConversation({user: userId},function(err,convo) {
-                                //     if (err) {
-                                //         console.log(err);
-                                //     } else {
-                                //         convo.say('Hello and thank you for adding NetSuite Support Bot to your team!');
-                                //         convo.say('Please make sure you finish the setup inside of NetSuite so that I can be of use.');
-                                //         convo.say('Then, invite me to your support channel using /invite so that I can help everyone :smiley:.');
-                                //     }
-                                // });
                                 var message = {
                                     channel: userId,
                                     text: 'Hello and thank you for adding NetSuite Support Bot to your team!\n' +
                                         'Please make sure you finish the setup inside of NetSuite so that I can be of use.\n' +
                                         'Then, invite me to your support channel using /invite so that I can help everyone :smiley:.'
                                 };
-                                // var promise = new Promise(function(resolve, reject) {
-                                //     resolve(bot.say(message1));
-                                // });
-                                // promise.then(function () {return bot.say(message2)});
-                                // promise.then(function () {return bot.say(message3)});
-                                // sendMessage(message1)
-                                //     .then(sendMessage(message2))
-                                //     .then(sendMessage(message3))
-                                //     .catch(function (err) {console.log(err)});
                                 bot.say(message);
                             } else {
                                 var message = {
@@ -221,6 +196,24 @@ router.delete('/delete/:accountid', function (req, res) {
                 }
             }
         })
+    }
+});
+
+router.get('/new-token', function(req, res){
+    if (req.headers.authorization === 'Bearer ' + process.env.ACCESS_TOKEN) {
+        var token = {
+            token: crypto.randomBytes(64).toString('hex')
+        };
+        console.log('Generated token: ', token.token);
+        var tokenModel = new tokenSchema;
+        tokenModel.token = token.token;
+        tokenModel.save()
+        .catch(function(err){
+            console.log('Error saving token', err);
+        });
+        res.status(200).send(token);
+    } else {
+        res.status(401).send('Not Authorized');
     }
 });
 

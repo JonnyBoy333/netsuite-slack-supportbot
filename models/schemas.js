@@ -43,7 +43,7 @@ var teamSchema = mongoose.Schema({
         }
     ],
     message_count: Number,
-    active: Boolean,
+    active: { type: Boolean, default: true },
     date_created: { type: Date, default: Date.now }
 });
 
@@ -59,6 +59,7 @@ var channelSchema = mongoose.Schema({
         }
     ],
     message_count: Number,
+    active: { type: Boolean, default: true },
     date_created: { type: Date, default: Date.now }
 });
 
@@ -98,11 +99,19 @@ var userSchema = mongoose.Schema({
     is_admin: Boolean,
     is_owner: Boolean,
     has_2fa: Boolean,
+    active: { type: Boolean, default: true },
+    date_created: { type: Date, default: Date.now }
+});
+
+var tokenSchema = mongoose.Schema({
+    token: { type: String, unique: true, index: true },
+    active: { type: Boolean, default: true },
     date_created: { type: Date, default: Date.now }
 });
 
 module.exports = {
     teams: mongoose.model('teams', teamSchema),
     channels: mongoose.model('channels', channelSchema),
-    users: mongoose.model('users', userSchema)
+    users: mongoose.model('users', userSchema),
+    tokens: mongoose.model('tokens', tokenSchema)
 };

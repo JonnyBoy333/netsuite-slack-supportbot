@@ -300,7 +300,7 @@ function getUserIdList (name, bot, defaultChannel){
                 for (var i = 0; i < response.members.length; i++){
                     var member = response.members[i];
                     var cleanName = member.real_name.replace(/ /g,'').toLowerCase().trim();
-                    console.log('Name : Slack Name', name + ' : ' + cleanName);
+                    //console.log('Name : Slack Name', name + ' : ' + cleanName);
                     if(name == cleanName) {
                         userId = member.id;
                         break;
