@@ -2,12 +2,15 @@ var express  = require('express'),
     router = express.Router(),
     teamModel = require('../models/schemas').teams,
     controller = require('../modules/bot_controller'),
-    tokenSchema = require('../models/schemas').tokens,
     crypto = require('crypto'),
-    _bots = require('../modules/track_bot').bots;
+    _bots = require('../modules/track_bot').bots,
+    tokenSchema = require('../models/schemas').tokens,
+    passport = require('passport');
 
 //Add a new account
-router.post('/addaccount/:accountid', function(req, res) {
+router.post('/addaccount/:accountid',
+    passport.authenticate('bearer', { session: false }),
+    function(req, res) {
     var accountId = req.params.accountid;
     console.log('New account id', accountId);
     //console.log(req.body);
@@ -133,7 +136,9 @@ router.post('/addaccount/:accountid', function(req, res) {
 });
 
 //Add or update users in an account
-router.put('/updateaccount/:accountid', function(req, res) {
+router.put('/updateaccount/:accountid',
+    passport.authenticate('bearer', { session: false }),
+    function(req, res) {
     var accountId = req.params.accountid;
     console.log(accountId);
     console.log(req.body);
@@ -179,7 +184,9 @@ router.put('/updateaccount/:accountid', function(req, res) {
 });
 
 //Delete an account
-router.delete('/delete/:accountid', function (req, res) {
+router.delete('/delete/:accountid',
+    passport.authenticate('bearer', { session: false }),
+    function (req, res) {
     var accountId = req.params.accountid;
     if (accountId) {
         teamModel.findOneAndRemove({ id: accountId }, function (err) {
@@ -199,17 +206,30 @@ router.delete('/delete/:accountid', function (req, res) {
     }
 });
 
-router.get('/new-token', function(req, res){
+router.post('/generate-token', function(req, res){
     if (req.headers.authorization === 'Bearer ' + process.env.ACCESS_TOKEN) {
         var token = {
-            token: crypto.randomBytes(64).toString('hex')
+            token: crypto.randomBytes(64).toString('hex'),
+            account_id: req.body.account_id,
+            account_name: req.body.account_name
         };
         console.log('Generated token: ', token.token);
         var tokenModel = new tokenSchema;
         tokenModel.token = token.token;
+        tokenModel.account_id = token.account_id;
+        tokenModel.account_name = token.account_name;
         tokenModel.save()
         .catch(function(err){
             console.log('Error saving token', err);
+            if (err.code === '11000') {
+                console.log('Account already exists, send back the original token', token);
+                tokenSchema.findOne({
+                    account_id: token.account_id
+                }).lean().exec(function (err, foundToken) {
+                    token.token = foundToken.token;
+                    res.status(200).send(token)
+                })
+            }
         });
         res.status(200).send(token);
     } else {

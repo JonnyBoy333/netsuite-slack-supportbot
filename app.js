@@ -6,6 +6,9 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var mongooseDB = mongoose.connection;
+var passport = require('passport');
+var tokenSchema = require('./models/schemas').tokens;
+var BearerStrategy = require('passport-http-bearer').Strategy;
 
 if (!process.env.SLACK_KEY || !process.env.SLACK_SECRET || !process.env.NETSUITE_KEY || !process.env.NETSUITE_SECRET) {
     console.log('Error: Specify clientId and clientSecret in environment');
@@ -45,6 +48,15 @@ mongooseDB.on('disconnected', function() {
 });
 mongoose.connect(mongodbUri, options);
 
+
+//Configure passport
+passport.use(new BearerStrategy({}, function(token, done) {
+    tokenSchema.findOne({ token: token }, function(err, token) {
+        if (!token) return done(null, false);
+        return done(null, token);
+    })
+}));
+
 var slack = require('./routes/slack');
 var heroku_keep_alive = require('./routes/heroku_keep_alive');
 var index = require('./routes/index');
@@ -80,7 +92,7 @@ app.use(function(req, res, next) {
 // development error handler
 // will print stacktrace
 if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
+  app.use(function(err, req, res) {
     res.status(err.status || 500);
     res.render('error', {
       message: err.message,
@@ -91,7 +103,7 @@ if (app.get('env') === 'development') {
 
 // production error handler
 // no stacktraces leaked to user
-app.use(function(err, req, res, next) {
+app.use(function(err, req, res) {
   res.status(err.status || 500);
   res.render('error', {
     message: err.message,

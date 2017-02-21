@@ -105,6 +105,8 @@ var userSchema = mongoose.Schema({
 
 var tokenSchema = mongoose.Schema({
     token: { type: String, unique: true, index: true },
+    account_id: { type: String, unique: true },
+    account_name: String,
     active: { type: Boolean, default: true },
     date_created: { type: Date, default: Date.now }
 });

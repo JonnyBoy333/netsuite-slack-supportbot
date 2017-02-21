@@ -6,6 +6,9 @@ var sanitizeHtml = require('sanitize-html');
 var controller = require('../modules/bot_controller');
 var trackBot = require('../modules/track_bot').trackBot;
 var _bots = require('../modules/track_bot').bots;
+var passport = require('passport');
+    // var BearerStrategy = require('passport-http-bearer').Strategy;
+    // var tokenSchema = require('../models/schemas').tokens;
 
 controller.storage.teams.all(function(err,teams) {
     if (err) {
@@ -185,9 +188,11 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
 
                 //Handle error if no users are found
                 if (users.length === 0) {
-                    bot.reply(message, 'Sorry, I can\'t connect to NetSuite if no users have been setup. Please visit the Slack setup page again in NetSuite and complete the user setup at the bottom of the page.', function (err, res) {
-                        if (err) {console.log(err)}
-                    });
+                    bot.reply(message, 'Sorry, I can\'t connect to NetSuite if no users have been setup. Please visit the Slack setup page again in NetSuite and complete the user setup at the bottom of the page.',
+                        function (err) {
+                            if (err) console.log(err);
+                        }
+                    );
                     return
                 }
 
@@ -247,8 +252,8 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                             return new Promise(function(resolve) {
                                 var reply = body[i].attachments && body[i].attachments.length > 0 ? {attachments: body[i].attachments} : body[i].message;
                                 console.log('Reply: ' + JSON.stringify(reply));
-                                bot.reply(message, reply, function (err, res) {
-                                    if (err) {console.log(err)}
+                                bot.reply(message, reply, function (err) {
+                                    if (err) console.log(err);
                                     resolve();
                                 });
                                 if (i <= (body.length - 1)) {bot.startTyping(message)}
@@ -337,8 +342,12 @@ function getAttachments(slackMessages) {
     }
     return attachments;
 }
+
+router.use(passport.authenticate('bearer', { session: false }));
 //Post new cases
-router.post('/newcase', function (req, res, next) {
+router.post('/newcase',
+    passport.authenticate('bearer', { session: false }),
+    function (req, res) {
     var message = req.body;
     console.log('body:', message);
     var slackMessages = message['slack_messages'];
@@ -356,12 +365,12 @@ router.post('/newcase', function (req, res, next) {
             attachments: attachments
         };
         console.log('New Case Slack Attachment:', slackAttachment);
-        bot.say(slackAttachment, function(err,res) {
+        bot.say(slackAttachment, function(err) {
             if (err) {
                 console.log('Error sending new case', err);
                 slackAttachment.channel = '#general';
                 console.log('Slack attachment to send to general channel', slackAttachment);
-                bot.say(slackAttachment,function(err,res) {
+                bot.say(slackAttachment,function(err) {
                     if (err) console.log('Error sending new case to general channel', err);
                 })
             }
@@ -400,7 +409,9 @@ router.post('/newcase', function (req, res, next) {
 });
 
 //Post case replies
-router.post('/casereply', function (req, res, next) {
+router.post('/casereply',
+    passport.authenticate('bearer', { session: false }),
+    function (req, res) {
     var message = req.body;
     console.log('body:', message);
     var slackMessages = message['slack_messages'];
@@ -420,11 +431,11 @@ router.post('/casereply', function (req, res, next) {
                 channel: userId
             };
             console.log('RTM Slack Attachment:', slackAttachment);
-            bot.say(slackAttachment, function(err,res) {
+            bot.say(slackAttachment, function(err) {
                 if (err) {
                     console.log('Error sending case reply', err);
                     slackAttachment.channel = '#general';
-                    bot.say(slackAttachment,function(err,res) {
+                    bot.say(slackAttachment,function(err) {
                         if (err) console.log('Error sending new case to general channel', err);
                     })
                 }
@@ -466,5 +477,6 @@ router.post('/casereply', function (req, res, next) {
 router.get('/', function(req, res, next) {
     res.render('index', { title: 'Slack Bot App' });
 });
+
 
 module.exports = router;
