@@ -22,7 +22,7 @@ function sendData (message) {
     };
 
     var headerWithRealm = oauth.toHeader(oauth.authorize(request_data, token));
-    headerWithRealm.Authorization += ', realm=' + process.env.NETSUITE_ACCT_ID;
+    headerWithRealm.Authorization += ', realm="' + process.env.NETSUITE_ACCT_ID + '"';
     headerWithRealm['content-type'] = 'application/json';
     console.log('Header Authorization: ' + JSON.stringify(headerWithRealm));
 
@@ -32,7 +32,7 @@ function sendData (message) {
         headers: headerWithRealm,
         json: message
     }, function (error, response, body) {
-        if (error) console.log(error);
+        if (error) console.log('Error adding message to NS db', error);
         else console.log('Added message to NS db', response.body);
     });
 }
