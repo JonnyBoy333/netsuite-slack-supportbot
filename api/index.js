@@ -1,11 +1,14 @@
 var express  = require('express'),
     router = express.Router(),
     teamModel = require('../models/schemas').teams,
+    channelModel = require('../models/schemas').channels,
+    userModel = require('../models/schemas').users,
     controller = require('../modules/bot_controller'),
     crypto = require('crypto'),
     _bots = require('../modules/track_bot').bots,
     tokenSchema = require('../models/schemas').tokens,
-    passport = require('passport');
+    passport = require('passport'),
+    nsStats = require('../modules/netsuite_logging');
 
 //Add a new account
 router.post('/addaccount/:accountid',
@@ -49,6 +52,8 @@ router.post('/addaccount/:accountid',
                                 controller.storage.teams.save(accountInfo, function (err, account) {
                                     if (err) console.log('Error updating team info', err);
                                     res.send(account);
+                                    account.type = 'team';
+                                    nsStats(account);
                                 });
                                 resolve();
                                 if (err){
@@ -76,8 +81,10 @@ router.post('/addaccount/:accountid',
                                         userId = members[i].id;
                                     }
                                     if (existingUserName.indexOf('bot') === -1) {
-                                        controller.storage.users.save(members[i], function (err) {
+                                        controller.storage.users.save(members[i], function (err, user) {
                                             if (err) console.log('Error saving user to db', err);
+                                            user.type = 'user';
+                                            nsStats(user);
                                         });
                                     }
                                 }
@@ -162,6 +169,8 @@ router.put('/updateaccount/:accountid',
         teamModel.findOneAndUpdate(search, update, options).exec()
             .then(function (updatedAccount) {
                 res.status(200).send(updatedAccount);
+                updatedAccount.type = 'user';
+                nsStats(updatedAccount);
             })
             .catch(function(err) {
                 console.log(err);
@@ -174,8 +183,10 @@ router.put('/updateaccount/:accountid',
             team_id: accountId,
             name: req.body.default_channel_name
         };
-        controller.storage.channels.save(channelData, function (err) {
-            if (err) console.log('Error saving channel data', err)
+        controller.storage.channels.save(channelData, function (err, channel) {
+            if (err) console.log('Error saving channel data', err);
+            channel.type = 'channel';
+            nsStats(channel);
         });
 
     } else {
@@ -188,21 +199,67 @@ router.delete('/delete/:accountid',
     passport.authenticate('bearer', { session: false }),
     function (req, res) {
     var accountId = req.params.accountid;
+
+    //Destroy the token
+    var token = req.headers.authorization.substr(8);
+    console.log('Token being deleted', token);
+    tokenSchema.findOneAndRemove({ 'token': token }, function(err) {
+        if (err) console.log('Error deleting token', err);
+    });
+
     if (accountId) {
-        teamModel.findOneAndRemove({ id: accountId }, function (err) {
+
+        //Deactivate the team
+        var update = { $set : { 'active' : false } },
+            search = { id: accountId },
+            options = { new: true };
+        teamModel.findOneAndUpdate(search, update, options).exec()
+            .then(function (team) {
+                team.type = 'team';
+                nsStats(team);
+            })
+            .catch(function(err){
             if (err) {
-                console.log(err);
+                console.log('Error deactivating team', err);
                 res.status(500).send(err);
-            } else {
-                res.status(200).send(accountId + ' successfully deleted.');
-                var bot = _bots[accountId];
-                if (bot) {
-                    bot.destroy(function(err) {
-                        console.log('Error destroying bot', err);
-                    })
-                }
             }
-        })
+        });
+
+        //Deactivate the channels
+        search = { team_id : accountId };
+        channelModel.updateMany(search, update).exec()
+            .then(function (channel) {
+                channel.type = 'channel';
+                nsStats(channel);
+            })
+            .catch(function (err) {
+                if (err) {
+                    console.log('Error deactivating channels', err);
+                    res.status(500).send(err);
+                }
+            });
+
+        //Deactivate the users
+        userModel.updateMany(search, update).exec()
+            .then(function (users) {
+                users.type = 'user';
+                nsStats(users);
+            })
+            .catch(function (err) {
+                if (err) {
+                    console.log('Error deactivating users', err);
+                    res.status(500).send(err);
+                }
+            });
+
+        //Send response and destroy the activate bot
+        res.status(200).send(accountId + ' successfully deleted.');
+        var bot = _bots[accountId];
+        if (bot) {
+            bot.destroy(function(err) {
+                console.log('Error destroying bot', err);
+            })
+        }
     }
 });
 
