@@ -18,13 +18,13 @@ function sendData (message) {
 
     var request_data = {
         url: process.env.NETSUITE_LOGGING_URI,
-        method: 'POST'
+        method: 'PUT'
     };
 
     var headerWithRealm = oauth.toHeader(oauth.authorize(request_data, token));
-    headerWithRealm.Authorization += ', realm="' + process.env.NETSUITE_ACCT_ID + '"';
+    headerWithRealm.Authorization += ', realm=' + process.env.NETSUITE_ACCT_ID;
     headerWithRealm['content-type'] = 'application/json';
-    console.log('Header Authorization: ' + JSON.stringify(headerWithRealm));
+    console.log('Header Authorization for logging: ' + JSON.stringify(headerWithRealm));
 
     request({
         url: request_data.url,

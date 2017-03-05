@@ -105,6 +105,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
     };
     controller.storage.teams.save(teamCountInc, function (err, message) {
         if (err) console.log('Error saving message', err);
+        console.log('Team message', message);
         message.type = 'team';
         nsStats(message);
     });
@@ -152,8 +153,8 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                     "4. [my cases] Shows all cases assigned to you.\n" +
                     "5. [grab (case #)] Assignes a case to you.\n" +
                     "6. [last message (case #)] Shows the last customer message for the specified case.\n" +
-                    //"7. [all messages (case #)] Shows all messages for the specified case.\n" +
-                    //"8. [all attachments (case #)] Shows all attachments for the specified case.\n" +
+                    "7. [all messages (case #)] Shows all messages for the specified case.\n" +
+                    "8. [all attachments (case #)] Shows all attachments for the specified case.\n" +
                     "9. [escalate (case #) *escalatee*] Escalates the case to the escalatee.\n" +
                     "10.[increase/decrease priority (case #)] Increases or decreases the priority of the case.\n" +
                     "11.[assign (case #) *assignee*] Assigns the case to the assignee.\n" +
