@@ -36,6 +36,7 @@ function getStorage(model) {
                 id: data.id
             }, data, {
                 upsert: true,
+                setDefaultsOnInsert: true,
                 new: true
             }).lean().exec(cb);
         },

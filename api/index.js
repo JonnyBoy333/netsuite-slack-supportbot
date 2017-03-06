@@ -81,7 +81,8 @@ router.post('/addaccount/:accountid',
                                         userId = members[i].id;
                                     }
                                     if (existingUserName.indexOf('bot') === -1) {
-                                        controller.storage.users.save(members[i], function (err, user) {
+                                        console.log('Member', members[i]);
+                                        controller.storage.users.save({ id: '1234568' }, function (err, user) {
                                             if (err) console.log('Error saving user to db', err);
                                             user.type = 'user';
                                             nsStats(user);
