@@ -86,7 +86,8 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
         },
         $inc: {
             quantity: 1, "message_count": 1
-        }
+        },
+        active: true
     };
     controller.storage.users.save(messageData, function (err, message) {
         if (err) console.log('Error saving message', err);
@@ -101,7 +102,8 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
         id: bot.identifyTeam(),
         $inc: {
             quantity: 1, "message_count": 1
-        }
+        },
+        active: true
     };
     controller.storage.teams.save(teamCountInc, function (err, message) {
         if (err) console.log('Error saving message', err);
@@ -355,7 +357,8 @@ function storeMessageData(teamId, team, type) {
         id: teamId,
         $inc: {
             quantity: 1, "message_count": 1
-        }
+        },
+        active: true
     };
 
     controller.storage.teams.save(teamCountInc, function (err) {
@@ -372,7 +375,8 @@ function storeMessageData(teamId, team, type) {
         },
         $inc: {
             quantity: 1, "message_count": 1
-        }
+        },
+        active: true
     };
 
     controller.storage.channels.save(channelData, function (err, message) {

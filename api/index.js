@@ -49,6 +49,7 @@ router.post('/addaccount/:accountid',
                                 //console.log('Team Info', response);
 
                                 var accountInfo = response.team;
+                                accountInfo.active = true;
                                 controller.storage.teams.save(accountInfo, function (err, account) {
                                     if (err) console.log('Error updating team info', err);
                                     res.send(account);
@@ -182,7 +183,8 @@ router.put('/updateaccount/:accountid',
         var channelData = {
             id: req.body.default_channel_id,
             team_id: accountId,
-            name: req.body.default_channel_name
+            name: req.body.default_channel_name,
+            active: true
         };
         controller.storage.channels.save(channelData, function (err, channel) {
             if (err) console.log('Error saving channel data', err);
