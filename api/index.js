@@ -337,6 +337,7 @@ router.post('/announcement/',
                     }
                 });
             })
+            res.status(200).send({ result: 'All messages sent' });
         } else {
             res.status(500).send();
         }
