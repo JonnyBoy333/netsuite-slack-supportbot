@@ -10,19 +10,22 @@ var express  = require('express'),
     passport = require('passport'),
     nsStats = require('../modules/netsuite_logging');
 
-//Lookup General Channel
-function lookupGeneralChan(bot) {
-    bot.api.channels.list({}, function (err, response) {
-        if (err) console.log('Error looking up channels', err);
-        console.log('Channel List', response);
-        if (response.ok === true) {
-            for (var i = 0; i < response.channels.length; i++) {
-                var channel = response.channels[i];
-                if (channel.name === 'general') return channel.id;
-            }
-        }
-    })
-}
+// //Lookup General Channel
+// function lookupGeneralChan(bot) {
+//     return new Promise(function(resolve, reject) {
+//         bot.api.channels.list({}, function (err, response) {
+//             if (err) console.log('Error looking up channels', err);
+//             console.log('Channel List', response);
+//             if (response.ok === true) {
+//                 for (var i = 0; i < response.channels.length; i++) {
+//                     var channel = response.channels[i];
+//                     if (channel.name === 'random') resolve(channel.id);
+//                 }
+//             }
+//             reject('No general channel found.');
+//         })
+//     })
+// }
 
 
 //Add a new account
@@ -130,13 +133,14 @@ router.post('/addaccount/:accountid',
                                 };
                                 bot.say(message);
                             } else {
-                                var message = {
-                                    channel: lookupGeneralChan(bot),
-                                    text: 'Hello and thank you for adding NetSuite Support Bot to your team!\n' +
-                                    'Please make sure you finish the setup inside of NetSuite so that I can be of use.\n' +
-                                    'Then, invite me to your support channel using /invite so that I can help everyone :smiley:.'
-                                };
-                                bot.say(message);
+                                // var message = {
+                                //     channel: lookupGeneralChan(bot),
+                                //     text: 'Hello and thank you for adding NetSuite Support Bot to your team!\n' +
+                                //     'Please make sure you finish the setup inside of NetSuite so that I can be of use.\n' +
+                                //     'Then, invite me to your support channel using /invite so that I can help everyone :smiley:.'
+                                // };
+                                // bot.say(message);
+                                console.log('Could not send welcome message because user does not exist.')
                             }
                         }
                     })
@@ -317,26 +321,29 @@ router.post('/announcement/',
     passport.authenticate('bearer', { session: false }),
     function(req, res) {
         console.log(req.body);
-        var announcement = req.body.announcement;
+        var announcement = req.body;
         if (announcement) {
-            controller.storage.teams.all(function (err, team) {
-                if (err) console.log('Error retrieving all teams', err);
-                var bot = _bots[team.id];
-                var slackAttachment = {
-                    attachments: announcement,
-                    channel: team.default_channel
-                };
-                console.log('RTM Slack Attachment:', slackAttachment);
-                bot.say(slackAttachment, function(err) {
-                    if (err) {
-                        console.log('Error sending case reply', err);
-                        slackAttachment.channel = lookupGeneralChan(bot);
-                        bot.say(slackAttachment,function(err) {
-                            if (err) console.log('Error sending new case to general channel', err);
-                        })
-                    }
-                });
-            })
+            controller.storage.teams.all(function (err, teams) {
+                teams.forEach(function (team) {
+                    if (err) console.log('Error retrieving all teams', err);
+                    console.log('Team ID', team.id);
+                    var bot = _bots[team.id];
+                    announcement.channel = team.default_channel;
+                    console.log('Announcement:', announcement);
+                    bot.say(announcement, function(err) {
+                        if (err) {
+                            console.log('Error sending announcement', err);
+                            // lookupGeneralChan(bot)
+                            // .then(function (generalChan) {
+                            //     announcement.channel = generalChan;
+                            //     bot.say(announcement,function(err) {
+                            //         if (err) console.log('Error sending new case to general channel', err);
+                            //     })
+                            // })
+                        }
+                    });
+                })
+            });
             res.status(200).send({ result: 'All messages sent' });
         } else {
             res.status(500).send();
