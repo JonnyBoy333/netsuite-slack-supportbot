@@ -10,6 +10,21 @@ var express  = require('express'),
     passport = require('passport'),
     nsStats = require('../modules/netsuite_logging');
 
+//Lookup General Channel
+function lookupGeneralChan(bot) {
+    bot.api.channels.list({}, function (err, response) {
+        if (err) console.log('Error looking up channels', err);
+        console.log('Channel List', response);
+        if (response.ok === true) {
+            for (var i = 0; i < response.channels.length; i++) {
+                var channel = response.channels[i];
+                if (channel.name === 'general') return channel.id;
+            }
+        }
+    })
+}
+
+
 //Add a new account
 router.post('/addaccount/:accountid',
     passport.authenticate('bearer', { session: false }),
@@ -116,7 +131,7 @@ router.post('/addaccount/:accountid',
                                 bot.say(message);
                             } else {
                                 var message = {
-                                    channel: userId,
+                                    channel: lookupGeneralChan(bot),
                                     text: 'Hello and thank you for adding NetSuite Support Bot to your team!\n' +
                                     'Please make sure you finish the setup inside of NetSuite so that I can be of use.\n' +
                                     'Then, invite me to your support channel using /invite so that I can help everyone :smiley:.'
@@ -296,6 +311,37 @@ router.post('/generate-token', function(req, res){
         res.status(401).send('Not Authorized');
     }
 });
+
+//Make announcement to all Slack teams
+router.post('/announcement/',
+    passport.authenticate('bearer', { session: false }),
+    function(req, res) {
+        console.log(req.body);
+        var announcement = req.body.announcement;
+        if (announcement) {
+            controller.storage.teams.all(function (err, team) {
+                if (err) console.log('Error retrieving all teams', err);
+                var bot = _bots[team.id];
+                var slackAttachment = {
+                    attachments: announcement,
+                    channel: team.default_channel
+                };
+                console.log('RTM Slack Attachment:', slackAttachment);
+                bot.say(slackAttachment, function(err) {
+                    if (err) {
+                        console.log('Error sending case reply', err);
+                        slackAttachment.channel = lookupGeneralChan(bot);
+                        bot.say(slackAttachment,function(err) {
+                            if (err) console.log('Error sending new case to general channel', err);
+                        })
+                    }
+                });
+            })
+        } else {
+            res.status(500).send();
+        }
+    }
+);
 
 router.get('/', function(req, res, next) {
     res.render('index', { title: 'You\'ve reached the Support Bot api interface' });
