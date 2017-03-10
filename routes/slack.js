@@ -54,6 +54,8 @@ var searchTerms = [
     'my cases',
     'grab',
     'last message',
+    'all messages',
+    'all attachments',
     'escalate',
     'help',
     'netsuite',
