@@ -33,7 +33,7 @@ function sendData (message) {
         json: message
     }, function (error, response, body) {
         if (error) console.log('Error adding message to NS db', error);
-        else console.log('Added message to NS db', response.body);
+        else console.log('Added ' + message.type + ' to NS db', response.body);
     });
 }
 

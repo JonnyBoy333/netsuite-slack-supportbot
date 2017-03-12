@@ -93,9 +93,11 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
     };
     controller.storage.users.save(messageData, function (err, message) {
         if (err) console.log('Error saving message', err);
-
+        //console.log('User Message : ', message);
         //send to netsuite
         message.type = 'user';
+        messageData.$push.messages.date = new Date();
+        message.messages = [messageData.$push.messages];
         nsStats(message);
     });
 
@@ -109,7 +111,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
     };
     controller.storage.teams.save(teamCountInc, function (err, message) {
         if (err) console.log('Error saving message', err);
-        console.log('Team message', message);
+        //console.log('Team message', message);
         message.type = 'team';
         nsStats(message);
     });
@@ -180,17 +182,15 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
         .then(function(response){
             var realName = response.user.real_name.replace(/ /g,'').toLowerCase().trim();
             postData.user = response.user.real_name;
-            console.log('User Real Name', postData.user);
+            console.log('User Real Name:', postData.user);
 
             //Authentication
             var teamId = bot.identifyTeam();
             console.log('Team ID', teamId);
             controller.storage.teams.get(teamId, function (err, team) {
-                if (err) {
-                    throw new Error(err);
-                }
+                if (err) console.log('Error storing team data', err);
 
-                console.log('Team', team);
+                //console.log('Team', team);
                 var remoteAccountID = team.netsuite.account_id;
                 console.log('NetSuite Account ID', remoteAccountID);
                 var users = team.users;
@@ -260,6 +260,22 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                     } else {
                         function sendMessage(i) {
                             return new Promise(function(resolve) {
+                                console.log('i', i);
+                                if (body[i].needsCleaning === true) {
+                                    var dirtyMessage = body[i].message;
+                                    if (dirtyMessage) {
+                                        var cleanMessage = sanitizeHtml(dirtyMessage, {
+                                            allowedTags: [],
+                                            allowedAttributes: []
+                                        });
+                                        //console.log('Clean message: ' + cleanMessage);
+                                        var trimmedMessage = cleanMessage.trim();
+                                        var removeBlanks = /[\r\n]{2,}/g;
+                                        var noBlankLinesMessage = trimmedMessage.replace(removeBlanks, '\r\n');
+                                        //console.log('No Blanks: ' + noBlankLinesMessage);
+                                        body[i].message = noBlankLinesMessage;
+                                    }
+                                }
                                 var reply = body[i].attachments && body[i].attachments.length > 0 ? {attachments: body[i].attachments} : body[i].message;
                                 console.log('Reply: ' + JSON.stringify(reply));
                                 bot.reply(message, reply, function (err) {
@@ -363,8 +379,10 @@ function storeMessageData(teamId, team, type) {
         active: true
     };
 
-    controller.storage.teams.save(teamCountInc, function (err) {
+    controller.storage.teams.save(teamCountInc, function (err, message) {
         if (err) console.log('Error incrementing team message count', err);
+        message.type = 'team';
+        nsStats(message);
     });
 
     var channelData = {
@@ -384,6 +402,12 @@ function storeMessageData(teamId, team, type) {
     controller.storage.channels.save(channelData, function (err, message) {
         if (err) console.log('Error adding message to channel storage', err);
         message.type = 'channel';
+        console.log('Channel message', message);
+        // message.messages = [{
+        //     keyword: message.match[0],
+        //     message: message.text,
+        //     date: new Date()
+        // }];
         nsStats(message);
     });
 }

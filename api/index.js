@@ -287,16 +287,25 @@ router.delete('/delete/:accountid',
 
 router.post('/generate-token', function(req, res){
     if (req.headers.authorization === 'Bearer ' + process.env.ACCESS_TOKEN) {
-        var token = {
-            token: crypto.randomBytes(64).toString('hex'),
-            account_id: req.body.account_id,
-            account_name: req.body.account_name
-        };
-        console.log('Generated token: ', token.token);
+        var token = crypto.randomBytes(64).toString('hex');
+        console.log('Generated token: ', token);
         var tokenModel = new tokenSchema;
-        tokenModel.token = token.token;
-        tokenModel.account_id = token.account_id;
-        tokenModel.account_name = token.account_name;
+        tokenModel.token = token;
+        tokenModel.account_id = req.body.account_id;
+        tokenModel.account_name = req.body.account_name;
+        tokenModel.website = req.body.website;
+        tokenModel.ein = req.body.ein;
+        tokenModel.taxid = req.body.taxid;
+        tokenModel.email = req.body.email;
+        tokenModel.logo_url = req.body.logo_url;
+        teamModel.address = {
+            addr1: req.body.addr1,
+            addr2: req.body.addr2,
+            city: req.body.city,
+            state: req.body.state,
+            country: req.body.country,
+            zip: req.body.zip
+        };
         tokenModel.save()
         .catch(function(err){
             console.log('Error saving token', err);
