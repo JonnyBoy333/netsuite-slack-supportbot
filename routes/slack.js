@@ -369,7 +369,7 @@ function getAttachments(slackMessages) {
     return attachments;
 }
 
-function storeMessageData(teamId, team, type) {
+function storeMessageData(teamId, team, type, slackAttachment) {
     //Store the message info
     var teamCountInc = {
         id: teamId,
@@ -389,8 +389,8 @@ function storeMessageData(teamId, team, type) {
         id: team.default_channel,
         $push: {
             messages: {
-                type: type,
-                message_type: slackAttachment.attachments[0].title
+                message_type: type,
+                message: slackAttachment.attachments[0].title
             }
         },
         $inc: {
@@ -437,13 +437,13 @@ router.post('/newcase',
         bot.say(slackAttachment, function(err) {
             if (err) {
                 console.log('Error sending new case', err);
-                slackAttachment.channel = '#general';
-                console.log('Slack attachment to send to general channel', slackAttachment);
-                bot.say(slackAttachment,function(err) {
-                    if (err) console.log('Error sending new case to general channel', err);
-                })
+                // slackAttachment.channel = '#general';
+                // console.log('Slack attachment to send to general channel', slackAttachment);
+                // bot.say(slackAttachment,function(err) {
+                //     if (err) console.log('Error sending new case to general channel', err);
+                // })
             }
-            storeMessageData(teamId, team, 'newcase');
+            storeMessageData(teamId, team, 'newcase', slackAttachment);
         });
     });
     res.end("NetSuite Listener");
@@ -475,12 +475,12 @@ router.post('/casereply',
                 bot.say(slackAttachment, function(err) {
                     if (err) {
                         console.log('Error sending case reply', err);
-                        slackAttachment.channel = '#general';
-                        bot.say(slackAttachment,function(err) {
-                            if (err) console.log('Error sending new case to general channel', err);
-                        })
+                        // slackAttachment.channel = '#general';
+                        // bot.say(slackAttachment,function(err) {
+                        //     if (err) console.log('Error sending new case to general channel', err);
+                        // })
                     }
-                    storeMessageData(teamId, team, 'casereply');
+                    storeMessageData(teamId, team, 'casereply', slackAttachment);
                 });
             })
         });
