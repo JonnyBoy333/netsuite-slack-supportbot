@@ -39,15 +39,28 @@ router.post('/addaccount/:accountid',
         var newUserName = '';
         var newAccount = new teamModel;
         newAccount.id = accountId;
-        if (req.body.default_channel_id) newAccount.default_channel = req.body.default_channel_id;
+        newAccount.default_channel = req.body.default_channel_id;
         if (req.body.netsuite) newAccount.netsuite = {
             slack_listener_uri: req.body.netsuite.slack_listener_uri,
             account_id: req.body.netsuite.account_id
         };
-        if (req.body.token) newAccount.token = req.body.token;
-        if (req.body.bot) newAccount.bot = { token: req.body.bot.token };
-        if (req.body.users) newAccount.users = req.body.users;
-        if (req.body.user) newUserName = req.body.user.replace(/ /g,'').toLowerCase().trim();
+        newAccount.token = req.body.token;
+        newAccount.bot = { token: req.body.bot.token };
+        newAccount.users = req.body.users;
+        newUserName = req.body.user.replace(/ /g,'').toLowerCase().trim();
+        newAccount.website = req.body.website;
+        newAccount.ein = req.body.ein;
+        newAccount.taxid = req.body.taxid;
+        newAccount.email = req.body.email;
+        newAccount.logo_url = req.body.logo_url;
+        newAccount.address = {
+            addr1: req.body.addr1,
+            addr2: req.body.addr2,
+            city: req.body.city,
+            state: req.body.state,
+            country: req.body.country,
+            zip: req.body.zip
+        };
         console.log('New Account', newAccount);
 
         newAccount.save()
@@ -293,19 +306,6 @@ router.post('/generate-token', function(req, res){
         tokenModel.token = token;
         tokenModel.account_id = req.body.account_id;
         tokenModel.account_name = req.body.account_name;
-        tokenModel.website = req.body.website;
-        tokenModel.ein = req.body.ein;
-        tokenModel.taxid = req.body.taxid;
-        tokenModel.email = req.body.email;
-        tokenModel.logo_url = req.body.logo_url;
-        teamModel.address = {
-            addr1: req.body.addr1,
-            addr2: req.body.addr2,
-            city: req.body.city,
-            state: req.body.state,
-            country: req.body.country,
-            zip: req.body.zip
-        };
         tokenModel.save()
         .catch(function(err){
             console.log('Error saving token', err);
