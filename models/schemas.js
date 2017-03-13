@@ -12,6 +12,19 @@ var teamSchema = mongoose.Schema({
     id: { type: String, unique: true, index: true },
     default_channel: String,
     name: String,
+    website: String,
+    ein: String,
+    taxid: String,
+    email: String,
+    logo_url: String,
+    address: {
+        addr1: String,
+        addr2: String,
+        city: String,
+        state: String,
+        zip: String,
+        country: String
+    },
     domain: String,
     email_domain: String,
     enterprise_id: String,
@@ -43,7 +56,7 @@ var teamSchema = mongoose.Schema({
         }
     ],
     message_count: Number,
-    active: Boolean,
+    active: { type: Boolean, default: true },
     date_created: { type: Date, default: Date.now }
 });
 
@@ -54,11 +67,12 @@ var channelSchema = mongoose.Schema({
     messages: [
         {
             date: { type: Date, default: Date.now },
-            type: String,
+            message_type: String,
             message: String
         }
     ],
     message_count: Number,
+    active: { type: Boolean, default: true },
     date_created: { type: Date, default: Date.now }
 });
 
@@ -98,11 +112,21 @@ var userSchema = mongoose.Schema({
     is_admin: Boolean,
     is_owner: Boolean,
     has_2fa: Boolean,
+    active: { type: Boolean, default: true },
+    date_created: { type: Date, default: Date.now }
+});
+
+var tokenSchema = mongoose.Schema({
+    token: { type: String, unique: true, index: true },
+    account_id: { type: String, unique: true },
+    account_name: String,
+    active: { type: Boolean, default: true },
     date_created: { type: Date, default: Date.now }
 });
 
 module.exports = {
     teams: mongoose.model('teams', teamSchema),
     channels: mongoose.model('channels', channelSchema),
-    users: mongoose.model('users', userSchema)
+    users: mongoose.model('users', userSchema),
+    tokens: mongoose.model('tokens', tokenSchema)
 };

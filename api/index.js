@@ -2,11 +2,36 @@ var express  = require('express'),
     router = express.Router(),
     teamModel = require('../models/schemas').teams,
     channelModel = require('../models/schemas').channels,
+    userModel = require('../models/schemas').users,
     controller = require('../modules/bot_controller'),
-    _bots = require('../modules/track_bot').bots;
+    crypto = require('crypto'),
+    _bots = require('../modules/track_bot').bots,
+    tokenSchema = require('../models/schemas').tokens,
+    passport = require('passport'),
+    nsStats = require('../modules/netsuite_logging');
+
+// //Lookup General Channel
+// function lookupGeneralChan(bot) {
+//     return new Promise(function(resolve, reject) {
+//         bot.api.channels.list({}, function (err, response) {
+//             if (err) console.log('Error looking up channels', err);
+//             console.log('Channel List', response);
+//             if (response.ok === true) {
+//                 for (var i = 0; i < response.channels.length; i++) {
+//                     var channel = response.channels[i];
+//                     if (channel.name === 'random') resolve(channel.id);
+//                 }
+//             }
+//             reject('No general channel found.');
+//         })
+//     })
+// }
+
 
 //Add a new account
-router.post('/addaccount/:accountid', function(req, res) {
+router.post('/addaccount/:accountid',
+    passport.authenticate('bearer', { session: false }),
+    function(req, res) {
     var accountId = req.params.accountid;
     console.log('New account id', accountId);
     //console.log(req.body);
@@ -30,6 +55,7 @@ router.post('/addaccount/:accountid', function(req, res) {
             controller.spawn(savedObject.bot).startRTM(function(err, bot) {
                 if (err) {
                     console.log('Error connecting bot to Slack:', err);
+                    bot.closeRTM();
                 } else {
                     console.log('Bot added for first time:', bot.team_info.name);
 
@@ -41,9 +67,12 @@ router.post('/addaccount/:accountid', function(req, res) {
                                 //console.log('Team Info', response);
 
                                 var accountInfo = response.team;
+                                accountInfo.active = true;
                                 controller.storage.teams.save(accountInfo, function (err, account) {
                                     if (err) console.log('Error updating team info', err);
                                     res.send(account);
+                                    account.type = 'team';
+                                    nsStats(account);
                                 });
                                 resolve();
                                 if (err){
@@ -59,7 +88,7 @@ router.post('/addaccount/:accountid', function(req, res) {
                         var userId = '';
                         return new Promise(function(resolve, reject){
                             bot.api.users.list({},function(err,response) {
-                                console.log('User List', response);
+                                //console.log('User List', response);
                                 var members = response.members;
                                 for (var i = 0; i < members.length; i++){
                                     var firstName = members[i].profile.first_name ? members[i].profile.first_name : '';
@@ -71,8 +100,11 @@ router.post('/addaccount/:accountid', function(req, res) {
                                         userId = members[i].id;
                                     }
                                     if (existingUserName.indexOf('bot') === -1) {
-                                        controller.storage.users.save(members[i], function (err) {
+                                        console.log('Member', members[i]);
+                                        controller.storage.users.save(members[i], function (err, user) {
                                             if (err) console.log('Error saving user to db', err);
+                                            user.type = 'user';
+                                            nsStats(user);
                                         });
                                     }
                                 }
@@ -93,31 +125,22 @@ router.post('/addaccount/:accountid', function(req, res) {
 
                             //If the user is found send them an intro message, otherwise send the message to the general channel
                             if (userId) {
-                                // bot.startPrivateConversation({user: userId},function(err,convo) {
-                                //     if (err) {
-                                //         console.log(err);
-                                //     } else {
-                                //         convo.say('Hello and thank you for adding NetSuite Support Bot to your team!');
-                                //         convo.say('Please make sure you finish the setup inside of NetSuite so that I can be of use.');
-                                //         convo.say('Then, invite me to your support channel using /invite so that I can help everyone :smiley:.');
-                                //     }
-                                // });
-                                var message1 = { channel: userId, text: 'Hello and thank you for adding NetSuite Support Bot to your team!' },
-                                    message2 = { channel: userId, text: 'Please make sure you finish the setup inside of NetSuite so that I can be of use.' },
-                                    message3 = { channel: userId, text: 'Then, invite me to your support channel using /invite so that I can help everyone :smiley:.' };
-                                new Promise(function(resolve, reject) {
-                                    resolve(bot.say(message1));
-                                })
-                                .then(function () {return bot.say(message2)})
-                                .then(function () {return bot.say(message3)})
-                                .catch(function (err) {console.log(err)})
+                                var message = {
+                                    channel: userId,
+                                    text: 'Hello and thank you for adding NetSuite Support Bot to your team!\n' +
+                                        'Please make sure you finish the setup inside of NetSuite so that I can be of use.\n' +
+                                        'Then, invite me to your support channel using /invite so that I can help everyone :smiley:.'
+                                };
+                                bot.say(message);
                             } else {
-                                var message = { channel: '#general', text: 'Hello and thank you for adding NetSuite Support Bot to your team!' };
-                                bot.say(message);
-                                message = { channel: '#general', text: 'Please make sure you finish the setup inside of NetSuite so that I can be of use.' };
-                                bot.say(message);
-                                message = { channel: '#general', text: 'Then, invite me to your support channel using /invite so that I can help everyone :smiley:.' };
-                                bot.say(message);
+                                // var message = {
+                                //     channel: lookupGeneralChan(bot),
+                                //     text: 'Hello and thank you for adding NetSuite Support Bot to your team!\n' +
+                                //     'Please make sure you finish the setup inside of NetSuite so that I can be of use.\n' +
+                                //     'Then, invite me to your support channel using /invite so that I can help everyone :smiley:.'
+                                // };
+                                // bot.say(message);
+                                console.log('Could not send welcome message because user does not exist.')
                             }
                         }
                     })
@@ -128,8 +151,12 @@ router.post('/addaccount/:accountid', function(req, res) {
             });
         })
         .catch(function(err) {
-            console.log(err);
-            res.status(500).send(err);
+            console.log('Error adding a new account', err);
+            if (err.code === 11000) {
+                res.status(500).send('Account already added');
+                //TODO reinstantiate bot
+            }
+            else res.status(500).send(err);
         })
     } else {
         res.status(500).send();
@@ -137,7 +164,9 @@ router.post('/addaccount/:accountid', function(req, res) {
 });
 
 //Add or update users in an account
-router.put('/updateaccount/:accountid', function(req, res) {
+router.put('/updateaccount/:accountid',
+    passport.authenticate('bearer', { session: false }),
+    function(req, res) {
     var accountId = req.params.accountid;
     console.log(accountId);
     console.log(req.body);
@@ -146,7 +175,10 @@ router.put('/updateaccount/:accountid', function(req, res) {
         //Add users to the team and update default channel
         var userArray = req.body.users,
             update = {
-                $set : { 'users' : userArray, 'default_channel': req.body.default_channel_id }
+                $set : {
+                    'users' : userArray,
+                    'default_channel': req.body.default_channel_id
+                }
             },
             search = {
                 id: accountId
@@ -158,6 +190,8 @@ router.put('/updateaccount/:accountid', function(req, res) {
         teamModel.findOneAndUpdate(search, update, options).exec()
             .then(function (updatedAccount) {
                 res.status(200).send(updatedAccount);
+                updatedAccount.type = 'user';
+                nsStats(updatedAccount);
             })
             .catch(function(err) {
                 console.log(err);
@@ -168,10 +202,13 @@ router.put('/updateaccount/:accountid', function(req, res) {
         var channelData = {
             id: req.body.default_channel_id,
             team_id: accountId,
-            name: req.body.default_channel_name
+            name: req.body.default_channel_name,
+            active: true
         };
-        controller.storage.channels.save(channelData, function (err) {
-            if (err) console.log('Error saving channel data', err)
+        controller.storage.channels.save(channelData, function (err, channel) {
+            if (err) console.log('Error saving channel data', err);
+            channel.type = 'channel';
+            nsStats(channel);
         });
 
     } else {
@@ -180,23 +217,148 @@ router.put('/updateaccount/:accountid', function(req, res) {
 });
 
 //Delete an account
-router.delete('/delete/:accountid', function (req, res) {
+router.delete('/delete/:accountid',
+    passport.authenticate('bearer', { session: false }),
+    function (req, res) {
     var accountId = req.params.accountid;
+
+    //Destroy the token
+    var token = req.headers.authorization.substr(8);
+    console.log('Token being deleted', token);
+    tokenSchema.findOneAndRemove({ 'token': token }, function(err) {
+        if (err) console.log('Error deleting token', err);
+    });
+
     if (accountId) {
-        teamModel.findOneAndRemove({ id: accountId }, function (err) {
+
+        //Deactivate the team
+        var update = { $set : { 'active' : false } },
+            search = { id: accountId },
+            options = { new: true };
+        teamModel.findOneAndUpdate(search, update, options).exec()
+            .then(function (team) {
+                team.type = 'team';
+                nsStats(team);
+            })
+            .catch(function(err){
             if (err) {
-                console.log(err);
+                console.log('Error deactivating team', err);
                 res.status(500).send(err);
-            } else {
-                res.status(200).send(accountId + ' successfully deleted.');
-                var bot = _bots[accountId];
-                bot.destroy(function(err) {
-                    console.log('Error destroying bot', err);
-                })
             }
-        })
+        });
+
+        //Deactivate the channels
+        search = { team_id : accountId };
+        channelModel.updateMany(search, update).exec()
+            .then(function (channel) {
+                channel.type = 'channel';
+                nsStats(channel);
+            })
+            .catch(function (err) {
+                if (err) {
+                    console.log('Error deactivating channels', err);
+                    res.status(500).send(err);
+                }
+            });
+
+        //Deactivate the users
+        userModel.updateMany(search, update).exec()
+            .then(function (users) {
+                users.type = 'user';
+                nsStats(users);
+            })
+            .catch(function (err) {
+                if (err) {
+                    console.log('Error deactivating users', err);
+                    res.status(500).send(err);
+                }
+            });
+
+        //Send response and destroy the activate bot
+        res.status(200).send(accountId + ' successfully deleted.');
+        var bot = _bots[accountId];
+        if (bot) {
+            bot.destroy(function(err) {
+                console.log('Error destroying bot', err);
+            })
+        }
     }
 });
+
+router.post('/generate-token', function(req, res){
+    if (req.headers.authorization === 'Bearer ' + process.env.ACCESS_TOKEN) {
+        var token = crypto.randomBytes(64).toString('hex');
+        console.log('Generated token: ', token);
+        var tokenModel = new tokenSchema;
+        tokenModel.token = token;
+        tokenModel.account_id = req.body.account_id;
+        tokenModel.account_name = req.body.account_name;
+        tokenModel.website = req.body.website;
+        tokenModel.ein = req.body.ein;
+        tokenModel.taxid = req.body.taxid;
+        tokenModel.email = req.body.email;
+        tokenModel.logo_url = req.body.logo_url;
+        teamModel.address = {
+            addr1: req.body.addr1,
+            addr2: req.body.addr2,
+            city: req.body.city,
+            state: req.body.state,
+            country: req.body.country,
+            zip: req.body.zip
+        };
+        tokenModel.save()
+        .catch(function(err){
+            console.log('Error saving token', err);
+            if (err.code === '11000') {
+                console.log('Account already exists, send back the original token', token);
+                tokenSchema.findOne({
+                    account_id: token.account_id
+                }).lean().exec(function (err, foundToken) {
+                    token.token = foundToken.token;
+                    res.status(200).send(token)
+                })
+            }
+        });
+        res.status(200).send(token);
+    } else {
+        res.status(401).send('Not Authorized');
+    }
+});
+
+//Make announcement to all Slack teams
+router.post('/announcement/',
+    passport.authenticate('bearer', { session: false }),
+    function(req, res) {
+        console.log(req.body);
+        var announcement = req.body;
+        if (announcement) {
+            controller.storage.teams.all(function (err, teams) {
+                teams.forEach(function (team) {
+                    if (err) console.log('Error retrieving all teams', err);
+                    console.log('Team ID', team.id);
+                    var bot = _bots[team.id];
+                    announcement.channel = team.default_channel;
+                    console.log('Announcement:', announcement);
+                    bot.say(announcement, function(err) {
+                        if (err) {
+                            console.log('Error sending announcement', err);
+                            // lookupGeneralChan(bot)
+                            // .then(function (generalChan) {
+                            //     announcement.channel = generalChan;
+                            //     bot.say(announcement,function(err) {
+                            //         if (err) console.log('Error sending new case to general channel', err);
+                            //     })
+                            // })
+                        }
+                    });
+                })
+            });
+            res.status(200).send({ result: 'All messages sent' });
+        } else {
+            res.status(500).send();
+        }
+    }
+);
 
 router.get('/', function(req, res, next) {
     res.render('index', { title: 'You\'ve reached the Support Bot api interface' });

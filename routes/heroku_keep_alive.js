@@ -1,5 +1,5 @@
 var express = require('express');
-var http = require("http");
+var https = require("https");
 var router = express.Router();
 
 //Heroku keep alive
@@ -7,12 +7,17 @@ var hour = new Date().getHours();
 console.log("The hour is: " + hour);
 
 setInterval(function() {
-    //if (hour <= 24 && hour >= 7) {
-        http.get("http://slackbot-2.herokuapp.com/");
-    //}
-    var d = new Date();
-    hour = d.getHours();
-    console.log("The time is: " + d + "-" + hour);
+    if (process.env.NODE_ENV === 'Production') {
+        https.get("https://netsuite-slack-supportbot.herokuapp.com/");
+        var d = new Date();
+        hour = d.getHours();
+        console.log("The time is: " + d + "-" + hour);
+    } else {
+        // https.get("https://netsuite-slack-supportbot-dev.herokuapp.com/");
+        // var d = new Date();
+        // hour = d.getHours();
+        // console.log("The time is: " + d + "-" + hour);
+    }
 }, 30000); // every 5 minutes (3000000)
 
 module.exports = router;

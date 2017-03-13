@@ -1,11 +1,13 @@
-var express = require('express');
-var router = express.Router();
-var request = require("request");
-var OAuth = require('oauth-1.0a');
-var sanitizeHtml = require('sanitize-html');
-var controller = require('../modules/bot_controller');
-var trackBot = require('../modules/track_bot').trackBot;
-var _bots = require('../modules/track_bot').bots;
+var express = require('express'),
+    router = express.Router(),
+    request = require("request"),
+    OAuth = require('oauth-1.0a'),
+    sanitizeHtml = require('sanitize-html'),
+    controller = require('../modules/bot_controller'),
+    trackBot = require('../modules/track_bot').trackBot,
+    _bots = require('../modules/track_bot').bots,
+    passport = require('passport'),
+    nsStats = require('../modules/netsuite_logging');
 
 controller.storage.teams.all(function(err,teams) {
     if (err) {
@@ -18,7 +20,7 @@ controller.storage.teams.all(function(err,teams) {
             controller.spawn(teams[t].bot).startRTM(function(err, bot) {
                 if (err) {
                     console.log('Error connecting bot to Slack:', err);
-                    //TODO remove team as the likely removed your app
+                    //TODO remove team as they likely removed your app
                 } else {
                     console.log('Bot connected:', bot.team_info.name);
                     trackBot(bot);
@@ -47,28 +49,32 @@ function getUser(id, bot) {
 }
 
 var searchTerms = [
-    /open cases/i,
-    /unassigned cases/i,
-    /my cases/i,
-    /grab/i,
-    /last message/i,
-    /escalate/i,
-    /help/i,
-    /netsuite/i,
-    /it going/i,
-    /would you like to do/i,
-    /close/i,
-    /reply/i,
-    /assign/i,
-    /increase priority/i,
-    /decrease priority/i,
-    /all messages/i,
-    /all attachments/i,
-    /hello/i,
-    /about/i
-];
+    'open cases',
+    'unassigned cases',
+    'my cases',
+    'grab',
+    'last message',
+    'all messages',
+    'all attachments',
+    'escalate',
+    'help',
+    'netsuite',
+    'it going',
+    'would you like to do',
+    'close',
+    'reply',
+    'assign',
+    'increase priority',
+    'decrease priority',
+    'all messages',
+    'all attachments',
+    'hello',
+    'about'
+].join('|');
 
-controller.hears(searchTerms,['direct_message','direct_mention','mention'],function(bot,message) {
+var searchReg = new RegExp(searchTerms, 'gi');
+
+controller.hears([searchReg],['direct_message','direct_mention','mention'],function(bot,message) {
     if (message.user == bot.identity.id) return;
 
     //Store message data in db
@@ -82,10 +88,17 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
         },
         $inc: {
             quantity: 1, "message_count": 1
-        }
+        },
+        active: true
     };
-    controller.storage.users.save(messageData, function (err) {
-        if (err) console.log('Error saving message', err)
+    controller.storage.users.save(messageData, function (err, message) {
+        if (err) console.log('Error saving message', err);
+        //console.log('User Message : ', message);
+        //send to netsuite
+        message.type = 'user';
+        messageData.$push.messages.date = new Date();
+        message.messages = [messageData.$push.messages];
+        nsStats(message);
     });
 
     //Increment team message count
@@ -93,10 +106,14 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
         id: bot.identifyTeam(),
         $inc: {
             quantity: 1, "message_count": 1
-        }
+        },
+        active: true
     };
-    controller.storage.teams.save(teamCountInc, function (err) {
-        if (err) console.log('Error saving message', err)
+    controller.storage.teams.save(teamCountInc, function (err, message) {
+        if (err) console.log('Error saving message', err);
+        //console.log('Team message', message);
+        message.type = 'team';
+        nsStats(message);
     });
 
 
@@ -109,6 +126,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
     console.log('User', message.user);
     console.log('bot', bot.identity.id);
     console.log('team', bot.identifyTeam());
+
     var foundTerm = message.match[0].toLowerCase();
     //Responses to send to NetSuite
     if (foundTerm === "hello" || foundTerm === "it going" || foundTerm === "would you like to" || foundTerm === "help" || foundTerm === 'about') {
@@ -164,19 +182,30 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
         .then(function(response){
             var realName = response.user.real_name.replace(/ /g,'').toLowerCase().trim();
             postData.user = response.user.real_name;
+            console.log('User Real Name:', postData.user);
 
             //Authentication
             var teamId = bot.identifyTeam();
             console.log('Team ID', teamId);
             controller.storage.teams.get(teamId, function (err, team) {
-                if (err) {
-                    throw new Error(err);
-                }
+                if (err) console.log('Error storing team data', err);
 
                 //console.log('Team', team);
                 var remoteAccountID = team.netsuite.account_id;
+                console.log('NetSuite Account ID', remoteAccountID);
                 var users = team.users;
                 console.log('Users', users);
+
+                //Handle error if no users are found
+                if (users.length === 0) {
+                    bot.reply(message, 'Sorry, I can\'t connect to NetSuite if no users have been setup. Please visit the Slack setup page again in NetSuite and complete the user setup at the bottom of the page.',
+                        function (err) {
+                            if (err) console.log(err);
+                        }
+                    );
+                    return
+                }
+
                 //Loop through users and find the matching one
                 for (var i = 0, token = null; i < users.length; i++) {
                     var user = users[i];
@@ -231,10 +260,26 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
                     } else {
                         function sendMessage(i) {
                             return new Promise(function(resolve) {
-                                var reply = body[i].attachments ? {attachments: body[i].attachments} : body[i].message;
+                                console.log('i', i);
+                                if (body[i].needsCleaning === true) {
+                                    var dirtyMessage = body[i].message;
+                                    if (dirtyMessage) {
+                                        var cleanMessage = sanitizeHtml(dirtyMessage, {
+                                            allowedTags: [],
+                                            allowedAttributes: []
+                                        });
+                                        //console.log('Clean message: ' + cleanMessage);
+                                        var trimmedMessage = cleanMessage.trim();
+                                        var removeBlanks = /[\r\n]{2,}/g;
+                                        var noBlankLinesMessage = trimmedMessage.replace(removeBlanks, '\r\n');
+                                        //console.log('No Blanks: ' + noBlankLinesMessage);
+                                        body[i].message = noBlankLinesMessage;
+                                    }
+                                }
+                                var reply = body[i].attachments && body[i].attachments.length > 0 ? {attachments: body[i].attachments} : body[i].message;
                                 console.log('Reply: ' + JSON.stringify(reply));
-                                bot.reply(message, reply, function (err, res) {
-                                    if (err) {console.log(err)}
+                                bot.reply(message, reply, function (err) {
+                                    if (err) console.log(err);
                                     resolve();
                                 });
                                 if (i <= (body.length - 1)) {bot.startTyping(message)}
@@ -273,6 +318,7 @@ controller.hears(searchTerms,['direct_message','direct_mention','mention'],funct
 
 //Retrieves the user's ID from slack
 function getUserIdList (name, bot, defaultChannel){
+    name = name.replace(/ /g,'').toLowerCase().trim();
     return new Promise(function(resolve, reject){
         var userId;
         if (!name) {
@@ -285,6 +331,7 @@ function getUserIdList (name, bot, defaultChannel){
                 for (var i = 0; i < response.members.length; i++){
                     var member = response.members[i];
                     var cleanName = member.real_name.replace(/ /g,'').toLowerCase().trim();
+                    //console.log('Name : Slack Name', name + ' : ' + cleanName);
                     if(name == cleanName) {
                         userId = member.id;
                         break;
@@ -319,18 +366,66 @@ function getAttachments(slackMessages) {
         }
         attachments.push(attachment);
     }
+    return attachments;
 }
-//Post new cases
-router.post('/newcase', function (req, res, next) {
-    var message = req.body;
-    console.log('body:', message);
-    var slackMessages = message['slack_messages'];
-    var teamId = message.team_id;
-    var bot = _bots[teamId];
-    //console.log('headers: ' + JSON.stringify(req.headers));
-    var attachments = getAttachments(slackMessages);
 
-    var slackAttachment = {};
+function storeMessageData(teamId, team, type, slackAttachment) {
+    //Store the message info
+    var teamCountInc = {
+        id: teamId,
+        $inc: {
+            quantity: 1, "message_count": 1
+        },
+        active: true
+    };
+
+    controller.storage.teams.save(teamCountInc, function (err, message) {
+        if (err) console.log('Error incrementing team message count', err);
+        message.type = 'team';
+        nsStats(message);
+    });
+
+    var channelData = {
+        id: team.default_channel,
+        $push: {
+            messages: {
+                message_type: type,
+                message: slackAttachment.attachments[0].title
+            }
+        },
+        $inc: {
+            quantity: 1, "message_count": 1
+        },
+        active: true
+    };
+
+    controller.storage.channels.save(channelData, function (err, message) {
+        if (err) console.log('Error adding message to channel storage', err);
+        message.type = 'channel';
+        console.log('Channel message', message);
+        // message.messages = [{
+        //     keyword: message.match[0],
+        //     message: message.text,
+        //     date: new Date()
+        // }];
+        nsStats(message);
+    });
+}
+
+router.use(passport.authenticate('bearer', { session: false }));
+//Post new cases
+router.post('/newcase',
+    passport.authenticate('bearer', { session: false }),
+    function (req, res) {
+    var message = req.body,
+        slackMessages = message['slack_messages'],
+        teamId = message.team_id,
+        bot = _bots[teamId],
+        attachments = getAttachments(slackMessages),
+        slackAttachment = {};
+    console.log('body:', message);
+    console.log('Cleaned attachments', attachments);
+    //console.log('headers: ' + JSON.stringify(req.headers));
     controller.storage.teams.get(teamId, function(err, team) {
         if (err) console.log(err);
         slackAttachment = {
@@ -338,114 +433,67 @@ router.post('/newcase', function (req, res, next) {
             //channel: '#testing',
             attachments: attachments
         };
-        console.log('Webhooks Slack Attachment:', slackAttachment);
-        bot.say(slackAttachment, function(err,res) {
+        console.log('New Case Slack Attachment:', slackAttachment);
+        bot.say(slackAttachment, function(err) {
             if (err) {
                 console.log('Error sending new case', err);
-                slackAttachment.channel = '#general';
-                bot.say(slackAttachment,function(err,res) {
-                    if (err) console.log('Error sending new case to general channel', err);
-                })
+                // slackAttachment.channel = '#general';
+                // console.log('Slack attachment to send to general channel', slackAttachment);
+                // bot.say(slackAttachment,function(err) {
+                //     if (err) console.log('Error sending new case to general channel', err);
+                // })
             }
-
-            //Store the message info
-            var teamCountInc = {
-                id: teamId,
-                $inc: {
-                    quantity: 1, "message_count": 1
-                }
-            };
-
-            controller.storage.teams.save(teamCountInc, function (err) {
-                if (err) console.log('Error incrementing team message count', err);
-            });
-
-            var channelData = {
-                id: team.default_channel,
-                $push: {
-                    messages: {
-                        type: 'newcase',
-                        message: slackAttachment
-                    }
-                },
-                $inc: {
-                    quantity: 1, "message_count": 1
-                }
-            };
-            controller.storage.channels.save(channelData, function (err) {
-                if (err) console.log('Error adding message to channel storage', err);
-            });
+            storeMessageData(teamId, team, 'newcase', slackAttachment);
         });
     });
     res.end("NetSuite Listener");
 });
 
 //Post case replies
-router.post('/casereply', function (req, res, next) {
-    var message = req.body;
-    console.log('body:', message);
-    var slackMessages = message['slack_messages'];
-    var teamId = message.team_id;
-    var bot = _bots[teamId];
-    //console.log('headers: ' + JSON.stringify(req.headers));
-    var attachments = getAttachments(slackMessages);
-    var slackAttachment = {};
-    controller.storage.teams.get(teamId, function(err, team) {
-        if (err) console.log(err);
-        getUserIdList(message.assigned, bot, team.default_channel)
-        .then(function(userId) {
-            console.log(userId);
-            slackAttachment = {
-                attachments: attachments,
-                //channel: '#testing',
-                channel: userId
-            };
-            console.log('RTM Slack Attachment:', slackAttachment);
-            bot.say(slackAttachment, function(err,res) {
-                if (err) {
-                    console.log('Error sending new case', err);
-                    slackAttachment.channel = '#general';
-                    bot.say(slackAttachment,function(err,res) {
-                        if (err) console.log('Error sending new case to general channel', err);
-                    })
-                }
-
-                //Store the message info
-                var teamCountInc = {
-                    id: teamId,
-                    $inc: {
-                        quantity: 1, "message_count": 1
-                    }
+router.post('/casereply',
+    passport.authenticate('bearer', { session: false }),
+    function (req, res) {
+        var message = req.body,
+            slackMessages = message['slack_messages'],
+            teamId = message.team_id,
+            bot = _bots[teamId],
+            attachments = getAttachments(slackMessages),
+            slackAttachment = {};
+        console.log('body:', message);
+        //console.log('headers: ' + JSON.stringify(req.headers));
+        controller.storage.teams.get(teamId, function(err, team) {
+            if (err) console.log(err);
+            getUserIdList(message.assigned, bot, team.default_channel)
+            .then(function(userId) {
+                console.log('User ID', userId);
+                slackAttachment = {
+                    attachments: attachments,
+                    //channel: '#testing',
+                    channel: userId
                 };
-
-                controller.storage.teams.save(teamCountInc, function (err) {
-                    if (err) console.log('Error incrementing team message count', err);
-                });
-
-                var channelData = {
-                    id: team.default_channel,
-                    $push: {
-                        messages: {
-                            type: 'casereply',
-                            message: slackAttachment
-                        }
-                    },
-                    $inc: {
-                        quantity: 1, "message_count": 1
+                console.log('RTM Slack Attachment:', slackAttachment);
+                bot.say(slackAttachment, function(err) {
+                    if (err) {
+                        console.log('Error sending case reply', err);
+                        // slackAttachment.channel = '#general';
+                        // bot.say(slackAttachment,function(err) {
+                        //     if (err) console.log('Error sending new case to general channel', err);
+                        // })
                     }
-                };
-                controller.storage.channels.save(channelData, function (err) {
-                    if (err) console.log('Error adding message to channel storage', err);
+                    storeMessageData(teamId, team, 'casereply', slackAttachment);
                 });
-            });
-        })
-    });
-    res.end("NetSuite Listener");
-});
+            })
+        });
+        res.end("NetSuite Listener");
+    }
+);
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/',
+    passport.authenticate('bearer', { session: false }),
+    function(req, res, next) {
     res.render('index', { title: 'Slack Bot App' });
 });
+
 
 module.exports = router;

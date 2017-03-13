@@ -15,7 +15,6 @@ module.exports = function(config) {
 
     var storage = {};
     var zones = ['teams', 'channels', 'users'];
-    //var zones = ['teams'];
 
     zones.forEach(function(zone) {
         var model = SlackModel[zone];
@@ -37,6 +36,7 @@ function getStorage(model) {
                 id: data.id
             }, data, {
                 upsert: true,
+                setDefaultsOnInsert: true,
                 new: true
             }).lean().exec(cb);
         },
