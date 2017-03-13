@@ -9,9 +9,9 @@ console.log("The hour is: " + hour);
 setInterval(function() {
     if (process.env.NODE_ENV === 'Production') {
         https.get("https://netsuite-slack-supportbot.herokuapp.com/");
-        var d = new Date();
-        hour = d.getHours();
-        console.log("The time is: " + d + "-" + hour);
+        // var d = new Date();
+        // hour = d.getHours();
+        // console.log("The time is: " + d + "-" + hour);
     } else {
         // https.get("https://netsuite-slack-supportbot-dev.herokuapp.com/");
         // var d = new Date();

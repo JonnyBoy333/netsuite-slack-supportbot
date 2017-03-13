@@ -287,7 +287,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                         }
 
 
-                        console.log('Body:', body);
+                        //console.log('Body:', body);
                         if (typeof body == 'string' && body.indexOf('error') === 2){
                             console.log('Error :' + body);
                         } else {
@@ -423,7 +423,7 @@ router.post('/newcase',
         bot = _bots[teamId],
         attachments = getAttachments(slackMessages),
         slackAttachment = {};
-    console.log('body:', message);
+    //console.log('body:', message);
     console.log('Cleaned attachments', attachments);
     //console.log('headers: ' + JSON.stringify(req.headers));
     controller.storage.teams.get(teamId, function(err, team) {
@@ -459,7 +459,7 @@ router.post('/casereply',
             bot = _bots[teamId],
             attachments = getAttachments(slackMessages),
             slackAttachment = {};
-        console.log('body:', message);
+        //console.log('body:', message);
         //console.log('headers: ' + JSON.stringify(req.headers));
         controller.storage.teams.get(teamId, function(err, team) {
             if (err) console.log(err);
