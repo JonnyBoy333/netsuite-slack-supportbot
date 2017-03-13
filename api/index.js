@@ -319,7 +319,7 @@ router.post('/generate-token', function(req, res){
                 })
             }
         });
-        res.status(200).send(token);
+        res.status(200).send({ token: token });
     } else {
         res.status(401).send('Not Authorized');
     }
