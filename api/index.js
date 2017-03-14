@@ -55,12 +55,12 @@ router.post('/addaccount/:accountid',
         if (req.body.email) newAccount.email = req.body.email;
         if (req.body.logo_url) newAccount.logo_url = req.body.logo_url;
         newAccount.address = {};
-        if (req.body.addr1) newAccount.addr1 = req.body.addr1;
-        if (req.body.addr2) newAccount.addr2 = req.body.addr2;
-        if (req.body.city) newAccount.city = req.body.city;
-        if (req.body.state) newAccount.state = req.body.state;
-        if (req.body.country) newAccount.country = req.body.country;
-        if (req.body.zip) newAccount.zip = req.body.zip;
+        if (req.body.addr1) newAccount.address.addr1 = req.body.addr1;
+        if (req.body.addr2) newAccount.address.addr2 = req.body.addr2;
+        if (req.body.city) newAccount.address.city = req.body.city;
+        if (req.body.state) newAccount.address.state = req.body.state;
+        if (req.body.country) newAccount.address.country = req.body.country;
+        if (req.body.zip) newAccount.address.zip = req.body.zip;
         newAccount.active = true;
         console.log('New Account', newAccount);
 
