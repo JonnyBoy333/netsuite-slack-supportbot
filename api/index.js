@@ -321,11 +321,11 @@ router.post('/generate-token', function(req, res){
         .catch(function(err){
             console.log('Error saving token', err.message);
             if (err.code == 11000) {
-                console.log('Account already exists, send back the original token', token);
                 tokenSchema.findOne({
                     account_id: req.body.account_id
                 }).lean().exec(function (err, foundToken) {
-                    res.status(200).send({ token: foundToken })
+                    console.log('Account already exists, send back the original token', foundToken.token);
+                    res.status(200).send({ token: foundToken.token })
                 })
             }
         });
