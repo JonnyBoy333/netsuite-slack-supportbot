@@ -40,28 +40,27 @@ router.post('/addaccount/:accountid',
         //var newAccount = new teamModel;
         var newAccount = {};
         newAccount.id = accountId;
-        newAccount.default_channel = req.body.default_channel_id;
+        if (req.body.default_channel_id) newAccount.default_channel = req.body.default_channel_id;
         if (req.body.netsuite) newAccount.netsuite = {
             slack_listener_uri: req.body.netsuite.slack_listener_uri,
             account_id: req.body.netsuite.account_id
         };
-        newAccount.token = req.body.token;
-        newAccount.bot = { token: req.body.bot.token };
-        newAccount.users = req.body.users;
-        newUserName = req.body.user.replace(/ /g,'').toLowerCase().trim();
-        newAccount.website = req.body.website;
-        newAccount.ein = req.body.ein;
-        newAccount.taxid = req.body.taxid;
-        newAccount.email = req.body.email;
-        newAccount.logo_url = req.body.logo_url;
-        newAccount.address = {
-            addr1: req.body.addr1,
-            addr2: req.body.addr2,
-            city: req.body.city,
-            state: req.body.state,
-            country: req.body.country,
-            zip: req.body.zip
-        };
+        if (req.body.token) newAccount.token = req.body.token;
+        if (req.body.bot.token) newAccount.bot = { token: req.body.bot.token };
+        if (req.body.users) newAccount.users = req.body.users;
+        if (req.body.user) newUserName = req.body.user.replace(/ /g,'').toLowerCase().trim();
+        if (req.body.website) newAccount.website = req.body.website;
+        if (req.body.ein) newAccount.ein = req.body.ein;
+        if (req.body.taxid) newAccount.taxid = req.body.taxid;
+        if (req.body.email) newAccount.email = req.body.email;
+        if (req.body.logo_url) newAccount.logo_url = req.body.logo_url;
+        newAccount.address = {};
+        if (req.body.addr1) newAccount.addr1 = req.body.addr1;
+        if (req.body.addr2) newAccount.addr2 = req.body.addr2;
+        if (req.body.city) newAccount.city = req.body.city;
+        if (req.body.state) newAccount.state = req.body.state;
+        if (req.body.country) newAccount.country = req.body.country;
+        if (req.body.zip) newAccount.zip = req.body.zip;
         newAccount.active = true;
         console.log('New Account', newAccount);
 
