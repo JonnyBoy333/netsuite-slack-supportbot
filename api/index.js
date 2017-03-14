@@ -307,6 +307,9 @@ router.post('/generate-token', function(req, res){
         tokenModel.account_id = req.body.account_id;
         tokenModel.account_name = req.body.account_name;
         tokenModel.save()
+        .then(function(team){
+            res.status(200).send({ token: token });
+        })
         .catch(function(err){
             console.log('Error saving token', err);
             if (err.code == 11000) {
@@ -318,7 +321,6 @@ router.post('/generate-token', function(req, res){
                 })
             }
         });
-        res.status(200).send({ token: token });
     } else {
         res.status(401).send('Not Authorized');
     }
