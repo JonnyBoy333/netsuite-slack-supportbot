@@ -309,7 +309,7 @@ router.post('/generate-token', function(req, res){
         tokenModel.save()
         .catch(function(err){
             console.log('Error saving token', err);
-            if (err.code === '11000') {
+            if (err.code === 11000) {
                 console.log('Account already exists, send back the original token', token);
                 tokenSchema.findOne({
                     account_id: token.account_id
