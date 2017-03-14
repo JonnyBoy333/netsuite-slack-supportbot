@@ -312,10 +312,9 @@ router.post('/generate-token', function(req, res){
             if (err.code == 11000) {
                 console.log('Account already exists, send back the original token', token);
                 tokenSchema.findOne({
-                    account_id: token.account_id
+                    account_id: req.body.account_id
                 }).lean().exec(function (err, foundToken) {
-                    token.token = foundToken.token;
-                    res.status(200).send(token)
+                    res.status(200).send({ token: foundToken })
                 })
             }
         });
