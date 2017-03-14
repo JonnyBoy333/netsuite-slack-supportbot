@@ -73,7 +73,7 @@ router.post('/addaccount/:accountid',
             controller.spawn(newAccount.bot).startRTM(function(err, bot) {
                 if (err) {
                     console.log('Error connecting bot to Slack:', err);
-                    bot.closeRTM();
+                    //bot.closeRTM();
                 } else {
                     console.log('Bot added for first time:', bot.team_info.name);
 
