@@ -37,7 +37,8 @@ router.post('/addaccount/:accountid',
     //console.log(req.body);
     if (accountId && req.body.token && req.body.bot.token) {
         var newUserName = '';
-        var newAccount = new teamModel;
+        //var newAccount = new teamModel;
+        var newAccount = {};
         newAccount.id = accountId;
         newAccount.default_channel = req.body.default_channel_id;
         if (req.body.netsuite) newAccount.netsuite = {
@@ -61,17 +62,21 @@ router.post('/addaccount/:accountid',
             country: req.body.country,
             zip: req.body.zip
         };
+        newAccount.active = true;
         console.log('New Account', newAccount);
 
-        newAccount.save()
-        .then(function(savedObject) {
-            controller.spawn(savedObject.bot).startRTM(function(err, bot) {
+        controller.storage.teams.save(newAccount, function (err, newAccount) {
+            if (err) {
+                console.log('Error saving message', err);
+                return;
+            }
+            console.log('New Account', newAccount);
+            controller.spawn(newAccount.bot).startRTM(function(err, bot) {
                 if (err) {
                     console.log('Error connecting bot to Slack:', err);
                     bot.closeRTM();
                 } else {
                     console.log('Bot added for first time:', bot.team_info.name);
-
 
                     //Get the account information and save to db
                     function getAccountInfo(bot) {
@@ -130,47 +135,51 @@ router.post('/addaccount/:accountid',
                     }
                     getAccountInfo(bot).catch(function(e){console.log("error", e)});
                     getUserIdList(bot)
-                    .then(function (userId) {
-                        console.log('Found User ID', userId);
+                        .then(function (userId) {
+                            console.log('Found User ID', userId);
 
-                        //Send a message to the new account
-                        if (newUserName) {
+                            //Send a message to the new account
+                            if (newUserName) {
 
-                            //If the user is found send them an intro message, otherwise send the message to the general channel
-                            if (userId) {
-                                var message = {
-                                    channel: userId,
-                                    text: 'Hello and thank you for adding NetSuite Support Bot to your team!\n' +
+                                //If the user is found send them an intro message, otherwise send the message to the general channel
+                                if (userId) {
+                                    var message = {
+                                        channel: userId,
+                                        text: 'Hello and thank you for adding NetSuite Support Bot to your team!\n' +
                                         'Please make sure you finish the setup inside of NetSuite so that I can be of use.\n' +
                                         'Then, invite me to your support channel using /invite so that I can help everyone :smiley:.'
-                                };
-                                bot.say(message);
-                            } else {
-                                // var message = {
-                                //     channel: lookupGeneralChan(bot),
-                                //     text: 'Hello and thank you for adding NetSuite Support Bot to your team!\n' +
-                                //     'Please make sure you finish the setup inside of NetSuite so that I can be of use.\n' +
-                                //     'Then, invite me to your support channel using /invite so that I can help everyone :smiley:.'
-                                // };
-                                // bot.say(message);
-                                console.log('Could not send welcome message because user does not exist.')
+                                    };
+                                    bot.say(message);
+                                } else {
+                                    // var message = {
+                                    //     channel: lookupGeneralChan(bot),
+                                    //     text: 'Hello and thank you for adding NetSuite Support Bot to your team!\n' +
+                                    //     'Please make sure you finish the setup inside of NetSuite so that I can be of use.\n' +
+                                    //     'Then, invite me to your support channel using /invite so that I can help everyone :smiley:.'
+                                    // };
+                                    // bot.say(message);
+                                    console.log('Could not send welcome message because user does not exist.')
+                                }
                             }
-                        }
-                    })
-                    .catch(function(e) {
-                        console.log("error", e);
-                    });
+                        })
+                        .catch(function(e) {
+                            console.log("error", e);
+                        });
                 }
             });
-        })
-        .catch(function(err) {
-            console.log('Error adding a new account', err);
-            if (err.code === 11000) {
-                res.status(500).send('Account already added');
-                //TODO reinstantiate bot
-            }
-            else res.status(500).send(err);
-        })
+        });
+        // newAccount.save()
+        // .then(function(savedObject) {
+        //
+        // })
+        // .catch(function(err) {
+        //     console.log('Error adding a new account', err);
+        //     if (err.code === 11000) {
+        //         res.status(500).send('Account already added');
+        //         //TODO reinstantiate bot
+        //     }
+        //     else res.status(500).send(err);
+        // })
     } else {
         res.status(500).send();
     }
@@ -311,7 +320,7 @@ router.post('/generate-token', function(req, res){
             res.status(200).send({ token: token });
         })
         .catch(function(err){
-            console.log('Error saving token', err);
+            console.log('Error saving token', err.message);
             if (err.code == 11000) {
                 console.log('Account already exists, send back the original token', token);
                 tokenSchema.findOne({
