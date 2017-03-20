@@ -60,6 +60,7 @@ passport.use(new BearerStrategy({}, function(token, done) {
 var slack = require('./routes/slack');
 var heroku_keep_alive = require('./routes/heroku_keep_alive');
 var index = require('./routes/index');
+var privacypolicy = require('./routes/privacypolicy');
 var apiRouter = require('./api');
 
 var app = express();
@@ -79,6 +80,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/slack', slack);
 app.use('/api', apiRouter);
 app.use('/', index);
+app.use('/privacypolicy', privacypolicy);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

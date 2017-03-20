@@ -1,11 +1,99 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <link rel="apple-touch-icon" sizes="180x180" href="../images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="../images/favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="../images/favicon-16x16.png" sizes="16x16">
+    <link rel="manifest" href="../images/manifest.json">
+    <link rel="mask-icon" href="../images/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="theme-color" content="#ffffff">
+
     <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
+
+    <!-- Bootstrap core CSS -->
+    <!--<link href="../stylesheets/bootstrap.min.css" rel="stylesheet">-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <link href="../stylesheets/ie10-viewport-bug-workaround.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../stylesheets/jumbotron-narrow.css" rel="stylesheet">
+
+    <link href="../stylesheets/lightbox.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+  <div class="container">
+    <div class="header clearfix">
+      <nav>
+        <ul class="nav nav-pills pull-right">
+          <li role="presentation" class="active"><a href="/">Home</a></li>
+          <li role="presentation"><a href="/privacypolicy">Privacy Policy</a></li>
+          <!--<li role="presentation"><a href="#">Contact</a></li>-->
+        </ul>
+      </nav>
+      <h3 class="text-muted">NetSuite Support Slack Bot</h3>
+    </div>
+
+    <div class="jumbotron">
+      <h1 style="font-size:50px">Support Cases In Slack!</h1>
+      <p class="lead">Interact with NetSuite support cases from within Slack. Manage communication with your team and your cases in one place! Click the button below to install or search for 'Slack Support Bot' in the bundle search in NetSuite.</p>
+      <p><a class="btn btn-lg btn-success" style="padding: 14px 36px" href="https://system.netsuite.com/app/bundler/bundledetails.nl?sourcecompanyid=662377&domain=PRODUCTION&config=F&id=165111" role="button">Install</a></p>
+    </div>
+
+    <div class="row marketing">
+      <div class="col-lg-12">
+        <iframe width="100%" height="376.875px" src="https://www.youtube.com/embed/rS00xWnqwvI" frameborder="0" allowfullscreen></iframe>
+        <h4>New Cases In Slack</h4>
+        <p>New cases get automatically posted in Slack to the channel of your choise.</p>
+        <a href="../images/new_case.png" data-lightbox="new_case" data-title="New Case Posting"><img src="../images/new_case.png" width="100%"></a>
+
+        <h4>Case Replies</h4>
+        <p>Case replies get sent directly to the user assigned to them in Slack. No need to worry about filling your email inbox with case emails.</p>
+
+        <h4>Interact with cases right from Slack!</h4>
+        <a href="../images/help.png" data-lightbox="help" data-title="Help Command"><img src="../images/help.png" width="100%"></a>
+        <h5>See all open cases</h5>
+        <a href="../images/open_cases.png" data-lightbox="open_cases" data-title="Open Cases Command"><img src="../images/open_cases.png" width="100%"></a>
+        <h5>See all unassigned cases</h5>
+        <a href="../images/unassigned_cases.png" data-lightbox="unassigned_cases" data-title="Unassigned Cases Command"><img src="../images/unassigned_cases.png" width="100%"></a>
+        <h5>See all cases assigned to yourself</h5>
+        <h5>Assign a case to yourself</h5>
+        <a href="../images/grab.png" data-lightbox="grab" data-title="Grab Command"><img src="../images/grab.png" width="100%"></a>
+        <h5>Assign a case to an employee by name</h5>
+        <h5>Escalate a case to an employee by name</h5>
+        <h5>See the last message for a cases</h5>
+        <h5>See all messages for a case</h5>
+        <h5>See all attachments for a case</h5>
+        <h5>Increase/decrease priority of the case</h5>
+        <h5>Reply to a case</h5>
+        <h5>Close a case</h5>
+
+      </div>
+
+    </div>
+
+    <footer class="footer">
+      <p>&copy; 2016 Company, Inc.</p>
+    </footer>
+
+  </div> <!-- /container -->
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../js/ie10-viewport-bug-workaround.js"></script>
+    <script src="../js/lightbox-plus-jquery.min.js"></script>
   </body>
 </html>
