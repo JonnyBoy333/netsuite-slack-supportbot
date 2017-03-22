@@ -61,6 +61,7 @@ var slack = require('./routes/slack');
 var heroku_keep_alive = require('./routes/heroku_keep_alive');
 var index = require('./routes/index');
 var privacypolicy = require('./routes/privacypolicy');
+var contact = require('./routes/contact');
 var apiRouter = require('./api');
 
 var app = express();
@@ -81,6 +82,7 @@ app.use('/slack', slack);
 app.use('/api', apiRouter);
 app.use('/', index);
 app.use('/privacypolicy', privacypolicy);
+app.use('/contact', contact);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -1,0 +1,75 @@
+<%- include('header') -%>
+<style>
+    .red{
+        color:red;
+    }
+    .form-area
+    {
+        background-color: #FAFAFA;
+        padding: 10px 40px 60px;
+        margin: 10px 0px 60px;
+    }
+</style>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="jumbotron">
+            <form role="form">
+                <br style="clear:both">
+                <h3 style="margin-bottom: 25px; text-align: center;">Contact Form</h3>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Name" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="email" name="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="text" class="form-control" id="subject" name="subject" placeholder="Subject" required>
+                </div>
+                <div class="form-group">
+                    <textarea class="form-control" type="textarea" id="message" placeholder="Message" maxlength="140" rows="7"></textarea>
+                    <span class="help-block"><p id="characterLeft" class="help-block ">You have reached the limit</p></span>
+                </div>
+
+                <button type="button" id="submit" name="submit" class="btn btn-lg btn-primary" role="button">Submit Form</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include('footer') -%>
+<script>
+    jQuery(document).ready(function(){
+        jQuery('#characterLeft').text('240 characters left');
+        jQuery('#message').keydown(function () {
+            var max = 140;
+            var len = jQuery(this).val().length;
+            if (len >= max) {
+                jQuery('#characterLeft').text('You have reached the limit');
+                jQuery('#characterLeft').addClass('red');
+                jQuery('#btnSubmit').addClass('disabled');
+            }
+            else {
+                var ch = max - len;
+                jQuery('#characterLeft').text(ch + ' characters left');
+                jQuery('#btnSubmit').removeClass('disabled');
+                jQuery('#characterLeft').removeClass('red');
+            }
+        });
+
+        function isEmail(email) {
+            var regex = /^([a-zA-Z0-9_.+-])+\@(([a-zA-Z0-9-])+\.)+([a-zA-Z0-9]{2,4})+$/;
+            return regex.test(email);
+        }
+        jQuery('#email').focusout(function () {
+            var email = jQuery('#email').val();
+            if (!isEmail(email)) {
+                jQuery('#email').addClass('red');
+                alert('Invalid Email');
+            } else {
+                jQuery('#email').removeClass('red');
+            }
+        })
+
+    });
+</script>
