@@ -9,6 +9,17 @@ var express = require('express'),
     passport = require('passport'),
     nsStats = require('../modules/netsuite_logging');
 
+// set up a botkit app to expose oauth and webhook endpoints
+controller.setupWebserver((parseInt(process.env.PORT) + 1000),function(err,webserver) {
+
+    // set up web endpoints for oauth, receiving webhooks, etc.
+    controller
+        //.createHomepageEndpoint(controller.webserver)
+        //.createOauthEndpoints(controller.webserver,function(err,req,res) {  })
+        .createWebhookEndpoints(controller.webserver);
+
+});
+
 controller.storage.teams.all(function(err,teams) {
     if (err) {
         throw new Error(err);
@@ -48,6 +59,45 @@ function getUser(id, bot) {
     })
 }
 
+//Handle Interactive Messages
+// receive an interactive message, and reply with a message that will replace the original
+controller.on('interactive_message_callback', function(bot, message) {
+
+    // check message.actions and message.callback_id to see what action to take...
+
+    bot.replyInteractive(message, {
+        text: '...',
+        attachments: [
+            {
+                title: 'My buttons',
+                callback_id: '123',
+                attachment_type: 'default',
+                actions: [
+                    {
+                        "name":"yes",
+                        "text": "Yes!",
+                        "value": "yes",
+                        "type": "button"
+                    },
+                    {
+                        "text": "No!",
+                        "name": "no",
+                        "value": "delete",
+                        "style": "danger",
+                        "type": "button",
+                        "confirm": {
+                            "title": "Are you sure?",
+                            "text": "This will do something!",
+                            "ok_text": "Yes",
+                            "dismiss_text": "No"
+                        }
+                    }
+                ]
+            }
+        ]
+    });
+});
+
 var searchTerms = [
     'open cases',
     'unassigned cases',
@@ -69,7 +119,8 @@ var searchTerms = [
     'all messages',
     'all attachments',
     'hello',
-    'about'
+    'about',
+    'interactive'
 ].join('|');
 
 var searchReg = new RegExp(searchTerms, 'gi');
@@ -128,6 +179,39 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
     console.log('team', bot.identifyTeam());
 
     var foundTerm = message.match[0].toLowerCase();
+
+    //Testing interactions
+    if (foundTerm === 'interactive') {
+        bot.reply(message, {
+            attachments:[
+                {
+                    title: 'Do you want to interact with my buttons?',
+                    callback_id: '123',
+                    attachment_type: 'default',
+                    actions: [
+                        {
+                            "name":"yes",
+                            "text": "Yes",
+                            "style": "primary",
+                            "value": "yes",
+                            "type": "button"
+                        },
+                        {
+                            "name":"no",
+                            "text": "No",
+                            "style": "danger",
+                            "value": "no",
+                            "type": "button"
+                        }
+                    ]
+                }
+            ]
+        });
+        console.log('Message', message);
+        return;
+    }
+
+
     //Responses to send to NetSuite
     if (foundTerm === "hello" || foundTerm === "it going" || foundTerm === "would you like to" || foundTerm === "help" || foundTerm === 'about') {
         bot.startTyping(message);
@@ -178,6 +262,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
         var postData = {};
         postData.searchTerm = foundTerm;
         postData.message = message.text;
+        postData.id = message.ts;
         getUser(message.user, bot)
         .then(function(response){
             var realName = response.user.real_name.replace(/ /g,'').toLowerCase().trim();
@@ -209,8 +294,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                 //Loop through users and find the matching one
                 for (var i = 0, token = null; i < users.length; i++) {
                     var user = users[i];
-                    //var userName = user.name.replace(/ /g,'').toLowerCase().trim();
-                    var userName = user.name;
+                    var userName = user.name.replace(/ /g,'').toLowerCase().trim();
                     console.log('Username : Real Name', userName + ' : ' + realName);
                     if (userName == realName) {
                         //user token
