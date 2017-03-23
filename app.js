@@ -9,6 +9,7 @@ var mongooseDB = mongoose.connection;
 var passport = require('passport');
 var tokenSchema = require('./models/schemas').tokens;
 var BearerStrategy = require('passport-http-bearer').Strategy;
+var controller = require('./modules/bot_controller');
 
 if (!process.env.SLACK_KEY || !process.env.SLACK_SECRET || !process.env.NETSUITE_KEY || !process.env.NETSUITE_SECRET) {
     console.log('Error: Specify clientId and clientSecret in environment');
@@ -65,6 +66,8 @@ var contact = require('./routes/contact');
 var apiRouter = require('./api');
 
 var app = express();
+
+controller.createWebhookEndpoints(app);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

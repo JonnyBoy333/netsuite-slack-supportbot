@@ -9,16 +9,18 @@ var express = require('express'),
     passport = require('passport'),
     nsStats = require('../modules/netsuite_logging');
 
-// set up a botkit app to expose oauth and webhook endpoints
-controller.setupWebserver((parseInt(process.env.PORT) + 1000),function(err,webserver) {
+// // set up a botkit app to expose oauth and webhook endpoints
+// controller.setupWebserver((parseInt(process.env.PORT) + 1000),function(err,webserver) {
+//
+//     // set up web endpoints for oauth, receiving webhooks, etc.
+//     controller
+//         //.createHomepageEndpoint(controller.webserver)
+//         //.createOauthEndpoints(controller.webserver,function(err,req,res) {  })
+//         .createWebhookEndpoints(controller.webserver);
+//
+// });
 
-    // set up web endpoints for oauth, receiving webhooks, etc.
-    controller
-        //.createHomepageEndpoint(controller.webserver)
-        //.createOauthEndpoints(controller.webserver,function(err,req,res) {  })
-        .createWebhookEndpoints(controller.webserver);
-
-});
+//controller.createWebhookEndpoints(router);
 
 controller.storage.teams.all(function(err,teams) {
     if (err) {
