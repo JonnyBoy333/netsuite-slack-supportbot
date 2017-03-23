@@ -209,7 +209,9 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                 //Loop through users and find the matching one
                 for (var i = 0, token = null; i < users.length; i++) {
                     var user = users[i];
-                    var userName = user.name.replace(/ /g,'').toLowerCase().trim();
+                    //var userName = user.name.replace(/ /g,'').toLowerCase().trim();
+                    var userName = user.name;
+                    console.log('Username : Real Name', userName + ' : ' + realName);
                     if (userName == realName) {
                         //user token
                         token = {
@@ -331,7 +333,7 @@ function getUserIdList (name, bot, defaultChannel){
                 for (var i = 0; i < response.members.length; i++){
                     var member = response.members[i];
                     var cleanName = member.profile.real_name.replace(/ /g,'').toLowerCase().trim();
-                    //console.log('Name : Slack Name', name + ' : ' + cleanName);
+                    console.log('Name : Slack Name', name + ' : ' + cleanName);
                     if(name == cleanName) {
                         userId = member.id;
                         break;
@@ -402,7 +404,7 @@ function storeMessageData(teamId, team, type, slackAttachment) {
     controller.storage.channels.save(channelData, function (err, message) {
         if (err) console.log('Error adding message to channel storage', err);
         message.type = 'channel';
-        console.log('Channel message', message);
+        //console.log('Channel message', message);
         // message.messages = [{
         //     keyword: message.match[0],
         //     message: message.text,
