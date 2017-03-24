@@ -515,9 +515,8 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
 function getUserIdList (name, bot, defaultChannel){
     name = name.replace(/ /g,'').toLowerCase().trim();
     return new Promise(function(resolve, reject){
-        var userId;
+        var userId = defaultChannel;
         if (!name) {
-            userId = defaultChannel;
             //userId = '#testing';
             resolve(userId);
         } else {
