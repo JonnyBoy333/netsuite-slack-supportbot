@@ -67,7 +67,7 @@ controller.on('interactive_message_callback', function(bot, message) {
 
     var postData = {};
     var originalMessagerAttachment = message.original_message.attachments[0];
-    var caseNum = originalMessagerAttachment.title.substr(5, originalMessagerAttachment.title.indexOf(':'));
+    var caseNum = originalMessagerAttachment.title.substring(5, originalMessagerAttachment.title.indexOf(':'));
     postData.message = 'replyconfirmed ' + caseNum + ' ' + originalMessagerAttachment.text;
     console.log('Post Data', postData);
     postData.searchTerm = 'replyconfirmed';
@@ -154,7 +154,6 @@ controller.on('interactive_message_callback', function(bot, message) {
                     } else {
                         function sendMessage(i) {
                             return new Promise(function(resolve) {
-                                console.log('i', i);
                                 if (body[i].needsCleaning === true) {
                                     var dirtyMessage = body[i].message;
                                     if (dirtyMessage) {
