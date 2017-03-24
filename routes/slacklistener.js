@@ -66,8 +66,9 @@ controller.on('interactive_message_callback', function(bot, message) {
     }
 
     var postData = {};
-    var caseNum = message.original_message.attachments.title.substr(5, message.original_message.attachments.title.indexOf(':'));
-    postData.message = 'replyconfirmed ' + caseNum + ' ' + message.original_message.attachments.text;
+    var originalMessagerAttachment = message.original_message.attachments[0];
+    var caseNum = originalMessagerAttachment.title.substr(5, originalMessagerAttachment.title.indexOf(':'));
+    postData.message = 'replyconfirmed ' + caseNum + ' ' + originalMessagerAttachment.text;
     console.log('Post Data', postData);
     postData.searchTerm = 'replyconfirmed';
     getUser(message.user, bot)
