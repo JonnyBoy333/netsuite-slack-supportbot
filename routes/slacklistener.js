@@ -52,9 +52,17 @@ function getUser(id, bot) {
 // receive an interactive message, and reply with a message that will replace the original
 controller.on('interactive_message_callback', function(bot, message) {
     console.log('Button Response Message', message);
+    console.log('Original Message Attachments', message.original_message.attachments);
 
     // check message.actions and message.callback_id to see what action to take...
     bot.startTyping(message);
+
+    if (message.actions[0].value === 'no') {
+        bot.replyInteractive(message, {
+            text: 'Ok, I will not send your message.'
+        });
+        return;
+    }
 
     var postData = {};
     // postData.message = message.text;
