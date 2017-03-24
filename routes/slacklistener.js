@@ -53,9 +53,10 @@ function getUser(id, bot) {
 controller.on('interactive_message_callback', function(bot, message) {
     console.log('Button Response Message', message);
     console.log('Original Message Attachments', message.original_message.attachments);
+    console.log('Answer value', message.actions[0].value);
 
     // check message.actions and message.callback_id to see what action to take...
-    bot.startTyping(message);
+    //bot.startTyping(message);
 
     if (message.actions[0].value === 'no') {
         bot.replyInteractive(message, {
@@ -65,13 +66,14 @@ controller.on('interactive_message_callback', function(bot, message) {
     }
 
     var postData = {};
-    // postData.message = message.text;
-    // postData.id = message.ts;
+    var caseNum = message.original_message.attachments.title.substr(5, message.original_message.attachments.title.indexOf(':'));
+    postData.message = 'replyconfirmed ' + caseNum + ' ' + message.original_message.attachments.text;
+    console.log('Post Data', postData);
+    postData.searchTerm = 'replyconfirmed';
     getUser(message.user, bot)
         .then(function(response){
             var realName = response.user.real_name.replace(/ /g,'').toLowerCase().trim();
             postData.user = response.user.real_name;
-            postData.searchTerm = 'replyconfirmed';
             console.log('User Real Name:', postData.user);
 
             //Authentication
@@ -88,7 +90,7 @@ controller.on('interactive_message_callback', function(bot, message) {
 
                 //Handle error if no users are found
                 if (users.length === 0) {
-                    bot.reply(message, 'Sorry, I can\'t connect to NetSuite if no users have been setup. Please visit the Slack setup page again in NetSuite and complete the user setup at the bottom of the page.',
+                    bot.replyInteractive(message, 'Sorry, I can\'t connect to NetSuite if no users have been setup. Please visit the Slack setup page again in NetSuite and complete the user setup at the bottom of the page.',
                         function (err) {
                             if (err) console.log(err);
                         }
