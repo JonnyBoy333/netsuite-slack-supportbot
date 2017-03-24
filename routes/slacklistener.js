@@ -152,78 +152,52 @@ controller.on('interactive_message_callback', function(bot, message) {
                     if (error){
                         console.log(error);
                     } else {
-                        function sendMessage(i) {
-                            return new Promise(function(resolve) {
-                                if (body[i].needsCleaning === true) {
-                                    var dirtyMessage = body[i].message;
-                                    if (dirtyMessage) {
-                                        var cleanMessage = sanitizeHtml(dirtyMessage, {
-                                            allowedTags: [],
-                                            allowedAttributes: []
-                                        });
-                                        //console.log('Clean message: ' + cleanMessage);
-                                        var trimmedMessage = cleanMessage.trim();
-                                        var removeBlanks = /[\r\n]{2,}/g;
-                                        var noBlankLinesMessage = trimmedMessage.replace(removeBlanks, '\r\n');
-                                        //console.log('No Blanks: ' + noBlankLinesMessage);
-                                        body[i].message = noBlankLinesMessage;
-                                    }
-                                }
-                                var reply = body[i].attachments && body[i].attachments.length > 0 ? {attachments: body[i].attachments} : body[i].message;
-                                console.log('Reply: ' + JSON.stringify(reply));
-                                bot.replyInteractive(message, {
-                                    text: '...',
-                                    attachments: [
-                                        {
-                                            title: 'My buttons',
-                                            callback_id: '123',
-                                            attachment_type: 'default',
-                                            actions: [
-                                                {
-                                                    "name":"yes",
-                                                    "text": "Yes!",
-                                                    "value": "yes",
-                                                    "type": "button"
-                                                },
-                                                {
-                                                    "text": "No!",
-                                                    "name": "no",
-                                                    "value": "delete",
-                                                    "style": "danger",
-                                                    "type": "button",
-                                                    "confirm": {
-                                                        "title": "Are you sure?",
-                                                        "text": "This will do something!",
-                                                        "ok_text": "Yes",
-                                                        "dismiss_text": "No"
-                                                    }
-                                                }
-                                            ]
-                                        }
-                                    ]
-                                });
-                                resolve();
-                                if (i <= (body.length - 1)) {bot.startTyping(message)}
-                            })
-                        }
+                        // function sendMessage(i) {
+                        //     return new Promise(function(resolve) {
+                        //         if (body[i].needsCleaning === true) {
+                        //             var dirtyMessage = body[i].message;
+                        //             if (dirtyMessage) {
+                        //                 var cleanMessage = sanitizeHtml(dirtyMessage, {
+                        //                     allowedTags: [],
+                        //                     allowedAttributes: []
+                        //                 });
+                        //                 //console.log('Clean message: ' + cleanMessage);
+                        //                 var trimmedMessage = cleanMessage.trim();
+                        //                 var removeBlanks = /[\r\n]{2,}/g;
+                        //                 var noBlankLinesMessage = trimmedMessage.replace(removeBlanks, '\r\n');
+                        //                 //console.log('No Blanks: ' + noBlankLinesMessage);
+                        //                 body[i].message = noBlankLinesMessage;
+                        //             }
+                        //         }
+                        //         var reply = body[i].attachments && body[i].attachments.length > 0 ? {attachments: body[i].attachments} : body[i].message;
+                        //         console.log('Reply: ' + JSON.stringify(reply));
+                        //         bot.replyInteractive(message, reply);
+                        //         resolve();
+                        //         if (i <= (body.length - 1)) {bot.startTyping(message)}
+                        //     })
+                        // }
 
 
                         //console.log('Body:', body);
                         if (typeof body == 'string' && body.indexOf('error') === 2){
                             console.log('Error :' + body);
                         } else {
-                            // The loop initialization
-                            var len = body.length;
-                            Promise.resolve(0).then(function loop(i) {
-                                // The loop check
-                                if (i < len) { // The post iteration increment
-                                    return sendMessage(i).thenReturn(i + 1).then(loop);
-                                }
-                            }).then(function() {
-                                console.log("All messages sent");
-                            }).catch(function(e) {
-                                console.log("error", e);
-                            });
+                            var reply = { attachments: body[0].attachments };
+                            console.log('Reply: ' + JSON.stringify(reply));
+                            bot.replyInteractive(message, reply);
+
+                            // // The loop initialization
+                            // var len = body.length;
+                            // Promise.resolve(0).then(function loop(i) {
+                            //     // The loop check
+                            //     if (i < len) { // The post iteration increment
+                            //         return sendMessage(i).thenReturn(i + 1).then(loop);
+                            //     }
+                            // }).then(function() {
+                            //     console.log("All messages sent");
+                            // }).catch(function(e) {
+                            //     console.log("error", e);
+                            // });
                         }
                     }
                 });
