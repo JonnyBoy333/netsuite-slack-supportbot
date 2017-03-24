@@ -10,8 +10,7 @@ controller = Botkit.slackbot({
     clientId: process.env.SLACK_KEY,
     clientSecret: process.env.SLACK_SECRET,
     require_delivery: true,
-    storage: mongodbStorage,
-    //debug: true
+    storage: mongodbStorage
 });
 
 module.exports = controller;

@@ -9,19 +9,6 @@ var express = require('express'),
     passport = require('passport'),
     nsStats = require('../modules/netsuite_logging');
 
-// // set up a botkit app to expose oauth and webhook endpoints
-// controller.setupWebserver((parseInt(process.env.PORT) + 1000),function(err,webserver) {
-//
-//     // set up web endpoints for oauth, receiving webhooks, etc.
-//     controller
-//         //.createHomepageEndpoint(controller.webserver)
-//         //.createOauthEndpoints(controller.webserver,function(err,req,res) {  })
-//         .createWebhookEndpoints(controller.webserver);
-//
-// });
-
-//controller.createWebhookEndpoints(router);
-
 controller.storage.teams.all(function(err,teams) {
     if (err) {
         throw new Error(err);
@@ -64,40 +51,177 @@ function getUser(id, bot) {
 //Handle Interactive Messages
 // receive an interactive message, and reply with a message that will replace the original
 controller.on('interactive_message_callback', function(bot, message) {
+    console.log('Button Response Message', message);
 
     // check message.actions and message.callback_id to see what action to take...
+    bot.startTyping(message);
 
-    bot.replyInteractive(message, {
-        text: '...',
-        attachments: [
-            {
-                title: 'My buttons',
-                callback_id: '123',
-                attachment_type: 'default',
-                actions: [
-                    {
-                        "name":"yes",
-                        "text": "Yes!",
-                        "value": "yes",
-                        "type": "button"
+    var postData = {};
+    // postData.message = message.text;
+    // postData.id = message.ts;
+    getUser(message.user, bot)
+        .then(function(response){
+            var realName = response.user.real_name.replace(/ /g,'').toLowerCase().trim();
+            postData.user = response.user.real_name;
+            postData.searchTerm = 'replyconfirmed';
+            console.log('User Real Name:', postData.user);
+
+            //Authentication
+            var teamId = bot.identifyTeam();
+            console.log('Team ID', teamId);
+            controller.storage.teams.get(teamId, function (err, team) {
+                if (err) console.log('Error storing team data', err);
+
+                //console.log('Team', team);
+                var remoteAccountID = team.netsuite.account_id;
+                console.log('NetSuite Account ID', remoteAccountID);
+                var users = team.users;
+                console.log('Users', users);
+
+                //Handle error if no users are found
+                if (users.length === 0) {
+                    bot.reply(message, 'Sorry, I can\'t connect to NetSuite if no users have been setup. Please visit the Slack setup page again in NetSuite and complete the user setup at the bottom of the page.',
+                        function (err) {
+                            if (err) console.log(err);
+                        }
+                    );
+                    return
+                }
+
+                //Loop through users and find the matching one
+                for (var i = 0, token = null; i < users.length; i++) {
+                    var user = users[i];
+                    var userName = user.name.replace(/ /g,'').toLowerCase().trim();
+                    console.log('Username : Real Name', userName + ' : ' + realName);
+                    if (userName == realName) {
+                        //user token
+                        token = {
+                            public: user.token,
+                            secret: user.secret
+                        };
+                        break;
+                    }
+                }
+
+                //If no user found use default
+                if (!token) {
+                    var defaultIndex = users.map(function(user){return user.is_default}).indexOf(true);
+                    token = {
+                        public: users[defaultIndex].token,
+                        secret: users[defaultIndex].secret
+                    };
+                }
+
+
+                //app credentials
+                var oauth = OAuth({
+                    consumer: {
+                        public: process.env.NETSUITE_KEY,
+                        secret: process.env.NETSUITE_SECRET
                     },
-                    {
-                        "text": "No!",
-                        "name": "no",
-                        "value": "delete",
-                        "style": "danger",
-                        "type": "button",
-                        "confirm": {
-                            "title": "Are you sure?",
-                            "text": "This will do something!",
-                            "ok_text": "Yes",
-                            "dismiss_text": "No"
+                    signature_method: 'HMAC-SHA1'
+                });
+
+                var request_data = {
+                    url: team.netsuite.slack_listener_uri,
+                    method: 'POST'
+                };
+
+                var headerWithRealm = oauth.toHeader(oauth.authorize(request_data, token));
+                headerWithRealm.Authorization += ', realm=' + remoteAccountID;
+                headerWithRealm['content-type'] = 'application/json';
+                console.log('Header Authorization: ' + JSON.stringify(headerWithRealm));
+
+                request({
+                    url: request_data.url,
+                    method: request_data.method,
+                    headers: headerWithRealm,
+                    json: postData
+                }, function(error, response, body) {
+                    if (error){
+                        console.log(error);
+                    } else {
+                        function sendMessage(i) {
+                            return new Promise(function(resolve) {
+                                console.log('i', i);
+                                if (body[i].needsCleaning === true) {
+                                    var dirtyMessage = body[i].message;
+                                    if (dirtyMessage) {
+                                        var cleanMessage = sanitizeHtml(dirtyMessage, {
+                                            allowedTags: [],
+                                            allowedAttributes: []
+                                        });
+                                        //console.log('Clean message: ' + cleanMessage);
+                                        var trimmedMessage = cleanMessage.trim();
+                                        var removeBlanks = /[\r\n]{2,}/g;
+                                        var noBlankLinesMessage = trimmedMessage.replace(removeBlanks, '\r\n');
+                                        //console.log('No Blanks: ' + noBlankLinesMessage);
+                                        body[i].message = noBlankLinesMessage;
+                                    }
+                                }
+                                var reply = body[i].attachments && body[i].attachments.length > 0 ? {attachments: body[i].attachments} : body[i].message;
+                                console.log('Reply: ' + JSON.stringify(reply));
+                                bot.replyInteractive(message, {
+                                    text: '...',
+                                    attachments: [
+                                        {
+                                            title: 'My buttons',
+                                            callback_id: '123',
+                                            attachment_type: 'default',
+                                            actions: [
+                                                {
+                                                    "name":"yes",
+                                                    "text": "Yes!",
+                                                    "value": "yes",
+                                                    "type": "button"
+                                                },
+                                                {
+                                                    "text": "No!",
+                                                    "name": "no",
+                                                    "value": "delete",
+                                                    "style": "danger",
+                                                    "type": "button",
+                                                    "confirm": {
+                                                        "title": "Are you sure?",
+                                                        "text": "This will do something!",
+                                                        "ok_text": "Yes",
+                                                        "dismiss_text": "No"
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                });
+                                resolve();
+                                if (i <= (body.length - 1)) {bot.startTyping(message)}
+                            })
+                        }
+
+
+                        //console.log('Body:', body);
+                        if (typeof body == 'string' && body.indexOf('error') === 2){
+                            console.log('Error :' + body);
+                        } else {
+                            // The loop initialization
+                            var len = body.length;
+                            Promise.resolve(0).then(function loop(i) {
+                                // The loop check
+                                if (i < len) { // The post iteration increment
+                                    return sendMessage(i).thenReturn(i + 1).then(loop);
+                                }
+                            }).then(function() {
+                                console.log("All messages sent");
+                            }).catch(function(e) {
+                                console.log("error", e);
+                            });
                         }
                     }
-                ]
-            }
-        ]
-    });
+                });
+            })
+                .catch(function(reason){
+                    console.log(reason);
+                })
+        });
 });
 
 var searchTerms = [
@@ -348,7 +472,6 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                     } else {
                         function sendMessage(i) {
                             return new Promise(function(resolve) {
-                                console.log('i', i);
                                 if (body[i].needsCleaning === true) {
                                     var dirtyMessage = body[i].message;
                                     if (dirtyMessage) {
