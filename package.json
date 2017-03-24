@@ -26,6 +26,7 @@
     "request": "2.x.x",
     "sanitize-html": "latest",
     "serve-favicon": "~2.3.0",
+    "universal-analytics": "^0.4.12",
     "url": "latest"
   },
   "devDependencies": {
