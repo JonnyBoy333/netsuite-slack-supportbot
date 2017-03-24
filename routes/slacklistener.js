@@ -48,6 +48,166 @@ function getUser(id, bot) {
     })
 }
 
+//Handle Interactive Messages
+// receive an interactive message, and reply with a message that will replace the original
+controller.on('interactive_message_callback', function(bot, message) {
+    console.log('Button Response Message', message);
+    console.log('Original Message Attachments', message.original_message.attachments);
+    console.log('Answer value', message.actions[0].value);
+
+    // check message.actions and message.callback_id to see what action to take...
+    //bot.startTyping(message);
+
+    if (message.actions[0].value === 'no') {
+        bot.replyInteractive(message, {
+            text: 'Ok, I will not send your message.'
+        });
+        return;
+    }
+
+    var postData = {};
+    var originalMessagerAttachment = message.original_message.attachments[0];
+    var caseNum = originalMessagerAttachment.title.substring(5, originalMessagerAttachment.title.indexOf(':'));
+    postData.message = 'replyconfirmed ' + caseNum + ' ' + originalMessagerAttachment.text;
+    console.log('Post Data', postData);
+    postData.searchTerm = 'replyconfirmed';
+    getUser(message.user, bot)
+        .then(function(response){
+            var realName = response.user.real_name.replace(/ /g,'').toLowerCase().trim();
+            postData.user = response.user.real_name;
+            console.log('User Real Name:', postData.user);
+
+            //Authentication
+            var teamId = bot.identifyTeam();
+            console.log('Team ID', teamId);
+            controller.storage.teams.get(teamId, function (err, team) {
+                if (err) console.log('Error storing team data', err);
+
+                //console.log('Team', team);
+                var remoteAccountID = team.netsuite.account_id;
+                console.log('NetSuite Account ID', remoteAccountID);
+                var users = team.users;
+                console.log('Users', users);
+
+                //Handle error if no users are found
+                if (users.length === 0) {
+                    bot.replyInteractive(message, 'Sorry, I can\'t connect to NetSuite if no users have been setup. Please visit the Slack setup page again in NetSuite and complete the user setup at the bottom of the page.',
+                        function (err) {
+                            if (err) console.log(err);
+                        }
+                    );
+                    return
+                }
+
+                //Loop through users and find the matching one
+                for (var i = 0, token = null; i < users.length; i++) {
+                    var user = users[i];
+                    var userName = user.name.replace(/ /g,'').toLowerCase().trim();
+                    console.log('Username : Real Name', userName + ' : ' + realName);
+                    if (userName == realName) {
+                        //user token
+                        token = {
+                            public: user.token,
+                            secret: user.secret
+                        };
+                        break;
+                    }
+                }
+
+                //If no user found use default
+                if (!token) {
+                    var defaultIndex = users.map(function(user){return user.is_default}).indexOf(true);
+                    token = {
+                        public: users[defaultIndex].token,
+                        secret: users[defaultIndex].secret
+                    };
+                }
+
+
+                //app credentials
+                var oauth = OAuth({
+                    consumer: {
+                        public: process.env.NETSUITE_KEY,
+                        secret: process.env.NETSUITE_SECRET
+                    },
+                    signature_method: 'HMAC-SHA1'
+                });
+
+                var request_data = {
+                    url: team.netsuite.slack_listener_uri,
+                    method: 'POST'
+                };
+
+                var headerWithRealm = oauth.toHeader(oauth.authorize(request_data, token));
+                headerWithRealm.Authorization += ', realm=' + remoteAccountID;
+                headerWithRealm['content-type'] = 'application/json';
+                console.log('Header Authorization: ' + JSON.stringify(headerWithRealm));
+
+                request({
+                    url: request_data.url,
+                    method: request_data.method,
+                    headers: headerWithRealm,
+                    json: postData
+                }, function(error, response, body) {
+                    if (error){
+                        console.log(error);
+                    } else {
+                        // function sendMessage(i) {
+                        //     return new Promise(function(resolve) {
+                        //         if (body[i].needsCleaning === true) {
+                        //             var dirtyMessage = body[i].message;
+                        //             if (dirtyMessage) {
+                        //                 var cleanMessage = sanitizeHtml(dirtyMessage, {
+                        //                     allowedTags: [],
+                        //                     allowedAttributes: []
+                        //                 });
+                        //                 //console.log('Clean message: ' + cleanMessage);
+                        //                 var trimmedMessage = cleanMessage.trim();
+                        //                 var removeBlanks = /[\r\n]{2,}/g;
+                        //                 var noBlankLinesMessage = trimmedMessage.replace(removeBlanks, '\r\n');
+                        //                 //console.log('No Blanks: ' + noBlankLinesMessage);
+                        //                 body[i].message = noBlankLinesMessage;
+                        //             }
+                        //         }
+                        //         var reply = body[i].attachments && body[i].attachments.length > 0 ? {attachments: body[i].attachments} : body[i].message;
+                        //         console.log('Reply: ' + JSON.stringify(reply));
+                        //         bot.replyInteractive(message, reply);
+                        //         resolve();
+                        //         if (i <= (body.length - 1)) {bot.startTyping(message)}
+                        //     })
+                        // }
+
+
+                        //console.log('Body:', body);
+                        if (typeof body == 'string' && body.indexOf('error') === 2){
+                            console.log('Error :' + body);
+                        } else {
+                            var reply = { attachments: body[0].attachments };
+                            console.log('Reply: ' + JSON.stringify(reply));
+                            bot.replyInteractive(message, reply);
+
+                            // // The loop initialization
+                            // var len = body.length;
+                            // Promise.resolve(0).then(function loop(i) {
+                            //     // The loop check
+                            //     if (i < len) { // The post iteration increment
+                            //         return sendMessage(i).thenReturn(i + 1).then(loop);
+                            //     }
+                            // }).then(function() {
+                            //     console.log("All messages sent");
+                            // }).catch(function(e) {
+                            //     console.log("error", e);
+                            // });
+                        }
+                    }
+                });
+            })
+                .catch(function(reason){
+                    console.log(reason);
+                })
+        });
+});
+
 var searchTerms = [
     'open cases',
     'unassigned cases',
@@ -69,7 +229,8 @@ var searchTerms = [
     'all messages',
     'all attachments',
     'hello',
-    'about'
+    'about',
+    'interactive'
 ].join('|');
 
 var searchReg = new RegExp(searchTerms, 'gi');
@@ -128,6 +289,39 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
     console.log('team', bot.identifyTeam());
 
     var foundTerm = message.match[0].toLowerCase();
+
+    //Testing interactions
+    if (foundTerm === 'interactive') {
+        bot.reply(message, {
+            attachments:[
+                {
+                    title: 'Do you want to interact with my buttons?',
+                    callback_id: '123',
+                    attachment_type: 'default',
+                    actions: [
+                        {
+                            "name":"yes",
+                            "text": "Yes",
+                            "style": "primary",
+                            "value": "yes",
+                            "type": "button"
+                        },
+                        {
+                            "name":"no",
+                            "text": "No",
+                            "style": "danger",
+                            "value": "no",
+                            "type": "button"
+                        }
+                    ]
+                }
+            ]
+        });
+        console.log('Message', message);
+        return;
+    }
+
+
     //Responses to send to NetSuite
     if (foundTerm === "hello" || foundTerm === "it going" || foundTerm === "would you like to" || foundTerm === "help" || foundTerm === 'about') {
         bot.startTyping(message);
@@ -178,6 +372,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
         var postData = {};
         postData.searchTerm = foundTerm;
         postData.message = message.text;
+        postData.id = message.ts;
         getUser(message.user, bot)
         .then(function(response){
             var realName = response.user.real_name.replace(/ /g,'').toLowerCase().trim();
@@ -209,8 +404,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                 //Loop through users and find the matching one
                 for (var i = 0, token = null; i < users.length; i++) {
                     var user = users[i];
-                    //var userName = user.name.replace(/ /g,'').toLowerCase().trim();
-                    var userName = user.name;
+                    var userName = user.name.replace(/ /g,'').toLowerCase().trim();
                     console.log('Username : Real Name', userName + ' : ' + realName);
                     if (userName == realName) {
                         //user token
@@ -262,7 +456,6 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                     } else {
                         function sendMessage(i) {
                             return new Promise(function(resolve) {
-                                console.log('i', i);
                                 if (body[i].needsCleaning === true) {
                                     var dirtyMessage = body[i].message;
                                     if (dirtyMessage) {
@@ -322,9 +515,8 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
 function getUserIdList (name, bot, defaultChannel){
     name = name.replace(/ /g,'').toLowerCase().trim();
     return new Promise(function(resolve, reject){
-        var userId;
+        var userId = defaultChannel;
         if (!name) {
-            userId = defaultChannel;
             //userId = '#testing';
             resolve(userId);
         } else {

@@ -9,6 +9,7 @@ var mongooseDB = mongoose.connection;
 var passport = require('passport');
 var tokenSchema = require('./models/schemas').tokens;
 var BearerStrategy = require('passport-http-bearer').Strategy;
+var controller = require('./modules/bot_controller');
 
 if (!process.env.SLACK_KEY || !process.env.SLACK_SECRET || !process.env.NETSUITE_KEY || !process.env.NETSUITE_SECRET) {
     console.log('Error: Specify clientId and clientSecret in environment');
@@ -57,7 +58,7 @@ passport.use(new BearerStrategy({}, function(token, done) {
     })
 }));
 
-var slack = require('./routes/slack');
+var slack = require('./routes/slacklistener');
 var heroku_keep_alive = require('./routes/heroku_keep_alive');
 var index = require('./routes/index');
 var privacypolicy = require('./routes/privacypolicy');
@@ -65,6 +66,7 @@ var contact = require('./routes/contact');
 var apiRouter = require('./api');
 
 var app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -78,11 +80,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/slack', slack);
+app.use('/slacklistener', slack);
 app.use('/api', apiRouter);
 app.use('/', index);
 app.use('/privacypolicy', privacypolicy);
 app.use('/contact', contact);
+
+//Create slackbot button endpoints server
+controller.createWebhookEndpoints(app, process.env.VERIFICATION_TOKEN);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
