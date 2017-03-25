@@ -463,11 +463,11 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                             allowedTags: [],
                                             allowedAttributes: []
                                         });
-                                        //console.log('Clean message: ' + cleanMessage);
+                                        console.log('Clean message: ' + cleanMessage);
                                         var trimmedMessage = cleanMessage.trim();
                                         var removeBlanks = /[\r\n]{2,}/g;
                                         var noBlankLinesMessage = trimmedMessage.replace(removeBlanks, '\r\n');
-                                        //console.log('No Blanks: ' + noBlankLinesMessage);
+                                        console.log('No Blanks: ' + noBlankLinesMessage);
                                         body[i].message = noBlankLinesMessage;
                                     }
                                 }
