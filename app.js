@@ -78,7 +78,6 @@ app.set('view engine', 'ejs');
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 var analyticsId = process.env.NODE_ENV === 'Production' ? process.env.ANALYTICS_ID : process.env.ANALYTICS_ID_DEV;
-app.use(ua.middleware(analyticsId));
 app.use(logger('dev'));
 app.use(bodyParser.json({limit: '5mb'}));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -93,6 +92,7 @@ app.use('/', index);
 // visitor.pageview('/privacypolicy', 'http://netsuitesupportbot.com/', 'Privacy Policy').send();
 app.use('/privacypolicy', privacypolicy);
 app.use('/contact', contact);
+app.use(ua.middleware(analyticsId, { cookieName: '_ga' }));
 
 //Create slackbot button endpoints server
 controller.createWebhookEndpoints(app, process.env.VERIFICATION_TOKEN);
