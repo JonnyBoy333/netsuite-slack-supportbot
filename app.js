@@ -77,7 +77,8 @@ app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(ua.middleware('UA-3542953-4'));
+var analyticsId = process.env.NODE_ENV === 'Production' ? process.env.ANALYTICS_ID : process.env.ANALYTICS_ID_DEV;
+app.use(ua.middleware(analyticsId));
 app.use(logger('dev'));
 app.use(bodyParser.json({limit: '5mb'}));
 app.use(bodyParser.urlencoded({ extended: false }));
