@@ -11,7 +11,8 @@ var tokenSchema = require('./models/schemas').tokens;
 var BearerStrategy = require('passport-http-bearer').Strategy;
 var controller = require('./modules/bot_controller');
 var ua = require('universal-analytics');
-var visitor = ua('UA-3542953-4');
+//var ga = require('./modules/ga');
+//var visitor = ua('UA-3542953-4');
 
 if (!process.env.SLACK_KEY || !process.env.SLACK_SECRET || !process.env.NETSUITE_KEY || !process.env.NETSUITE_SECRET) {
     console.log('Error: Specify clientId and clientSecret in environment');
@@ -76,6 +77,7 @@ app.set('view engine', 'ejs');
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(ua.middleware('UA-3542953-4'));
 app.use(logger('dev'));
 app.use(bodyParser.json({limit: '5mb'}));
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -85,9 +87,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/slacklistener', slack);
 app.use('/api', apiRouter);
 app.use('/', index);
-visitor.pageview('/', 'http://netsuitesupportbot.com/', 'Welcome').send();
-visitor.pageview('/contact', 'http://netsuitesupportbot.com/', 'Contact Us').send();
-visitor.pageview('/privacypolicy', 'http://netsuitesupportbot.com/', 'Privacy Policy').send();
+// visitor.pageview('/', 'http://netsuitesupportbot.com/', 'Welcome').send();
+// visitor.pageview('/contact', 'http://netsuitesupportbot.com/', 'Contact Us').send();
+// visitor.pageview('/privacypolicy', 'http://netsuitesupportbot.com/', 'Privacy Policy').send();
 app.use('/privacypolicy', privacypolicy);
 app.use('/contact', contact);
 
