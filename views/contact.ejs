@@ -1,4 +1,5 @@
 <%- include('header') -%>
+
 <style>
     .red{
         color:red;
@@ -14,7 +15,7 @@
 <div class="row">
     <div class="col-lg-12">
         <div class="jumbotron">
-            <form role="form">
+            <form role="form" action="/contact" method="post" id="contactform" name="contactform">
                 <br style="clear:both">
                 <h3 style="margin-bottom: 25px; text-align: center;">Contact Form</h3>
                 <div class="form-group">
@@ -22,16 +23,26 @@
                 </div>
                 <div class="form-group">
                     <input type="text" class="form-control" id="email" name="email" placeholder="Email" required>
+                    <div class="alert alert-danger fade in" id="invalidemail" style="display: none;">
+                        <strong>Error!</strong> Your email address is invalid.
+                    </div>
                 </div>
                 <div class="form-group">
                     <input type="text" class="form-control" id="subject" name="subject" placeholder="Subject" required>
                 </div>
                 <div class="form-group">
-                    <textarea class="form-control" type="textarea" id="message" placeholder="Message" maxlength="140" rows="7"></textarea>
-                    <span class="help-block"><p id="characterLeft" class="help-block ">You have reached the limit</p></span>
+                    <textarea class="form-control" type="textarea" id="message" placeholder="Message" maxlength="140" rows="7" name="message"></textarea>
+                    <span class="help-block">
+                        <div class="alert alert-success fade in" style="display: <%= displaysuccess %>;">
+                            <strong>Success!</strong> Your message has been sent successfully.
+                        </div>
+                        <div class="alert alert-danger fade in" style="display: <%= displayfailure %>;">
+                            <strong>Failure!</strong> There was an error sending your message. Please send an email to erpsupport@bergankdv.com.
+                        </div>
+                        <p id="characterLeft" class="help-block ">You have reached the limit</p>
+                    </span>
                 </div>
-
-                <button type="button" id="submit" name="submit" class="btn btn-lg btn-primary" role="button">Submit Form</button>
+                <button type="submit" id="submit" name="submit" class="btn btn-lg btn-primary" role="button" value="accept">Submit Form</button>
             </form>
         </div>
     </div>
@@ -64,10 +75,11 @@
         jQuery('#email').focusout(function () {
             var email = jQuery('#email').val();
             if (!isEmail(email)) {
-                jQuery('#email').addClass('red');
-                alert('Invalid Email');
+                jQuery('#invalidemail').show();
+                jQuery('#submit').addClass('disabled');
             } else {
-                jQuery('#email').removeClass('red');
+                jQuery('#invalidemail').hide();
+                jQuery('#submit').removeClass('disabled');
             }
         })
 

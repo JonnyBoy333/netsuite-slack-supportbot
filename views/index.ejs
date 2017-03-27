@@ -1,43 +1,9 @@
 <%- include('header') -%>
-<style>
-  .logo {
-    padding: 15px 25px;
-  }
-  .gap-right {
-    margin-right: 10px;
-  }
-  .gap-left {
-    margin-left: 10px;
-  }
-  .vcenter {
-    vertical-align: middle;
-  }
-  ul li {
-    list-style-type:disc !important;
-    -webkit-column-break-inside:avoid;
-    -moz-column-break-inside:avoid;
-    -o-column-break-inside:avoid;
-    -ms-column-break-inside:avoid;
-    column-break-inside:avoid;
-  }
-  ul    {
-    list-style-type:disc !important;
-    margin-top: 1em;
-    -webkit-column-count: 2;
-    -webkit-column-gap:0.5em;
-    -moz-column-count:2;
-    -moz-column-gap:0.5em;
-    -o-column-count:2;
-    -o-column-gap:0.5em;
-    column-count:2;
-    column-gap:0.5em;
-    list-style-position: inside;
-  }
-</style>
+
 <div class="jumbotron">
   <img class="logo" width="20%" src="../images/demo_imgs/slack_logo.png"><img style="padding: 10px 15px" width="10%" src="../images/demo_imgs/plus.png"><img class="logo" width="20%" src="../images/demo_imgs/netsuite_logo.png"><br>
   <!--<img class="logo" width="10%" src="../images/demo_imgs/equals.png"><br>-->
-  <img class="logo" width="50%" src="../images/demo_imgs/slack_support_icon_no_ns.png">
+  <img class="logo" width="50%" src="../images/demo_imgs/slack_support_icon.png">
   <h1 style="font-size:50px">Support Cases In Slack!</h1>
   <p class="lead">Interact with NetSuite support cases from within Slack. Manage communication with your team and your cases in one place! Click the button below to install or search for 'Slack Support Bot' in the bundle search in NetSuite.</p>
   <p><a class="btn btn-lg btn-success" style="padding: 14px 36px" href="https://system.netsuite.com/app/bundler/bundledetails.nl?sourcecompanyid=662377&domain=PRODUCTION&config=F&id=165111" role="button">Install</a></p>
@@ -45,24 +11,37 @@
 
 <div class="row marketing">
   <div class="col-lg-12">
-    <iframe width="100%" height="376.875px" src="https://www.youtube.com/embed/rS00xWnqwvI" frameborder="0" allowfullscreen></iframe>
+    <iframe width="100%" height="376.875px" src="https://www.youtube.com/embed/Cm2uUi5oEqg" frameborder="0" allowfullscreen></iframe>
+    <div class="divider"></div>
     <h4>New Cases and Case Replies In Slack</h4>
     <p>New cases get automatically posted in Slack to the channel of your choice. Case replies get sent directly to the user assigned to them in Slack. No need to worry about filling your email inbox with case emails.</p>
-    <a href="../images/demo_imgs/new_case.png" data-lightbox="new_case" data-title="New Case Posting"><img src="../images/demo_imgs/new_case.png" width="100%"></a>
-    <div class="clearfix">
+    <a href="../images/demo_imgs/new_case2.png" data-lightbox="new_case" data-title="New Case Posting">
+      <img id="newcase" src="../images/demo_imgs/new_case2.png" width="100%">
+    </a>
+    <div class="divider"></div>
+    <div class="clearfix feature">
+      <img class="pull-left gap-right img-rounded" src="../images/demo_imgs/send_messages.jpg" width="70%">
+      <span class="vcenter">
+        <p>Send replies to cases straight from Slack. Simply specify the case number and the message you wish to send. You will see a preview of your message before it gets sent so there's always time to make any last minute adjustmemnts.</p>
+      </span>
+    </div>
+    <div class="divider"></div>
+    <div class="clearfix feature">
       <img class="pull-right gap-left img-rounded" src="../images/demo_imgs/grab_cases.jpg" width="70%">
       <span class="vcenter">
-        Use the "grab" and "assign" keywords to assign multiple cases to yourself or another support representative with ease.
+        <p>With Support Bot you can assign multiple cases to yourself or any other support rep in NetSuite by simply typing the <i>grab</i> or <i>assign</i> keywords followed by the cases and who you wish to assign them to.</p>
       </span>
     </div>
-    <div class="clearfix">
+    <div class="divider"></div>
+    <div class="clearfix feature">
       <img class="pull-left gap-right img-rounded" src="../images/demo_imgs/open_cases.jpg" width="70%">
       <span class="vcenter">
-        Use the "grab" and "assign" keywords to assign multiple cases to yourself or another support representative with ease.
+        <p>Manage all your cases with Support Bot. You can see a list of all open or unassigned cases in your NetSuite account as well as all the open cases that you are assigned to. Need more info? Just click the case link and NetSuite will open to that case in your browser.</p>
       </span>
     </div>
-    <h5>Complete List of Features</h5>
-    <ul>
+    <div class="divider"></div>
+    <h4>Complete List of Features</h4>
+    <ul class="features">
       <li>New Cases post to designated support channel</li>
       <li>Case Replies are sent to assigned support rep</li>
       <li>See all open cases</li>
@@ -71,12 +50,12 @@
       <li>Assign a case to yourself or others</li>
       <li>See the last message for a cases</li>
       <li>See all messages for a case</li>
-      <li>See all messages for a case</li>
       <li>See all attachments for a case</li>
       <li>Escalate a case to an employee by name</li>
       <li>Increase/decrease priority of the case</li>
       <li>Reply to a case</li>
       <li>Close a case</li>
+      <li>Only one license to NetSuite required</li>
     </ul>
 
   </div>
