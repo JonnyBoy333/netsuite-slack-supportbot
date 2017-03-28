@@ -1,9 +1,98 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    /*color: #777777;*/
+    font-family: Slack-Lato, sans-serif !important;
+    /*font-weight: 300;*/
 }
 
-a {
-  color: #00B7FF;
+h4 {
+    /*color: #777777;*/
+    font-family: Slack-Lato, sans-serif !important;
+    /*font-weight: 300;*/
 }
 
+#newcase {
+    margin-top: 20px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #DEDEDE;
+    border-radius: 4px;
+}
+
+/*a {*/
+  /*color: #00B7FF;*/
+/*}*/
+.logo {
+  padding: 15px 25px;
+}
+.gap-right {
+  margin-right: 25px;
+}
+.gap-left {
+  margin-left: 25px;
+}
+
+p {
+    color: #777777;
+    font-family: Slack-Lato, sans-serif;
+    font-weight: 300;
+    /*font-size: 15px;*/
+}
+
+.divider {
+    position: relative;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 50px;
+    margin-top: 50px;
+}
+
+.vcenter {
+    /*display: inline-block;*/
+    /*vertical-align: middle;*/
+    /*line-height: normal;*/
+    padding-top: 20px;
+}
+
+.feature {
+    margin: 40px 0;
+    /*line-height: 470px;*/
+}
+
+.features li {
+    text-indent: 15px;
+    position:relative;
+}
+ul.features {
+  /*list-style-type:disc !important;*/
+    list-style-type:none; /* removes default bullet */
+    padding-left: 20px;
+    -webkit-column-break-inside:avoid;
+    -moz-column-break-inside:avoid;
+    -o-column-break-inside:avoid;
+    -ms-column-break-inside:avoid;
+    column-break-inside:avoid;
+  margin-top: 1em;
+  -webkit-column-count: 2;
+  /*-webkit-column-gap:-0.5em;*/
+  -moz-column-count:2;
+  /*-moz-column-gap:-0.5em;*/
+  -o-column-count:2;
+  /*-o-column-gap:-0.5em;*/
+  column-count:2;
+ /* column-gap:-0.5em;*/
+  /*list-style-position: inside;*/
+    /*columns: 2;*/
+    /*-webkit-columns: 2;*/
+    /*-moz-columns: 2;*/
+    color: #777777;
+    font-family: Slack-Lato, sans-serif;
+    font-weight: 300;
+}
+
+.features li:before {
+    content:"\2219";    /* escaped unicode character */
+    font-size:2.5em;    /* the default unicode bullet size is very small */
+    line-height:0;        /* kills huge line height on resized bullet */
+    position:absolute;  /* position bullet relative to list item */
+    top:11px;           /* vertical align bullet position relative to list item */
+    left: -.5em;            /* position the bullet L- R relative to list item */
+}

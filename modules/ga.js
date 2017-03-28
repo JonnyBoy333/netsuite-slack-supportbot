@@ -6,7 +6,7 @@ var ga = {
             var udata = {
                 dp: req.path,
                 dt: title,
-                dh: 'https://mysite.com',
+                dh: 'http://netsuitesupportbot.com/',
                 uip: req.ip,
                 ua: req.headers['user-agent']
             };
