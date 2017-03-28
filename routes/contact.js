@@ -1,9 +1,12 @@
 var express = require('express');
 var router = express.Router();
 var nodemailer = require('nodemailer');
+var ga = require('../modules/ga');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/',
+    ga.pageview('Contact Form'),
+    function(req, res, next) {
     res.render('contact', {
         title: 'Contact Us',
         displaysuccess: 'none',
@@ -11,7 +14,9 @@ router.get('/', function(req, res, next) {
     });
 });
 
-router.post('/', function (req, res, next) {
+router.post('/',
+    ga.pageview('Contact Form Post'),
+    function (req, res, next) {
     console.log('Request', req.body);
 
     var transporter = nodemailer.createTransport({

@@ -1,8 +1,11 @@
 var express = require('express');
 var router = express.Router();
+var ga = require('../modules/ga');
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
+router.get('/',
+    ga.pageview('Home Page'),
+    function(req, res, next) {
     res.render('index', { title: 'NetSuite Support Slack Bot' });
     //res.send('Support Bot is up and running!');
 });
