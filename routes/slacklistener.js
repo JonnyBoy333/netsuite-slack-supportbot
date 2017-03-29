@@ -10,7 +10,9 @@ var express = require('express'),
     nsStats = require('../modules/netsuite_logging');
 
 controller.storage.teams.all(function(err,teams) {
+    console.log('Start bot connecting');
     if (err) {
+        console.log('Error connecting to bot', err)
         throw new Error(err);
     }
 
@@ -458,8 +460,10 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                             return new Promise(function(resolve) {
                                 if (body[i].needsCleaning === true) {
                                     var dirtyMessage = body[i].message;
-                                    if (dirtyMessage) {
-                                        var cleanMessage = sanitizeHtml(dirtyMessage, {
+                                    var intro = dirtyMessage.substr(0, dirtyMessage.indexOf('sent the following message:') + 27);
+                                    var html = dirtyMessage.substr(dirtyMessage.indexOf('sent the following message:') + 27);
+                                    if (html) {
+                                        var cleanMessage = sanitizeHtml(html, {
                                             allowedTags: [],
                                             allowedAttributes: []
                                         });
@@ -468,7 +472,11 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                         var removeBlanks = /[\r\n]{2,}/g;
                                         var noBlankLinesMessage = trimmedMessage.replace(removeBlanks, '\r\n');
                                         console.log('No Blanks: ' + noBlankLinesMessage);
-                                        body[i].message = noBlankLinesMessage;
+                                        if (noBlankLinesMessage.length + intro.length > 3990) {
+                                            body[i].message = intro + '```' + noBlankLinesMessage + ' (more)...```';
+                                        } else {
+                                            body[i].message = intro + '```' + noBlankLinesMessage + '```';
+                                        }
                                     }
                                 }
                                 var reply = body[i].attachments && body[i].attachments.length > 0 ? {attachments: body[i].attachments} : body[i].message;

@@ -9,9 +9,9 @@ var mongoose = require('mongoose');
  */
 module.exports = function(config) {
 
-    if (!config || !config.mongoUri) {
-        throw new Error('Need to provide mongo address.');
-    }
+    // if (!config || !config.mongoUri) {
+    //     throw new Error('Need to provide mongo address.');
+    // }
 
     var storage = {};
     var zones = ['teams', 'channels', 'users'];
