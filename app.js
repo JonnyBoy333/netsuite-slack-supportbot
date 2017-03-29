@@ -24,11 +24,8 @@ if (!process.env.SLACK_KEY || !process.env.SLACK_SECRET || !process.env.NETSUITE
 mongoose.Promise = global.Promise;
 var mongodbUri = process.env.NODE_ENV === 'Production' ? process.env.MONGODB_URI : process.env.MONGODB_URI_DEV;
 var options = {
-    server: {
-        socketOptions: { keepAlive: 300000, connectTimeoutMS: 30000 },
-        server: { auto_reconnect:true }
-    },
-    replset: { socketOptions: { keepAlive: 300000, connectTimeoutMS : 30000 } }
+    server: { socketOptions: { keepAlive: 1, connectTimeoutMS: 30000 } },
+    replset: { socketOptions: { keepAlive: 1, connectTimeoutMS: 30000 } }
 };
 mongooseDB.on('connecting', function() {
     console.log('connecting to MongoDB...');
