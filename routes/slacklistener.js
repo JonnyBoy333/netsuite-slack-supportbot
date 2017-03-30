@@ -51,6 +51,7 @@ function getUser(id, bot) {
 //Handle Interactive Messages
 // receive an interactive message, and reply with a message that will replace the original
 controller.on('interactive_message_callback', function(bot, message) {
+    console.log('Interactive Bot', bot);
     console.log('Button Response Message', message);
     console.log('Original Message Attachments', message.original_message.attachments);
     console.log('Answer value', message.actions[0].value);
@@ -280,7 +281,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
 
     //console.log('bots', _bots);
     //console.log('Controller Object', controller);
-    //console.log('Bot Object', bot);
+    console.log('Listener Bot', bot);
 
     bot.startTyping(message);
     console.log('Match', message.match[0]);
