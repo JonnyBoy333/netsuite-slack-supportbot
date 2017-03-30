@@ -50,9 +50,15 @@ function getUser(id, bot) {
     })
 }
 
+//Handle file uploads
+controller.on('file_shared', function(bot, message) {
+    console.log('File Message', message);
+});
+
 //Handle Interactive Messages
 // receive an interactive message, and reply with a message that will replace the original
 controller.on('interactive_message_callback', function(bot, message) {
+    console.log('Bot', bot);
     console.log('Button Response Message', message);
     console.log('Original Message Attachments', message.original_message.attachments);
     console.log('Answer value', message.actions[0].value);
