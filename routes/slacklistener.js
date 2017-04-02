@@ -64,7 +64,7 @@ controller.on('file_shared', function(bot, message) {
 // receive an interactive message, and reply with a message that will replace the original
 controller.on('interactive_message_callback', function(bot, message) {
     trackBot(bot, 'interactive');
-    console.log('Interactive Bot', bot);
+    //console.log('Interactive Bot', bot);
     console.log('Button Response Message', message);
     console.log('Original Message Attachments', message.original_message.attachments);
     console.log('Answer value', message.actions[0].value);
@@ -294,7 +294,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
 
     //console.log('bots', _bots);
     //console.log('Controller Object', controller);
-    console.log('Listening Bot', bot);
+    //console.log('Listening Bot', bot);
     bot.startTyping(message);
     console.log('Match', message.match[0]);
     console.log('User', message.user);
@@ -471,6 +471,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                             return new Promise(function(resolve) {
                                 if (body[i].needsCleaning === true) {
                                     var dirtyMessage = body[i].message;
+                                    console.log('Dirty Message', dirtyMessage);
                                     var intro = dirtyMessage.substr(0, dirtyMessage.indexOf('sent the following message:') + 27);
                                     var html = dirtyMessage.substr(dirtyMessage.indexOf('sent the following message:') + 27);
                                     if (html) {
@@ -486,7 +487,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                         console.log('No Blanks: ' + noBlankLinesMessage);
                                         console.log('No Blanks and Intro Length', intro.length + 3 + noBlankLinesMessage.substr(0, 3990 - intro.length).length + 13);
                                         if (noBlankLinesMessage.length + intro.length > 3980) {
-                                            body[i].message = intro + '```' + noBlankLinesMessage.substr(0, 3990 - intro.length) + ' (more)...```';
+                                            body[i].message = intro + '```' + noBlankLinesMessage.substr(0, 3983 - intro.length) + ' (more)...```';
                                         } else {
                                             body[i].message = intro + '```' + noBlankLinesMessage + '```';
                                         }
@@ -507,6 +508,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                         if (typeof body == 'string' && body.indexOf('error') === 2){
                             console.log('Error :' + body);
                         } else {
+                            console.log('Full Body', body);
                             // The loop initialization
                             var len = body.length;
                             Promise.resolve(0).then(function loop(i) {
