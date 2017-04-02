@@ -6,11 +6,14 @@ var express = require('express'),
     controller = require('../modules/bot_controller'),
     trackBot = require('../modules/track_bot').trackBot,
     _bots = require('../modules/track_bot').bots,
+    _interactive_bots = require('../modules/track_bot').interacticeBots,
     passport = require('passport'),
     nsStats = require('../modules/netsuite_logging');
 
 controller.storage.teams.all(function(err,teams) {
+    console.log('Start bot connecting');
     if (err) {
+        console.log('Error connecting to bot', err)
         throw new Error(err);
     }
 
@@ -23,7 +26,7 @@ controller.storage.teams.all(function(err,teams) {
                     //TODO remove team as they likely removed your app
                 } else {
                     console.log('Bot connected:', bot.team_info.name);
-                    trackBot(bot);
+                    trackBot(bot, 'main');
                 }
             });
         }
@@ -48,9 +51,19 @@ function getUser(id, bot) {
     })
 }
 
+//Handle file uploads
+controller.on('file_shared', function(bot, message) {
+    console.log('File Message', message);
+    var teamId = bot.team_info.id,
+        interactiveBot = _interactive_bots[teamId];
+    var reply = {};
+    interactiveBot.replyInteractive(message, reply);
+});
+
 //Handle Interactive Messages
 // receive an interactive message, and reply with a message that will replace the original
 controller.on('interactive_message_callback', function(bot, message) {
+    trackBot(bot, 'interactive');
     console.log('Interactive Bot', bot);
     console.log('Button Response Message', message);
     console.log('Original Message Attachments', message.original_message.attachments);
@@ -281,7 +294,11 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
 
     //console.log('bots', _bots);
     //console.log('Controller Object', controller);
+<<<<<<< HEAD
+    console.log('Listening Bot', bot);
+=======
     console.log('Listener Bot', bot);
+>>>>>>> master
 
     bot.startTyping(message);
     console.log('Match', message.match[0]);
@@ -459,8 +476,10 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                             return new Promise(function(resolve) {
                                 if (body[i].needsCleaning === true) {
                                     var dirtyMessage = body[i].message;
-                                    if (dirtyMessage) {
-                                        var cleanMessage = sanitizeHtml(dirtyMessage, {
+                                    var intro = dirtyMessage.substr(0, dirtyMessage.indexOf('sent the following message:') + 27);
+                                    var html = dirtyMessage.substr(dirtyMessage.indexOf('sent the following message:') + 27);
+                                    if (html) {
+                                        var cleanMessage = sanitizeHtml(html, {
                                             allowedTags: [],
                                             allowedAttributes: []
                                         });
@@ -469,7 +488,11 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                         var removeBlanks = /[\r\n]{2,}/g;
                                         var noBlankLinesMessage = trimmedMessage.replace(removeBlanks, '\r\n');
                                         console.log('No Blanks: ' + noBlankLinesMessage);
-                                        body[i].message = noBlankLinesMessage;
+                                        if (noBlankLinesMessage.length + intro.length > 3990) {
+                                            body[i].message = intro + '```' + noBlankLinesMessage + ' (more)...```';
+                                        } else {
+                                            body[i].message = intro + '```' + noBlankLinesMessage + '```';
+                                        }
                                     }
                                 }
                                 var reply = body[i].attachments && body[i].attachments.length > 0 ? {attachments: body[i].attachments} : body[i].message;

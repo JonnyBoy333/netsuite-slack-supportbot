@@ -1,0 +1,130 @@
+<%- include('header') -%>
+
+<!--<link type="text/css" rel="stylesheet" href="../stylesheets/jquery.tocify.css">-->
+
+<div class="row">
+    <div class="col-lg-12">
+        <!--<div id="toc" class="col-lg-12">-->
+            <!--<a href="#top">About</a>-->
+            <!--<a href="#top">Services</a>-->
+            <!--<a href="#top">Clients</a>-->
+            <!--<a href="#top">Contact</a>-->
+        <!--</div>-->
+        <h4>Table of Contents</h4>
+        <ul class="toc">
+            <li><a class="instructions" href="#bundleinstall">Bundle Install</a></li>
+            <li><a class="instructions" href="#appinstall">Slack App Install</a></li>
+            <li><a class="instructions" href="#usage">Usage Instructions</a></li>
+            <li><a class="instructions" href="#updating">Updating</a></li>
+            <li><a class="instructions" href="#uninstalling">Uninstalling</a></li>
+        </ul>
+
+        <div>
+            <h4 id="bundleinstall">Bundle Installation</h4>
+            <ol class="instructions">
+                <li>Log into your NetSuite account</li>
+                <li>Find the bundle by navigating to Customization>SuiteBundler>Search & Install Bundles</li>
+                <li>Search for ‘NS Support Bot for Slack’ in the search field</li>
+                <li>Click on the ‘Slack Support Bot’ name</li>
+                <li>Click ‘Install’</li>
+                <li>Once the installation has completed navigate to Setup>Slack Setup>Slack Setup and follow the instructions to connect your Slack account to NetSuite Support Bot</li>
+                <li>Invite NetSuite Support Bot to the channel you chose as your default channel in the previous step (to invite go to the channel and type ‘/invite #support’)</li>
+            </ol>
+            <a class="top" href="#">> top</a>
+        </div>
+        <div>
+            <h4 id="appinstall">Slack App Installation</h4>
+            <ol class="instructions">
+                <li>Navigate to Setup>Slack Setup>Slack Setup</li>
+                <li>Click the ‘Add to Slack’ button to add NetSuite Support Bot to your slack account</li>
+                <li>Choose the account to add NetSuite Support Bot</li>
+                <li>Click ‘Authorize’ to add the bot</li>
+                <li>
+                    <p>Then add user tokens for each employee that will be accessing NetSuite via Slack. Note, you required to have at least one user here that is marked default, all actions taken by NetSuite support bot will appear to come from this user in NetSuite.</p>
+                    <ol>
+                        <li>Add the Slack Token Access Role to your user roles by searching your name in the global search bar at the top of the page, clicking ‘edit’ and then adding the ‘Slack Token Access Role’ under the ‘Access’ subtab. Click ‘Save’ once it is added.</li>
+                        <img class="img-rounded instructions" src="../images/instructions/1-assign-token-role.jpg" width="100%">
+                        <li>Now change to that role to manage your tokens by hovering over your name in the top right and clicking on the new role. If the role doesn’t appear at first you made need to log out and log back in for it to appear.</li>
+                        <img class="img-rounded instructions" src="../images/instructions/2-switch-to-role.jpg" width="100%">
+                        <li>Once logged into the Slack Token Access Role find the ‘Settings’ portlet on the home dashboard on the left hand side. Click the ‘Manage Access Tokens’ link.</li>
+                        <img class="img-rounded instructions" src="../images/instructions/3-manage-tokens.jpg" width="100%">
+                        <li>On the My Access Tokens page click the ‘New My Access Token’ button.</li>
+                        <img class="img-rounded instructions" src="../images/instructions/4-new-access-token.jpg" width="100%">
+                        <li>On the Access Token page select ‘Slack Support Bot’ from the drop down and click ‘Save.’</li>
+                        <img class="img-rounded instructions" src="../images/instructions/5-select-application.jpg" width="100%">
+                        <li>Once saved you will see the generated Token ID and Token Secret. Copy these values into a text document. Log back into the administrator role by hovering over your name in the upper right corner and selecting the Administrator role. Navigate back to the Slack setup page at Setup>Slack Setup>Slack Setup. Under the ‘Add Employee Tokens’ sub list select your name as the employee and paste in the Token ID and Token Secret click ‘Add.’</li>
+                        <img class="img-rounded instructions" src="../images/instructions/6-record-token-secret.jpg" width="100%">
+                        <li>Before you click ‘Submit’ make sure to select a default channel to send new cases to underneath the ‘Add To Slack’ button. Then click the ‘Submit’ button to commit the changes.
+                        </li>
+                    </ol>
+                </li>
+            </ol>
+            <a class="top" href="#">> top</a>
+        <h4 id="usage">Usage Instructions</h4>
+        </div>
+
+        <div>
+            <p>You can message NetSuite Support Bot directly in a DM in slack or from within a channel that Support Bot has been invited into. When sending a message to Support Bot from within a channel you must direct the message to Support Bot by including @support before your message.<br /><br />
+                To get started message ‘help’ to Support Bot for a list of supported commands. In most cases you will specify the command, followed by a case number and in some cases an additional parameter. Separate each of these elements by a single space. When specifying a name to assign or escalate a case to you must specify the first and last name of the person (a space between the two is optional). Please note that the first and last name must match the first and last name of an employee in NetSuite who is marked as a support rep.<br /><br />
+                Many commands require you to specify a case # to interact with that specific case. It is often easiest to use one of the first three commands to list out cases before choosing one to interact with. When you list cases you will see the case number, subject, abbreviation for the support rep assigned to the case, the company that the case is associated with and a color that corresponds to the priority. When you list your own cases you will see the abbreviation for the case status instead of who it is assigned to. Some commands support interacting with multiple cases at once. These include the ‘grab,’ ‘escalate,’ ‘assign,’ ‘close,’ ‘increase priority,’ and the ‘decrease priority’ commands. Simply separate each case number with a space (i.e. close 123 456 789).<br /><br />
+                NetSuite Support Bot was built to support our internal team but I thought it would be a good tool for others to use. NetSuite Support Bot is currently in Beta and is free to use. I hope you enjoy using it as much as we do.
+            </p>
+            <a class="top" href="#">> top</a>
+        </div>
+
+        <div>
+            <h4 id="updating">Updating the App</h4>
+            <p>To update the Slack Support Bot bundle follow these steps:</p>
+            <ol class="instructions">
+                <li>Navigate to Customization>SuiteBundler>Search & Install Bundles>List</li>
+                <li>If there is an update available you will see a blue ‘!’ underneath the version number of the Slack Support Bot</li>
+                <li>Hover over the green action item on the left hand side of the Slack Support Bot bundle</li>
+                <li>Click the ‘Update’ link</li>
+                <li>What for the update to finish</li>
+            </ol>
+            <a class="top" href="#">> top</a>
+        </div>
+
+        <div>
+            <h4 id="uninstalling">Uninstalling The App</h4>
+            <p>To uninstall the Slack Support Bot follow these steps:</p>
+            <ol class="instructions">
+                <li>Navigate to Customization>SuiteBundler>Search & Install Bundles>List</li>
+                <li>Hover over the green action item on the left hand side of the Slack Support Bot bundle</li>
+                <li>Click the ‘Uninstall’ link</li>
+                <li>What for the uninstallation link</li>
+            </ol>
+            <p>Once the uninstallation is complete the Support Bot will disconnect from your Slack account and all bundle elements will be removed from your NetSuite account. Follow the installation instructions above if you wish to reinstall the Slack Support Bot bundle.</p>
+            <a class="top" href="#">> top</a>
+        </div>
+    </div>
+</div>
+
+<%- include('footer') -%>
+<!--<script src="../js/jquery-ui-1.9.1.custom.min.js"></script>-->
+<!--<script src="../js/jquery.tocify.min.js"></script>-->
+
+<!--<script>-->
+    <!--$(function() {-->
+        <!--var toc = $("#toc").tocify({-->
+            <!--selectors: "h4"-->
+        <!--}).data("toc-tocify");-->
+        <!--//prettyPrint();-->
+<!--//        $(".optionName").popover({ trigger: "hover" });-->
+    <!--});-->
+<!--</script>-->
+
+<script>
+    var $root = $('html, body');
+    $('.instructions').click(function() {
+        $root.animate({
+            scrollTop: $( $.attr(this, 'href') ).offset().top
+        }, 500);
+        return false;
+    });
+
+    $('a.top').click(function() {
+        $root.animate({ scrollTop: 0 }, "slow");
+        return false;
+    });
+</script>

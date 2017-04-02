@@ -9,6 +9,10 @@ router.get('/',
     function(req, res, next) {
     res.render('contact', {
         title: 'Contact Us',
+        home: '',
+        instructions: '',
+        privacypolicy: '',
+        contact: 'active',
         displaysuccess: 'none',
         displayfailure: 'none'
     });

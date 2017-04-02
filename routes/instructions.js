@@ -4,13 +4,13 @@ var ga = require('../modules/ga');
 
 /* GET home page. */
 router.get('/',
-    ga.pageview('Privacy Policy'),
+    ga.pageview('Instructions'),
     function(req, res, next) {
-        res.render('privacypolicy', {
-            title: 'Privacy Policy',
+        res.render('instructions', {
+            title: 'Instructions',
             home: '',
-            instructions: '',
-            privacypolicy: 'active',
+            instructions: 'active',
+            privacypolicy: '',
             contact: ''
         });
     }
