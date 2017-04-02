@@ -470,11 +470,37 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                         function sendMessage(i) {
                             return new Promise(function(resolve) {
                                 if (body[i].needsCleaning === true) {
+                                    function byteCount(s) {
+                                        return encodeURI(s).split(/%(?:u[0-9A-F]{2})?[0-9A-F]{2}|./).length - 1;
+                                    }
                                     var dirtyMessage = body[i].message;
                                     console.log('Dirty Message', dirtyMessage);
                                     var intro = dirtyMessage.substr(0, dirtyMessage.indexOf('sent the following message:') + 27);
                                     var html = dirtyMessage.substr(dirtyMessage.indexOf('sent the following message:') + 27);
                                     if (html) {
+                                        function encode_utf8( s ) {
+                                            return unescape( encodeURIComponent( s ) );
+                                        }
+
+                                        function substr_utf8_bytes(str, startInBytes, lengthInBytes) {
+                                            var resultStr = '';
+                                            var startInChars = 0;
+
+                                            for (bytePos = 0; bytePos < startInBytes; startInChars++) {
+
+                                                ch = str.charCodeAt(startInChars);
+                                                bytePos += (ch < 128) ? 1 : encode_utf8(str[startInChars]).length;
+                                            }
+                                            end = startInChars + lengthInBytes - 1;
+
+                                            for (n = startInChars; startInChars <= end; n++) {
+                                                ch = str.charCodeAt(n);
+                                                end -= (ch < 128) ? 1 : encode_utf8(str[n]).length;
+                                                resultStr += str[n];
+                                            }
+                                            return resultStr;
+                                        }
+
                                         var cleanMessage = sanitizeHtml(html, {
                                             allowedTags: [],
                                             allowedAttributes: []
@@ -486,8 +512,8 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                         console.log('i', i);
                                         console.log('No Blanks: ' + noBlankLinesMessage);
                                         console.log('No Blanks and Intro Length', intro.length + 3 + noBlankLinesMessage.substr(0, 3980 - intro.length).length + 13);
-                                        if (noBlankLinesMessage.length + intro.length > 3980) {
-                                            body[i].message = intro + '```' + noBlankLinesMessage.substr(0, 3980 - intro.length) + ' (more)...```';
+                                        if (byteCount(noBlankLinesMessage + intro) > 4000) {
+                                            body[i].message = intro + '```' + substr_utf8_bytes(noBlankLinesMessage, 0, 3974) + ' (more)...```';
                                         } else {
                                             body[i].message = intro + '```' + noBlankLinesMessage + '```';
                                         }
