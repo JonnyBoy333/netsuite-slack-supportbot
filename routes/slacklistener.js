@@ -294,7 +294,11 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
 
     //console.log('bots', _bots);
     //console.log('Controller Object', controller);
+<<<<<<< HEAD
     console.log('Listening Bot', bot);
+=======
+    console.log('Listener Bot', bot);
+>>>>>>> master
 
     bot.startTyping(message);
     console.log('Match', message.match[0]);
