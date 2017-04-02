@@ -487,7 +487,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                         console.log('No Blanks: ' + noBlankLinesMessage);
                                         console.log('No Blanks and Intro Length', intro.length + 3 + noBlankLinesMessage.substr(0, 3990 - intro.length).length + 13);
                                         if (noBlankLinesMessage.length + intro.length > 3980) {
-                                            body[i].message = intro + '```' + noBlankLinesMessage.substr(0, 3983 - intro.length) + ' (more)...```';
+                                            body[i].message = intro + '```' + noBlankLinesMessage.substr(0, 3980 - intro.length) + ' (more)...```';
                                         } else {
                                             body[i].message = intro + '```' + noBlankLinesMessage + '```';
                                         }
