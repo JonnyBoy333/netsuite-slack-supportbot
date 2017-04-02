@@ -13,7 +13,7 @@ var express = require('express'),
 controller.storage.teams.all(function(err,teams) {
     console.log('Start bot connecting');
     if (err) {
-        console.log('Error connecting to bot', err)
+        console.log('Error connecting to bot', err);
         throw new Error(err);
     }
 
@@ -486,14 +486,13 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                             var resultStr = '';
                                             var startInChars = 0;
 
-                                            for (bytePos = 0; bytePos < startInBytes; startInChars++) {
-
-                                                ch = str.charCodeAt(startInChars);
+                                            for (var bytePos = 0; bytePos < startInBytes; startInChars++) {
+                                                var ch = str.charCodeAt(startInChars);
                                                 bytePos += (ch < 128) ? 1 : encode_utf8(str[startInChars]).length;
                                             }
-                                            end = startInChars + lengthInBytes - 1;
 
-                                            for (n = startInChars; startInChars <= end; n++) {
+                                            var end = startInChars + lengthInBytes - 1;
+                                            for (var n = startInChars; startInChars <= end; n++) {
                                                 ch = str.charCodeAt(n);
                                                 end -= (ch < 128) ? 1 : encode_utf8(str[n]).length;
                                                 resultStr += str[n];
