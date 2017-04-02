@@ -62,6 +62,7 @@ var slack = require('./routes/slacklistener');
 var heroku_keep_alive = require('./routes/heroku_keep_alive');
 var index = require('./routes/index');
 var privacypolicy = require('./routes/privacypolicy');
+var instructions = require('./routes/instructions');
 var contact = require('./routes/contact');
 var apiRouter = require('./api');
 
@@ -84,6 +85,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/slacklistener', slack);
 app.use('/api', apiRouter);
 app.use('/', index);
+app.use('/instructions', instructions);
 app.use('/privacypolicy', privacypolicy);
 app.use('/contact', contact);
 app.use(ua.middleware(analyticsId, { cookieName: '_ga' }));

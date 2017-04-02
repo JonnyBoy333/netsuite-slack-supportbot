@@ -6,6 +6,7 @@ var express = require('express'),
     controller = require('../modules/bot_controller'),
     trackBot = require('../modules/track_bot').trackBot,
     _bots = require('../modules/track_bot').bots,
+    _interactive_bots = require('../modules/track_bot').interacticeBots,
     passport = require('passport'),
     nsStats = require('../modules/netsuite_logging');
 
@@ -25,7 +26,7 @@ controller.storage.teams.all(function(err,teams) {
                     //TODO remove team as they likely removed your app
                 } else {
                     console.log('Bot connected:', bot.team_info.name);
-                    trackBot(bot);
+                    trackBot(bot, 'main');
                 }
             });
         }
@@ -53,12 +54,17 @@ function getUser(id, bot) {
 //Handle file uploads
 controller.on('file_shared', function(bot, message) {
     console.log('File Message', message);
+    var teamId = bot.team_info.id,
+        interactiveBot = _interactive_bots[teamId];
+    var reply = {};
+    interactiveBot.replyInteractive(message, reply);
 });
 
 //Handle Interactive Messages
 // receive an interactive message, and reply with a message that will replace the original
 controller.on('interactive_message_callback', function(bot, message) {
-    console.log('Bot', bot);
+    trackBot(bot, 'interactive');
+    console.log('Interactive Bot', bot);
     console.log('Button Response Message', message);
     console.log('Original Message Attachments', message.original_message.attachments);
     console.log('Answer value', message.actions[0].value);
@@ -288,7 +294,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
 
     //console.log('bots', _bots);
     //console.log('Controller Object', controller);
-    //console.log('Bot Object', bot);
+    console.log('Listening Bot', bot);
 
     bot.startTyping(message);
     console.log('Match', message.match[0]);

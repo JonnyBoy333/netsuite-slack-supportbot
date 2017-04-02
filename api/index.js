@@ -5,6 +5,7 @@ var express  = require('express'),
     userModel = require('../models/schemas').users,
     controller = require('../modules/bot_controller'),
     crypto = require('crypto'),
+    trackBot = require('../modules/track_bot').trackBot,
     _bots = require('../modules/track_bot').bots,
     tokenSchema = require('../models/schemas').tokens,
     passport = require('passport'),
@@ -76,6 +77,7 @@ router.post('/addaccount/:accountid',
                     //bot.closeRTM();
                 } else {
                     console.log('Bot added for first time:', bot.team_info.name);
+                    trackBot(bot, 'main');
 
                     //Get the account information and save to db
                     function getAccountInfo(bot) {

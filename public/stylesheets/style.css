@@ -88,6 +88,23 @@ ul.features {
     font-weight: 300;
 }
 
+ol.instructions {
+    padding-left: 20px;
+    margin-top: 1em;
+    color: #777777;
+    font-family: Slack-Lato, sans-serif;
+    font-weight: 300;
+}
+
+ul.toc {
+    list-style-type:none; /* removes default bullet */
+    padding-left: 0px;
+}
+
+ul.toc a:hover{
+    text-decoration: none;
+}
+
 .features li:before {
     content:"\2219";    /* escaped unicode character */
     font-size:2.5em;    /* the default unicode bullet size is very small */
@@ -95,4 +112,11 @@ ul.features {
     position:absolute;  /* position bullet relative to list item */
     top:11px;           /* vertical align bullet position relative to list item */
     left: -.5em;            /* position the bullet L- R relative to list item */
+}
+
+img.instructions {
+    border-style: solid;
+    border-width: 1px;
+    border-color: #DEDEDE;
+    border-radius:3px;
 }
