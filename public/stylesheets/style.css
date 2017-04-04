@@ -1,13 +1,20 @@
 body {
     /*color: #777777;*/
-    font-family: Slack-Lato, sans-serif !important;
+    font-family: Slack-Lato, sans-serif;
     /*font-weight: 300;*/
 }
 
 h4 {
     /*color: #777777;*/
-    font-family: Slack-Lato, sans-serif !important;
+    font-family: Slack-Lato, sans-serif;
     /*font-weight: 300;*/
+}
+
+h3 {
+    color: #777777;
+    font-family: Slack-Lato, sans-serif;
+    font-weight: 300;
+    line-height: 32px;
 }
 
 #newcase {
@@ -17,10 +24,12 @@ h4 {
     border-color: #DEDEDE;
     border-radius: 4px;
 }
+a, a:hover, a:active, a:visited, a:focus {
+    text-decoration:none;
+    font-family: Slack-Lato, sans-serif;
+    /*font-weight: 300;*/
+}
 
-/*a {*/
-  /*color: #00B7FF;*/
-/*}*/
 .logo {
   padding: 15px 25px;
 }
@@ -62,7 +71,7 @@ p {
     position:relative;
 }
 ul.features {
-  /*list-style-type:disc !important;*/
+  /*list-style-type:disc;*/
     list-style-type:none; /* removes default bullet */
     padding-left: 20px;
     -webkit-column-break-inside:avoid;
@@ -101,10 +110,6 @@ ul.toc {
     padding-left: 0px;
 }
 
-ul.toc a:hover{
-    text-decoration: none;
-}
-
 .features li:before {
     content:"\2219";    /* escaped unicode character */
     font-size:2.5em;    /* the default unicode bullet size is very small */
@@ -118,5 +123,6 @@ img.instructions {
     border-style: solid;
     border-width: 1px;
     border-color: #DEDEDE;
-    border-radius:3px;
+    border-radius:5px;
+    margin: 20px 0;
 }

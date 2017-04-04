@@ -1,6 +1,7 @@
 <%- include('header') -%>
 
 <!--<link type="text/css" rel="stylesheet" href="../stylesheets/jquery.tocify.css">-->
+<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
 
 <div class="row">
     <div class="col-lg-12">
@@ -30,7 +31,7 @@
                 <li>Once the installation has completed navigate to Setup>Slack Setup>Slack Setup and follow the instructions to connect your Slack account to NetSuite Support Bot</li>
                 <li>Invite NetSuite Support Bot to the channel you chose as your default channel in the previous step (to invite go to the channel and type ‘/invite #support’)</li>
             </ol>
-            <a class="top" href="#">> top</a>
+            <a class="top" href="#"><span class="icon-chevron-up"></span> top</a>
         </div>
         <div>
             <h4 id="appinstall">Slack App Installation</h4>
@@ -41,6 +42,9 @@
                 <li>Click ‘Authorize’ to add the bot</li>
                 <li>
                     <p>Then add user tokens for each employee that will be accessing NetSuite via Slack. Note, you required to have at least one user here that is marked default, all actions taken by NetSuite support bot will appear to come from this user in NetSuite.</p>
+                    <div class="embed-responsive embed-responsive-16by9" style="margin-bottom: 20px">
+                        <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/7C-Z3roJqD0"></iframe>
+                    </div>
                     <ol>
                         <li>Add the Slack Token Access Role to your user roles by searching your name in the global search bar at the top of the page, clicking ‘edit’ and then adding the ‘Slack Token Access Role’ under the ‘Access’ subtab. Click ‘Save’ once it is added.</li>
                         <img class="img-rounded instructions" src="../images/instructions/1-assign-token-role.jpg" width="100%">
@@ -59,7 +63,7 @@
                     </ol>
                 </li>
             </ol>
-            <a class="top" href="#">> top</a>
+            <a class="top" href="#"><span class="icon-chevron-up"></span> top</a>
         <h4 id="usage">Usage Instructions</h4>
         </div>
 
@@ -69,7 +73,7 @@
                 Many commands require you to specify a case # to interact with that specific case. It is often easiest to use one of the first three commands to list out cases before choosing one to interact with. When you list cases you will see the case number, subject, abbreviation for the support rep assigned to the case, the company that the case is associated with and a color that corresponds to the priority. When you list your own cases you will see the abbreviation for the case status instead of who it is assigned to. Some commands support interacting with multiple cases at once. These include the ‘grab,’ ‘escalate,’ ‘assign,’ ‘close,’ ‘increase priority,’ and the ‘decrease priority’ commands. Simply separate each case number with a space (i.e. close 123 456 789).<br /><br />
                 NetSuite Support Bot was built to support our internal team but I thought it would be a good tool for others to use. NetSuite Support Bot is currently in Beta and is free to use. I hope you enjoy using it as much as we do.
             </p>
-            <a class="top" href="#">> top</a>
+            <a class="top" href="#"><span class="icon-chevron-up"></span> top</a>
         </div>
 
         <div>
@@ -82,7 +86,7 @@
                 <li>Click the ‘Update’ link</li>
                 <li>What for the update to finish</li>
             </ol>
-            <a class="top" href="#">> top</a>
+            <a class="top" href="#"><span class="icon-chevron-up"></span> top</a>
         </div>
 
         <div>
@@ -95,7 +99,7 @@
                 <li>What for the uninstallation link</li>
             </ol>
             <p>Once the uninstallation is complete the Support Bot will disconnect from your Slack account and all bundle elements will be removed from your NetSuite account. Follow the installation instructions above if you wish to reinstall the Slack Support Bot bundle.</p>
-            <a class="top" href="#">> top</a>
+            <a class="top" href="#"><span class="icon-chevron-up"></span> top<br></a><br>
         </div>
     </div>
 </div>
