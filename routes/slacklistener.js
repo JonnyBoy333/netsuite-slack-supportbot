@@ -51,19 +51,33 @@ function getUser(id, bot) {
     })
 }
 
+setInterval(function(){
+    var date = new Date();
+    for (var message in _interactiveMessages) {
+        var messageExpiration = _interactiveMessages[message].setSeconds(_interactiveMessages[message].getSeconds() + 10);
+        if (date > messageExpiration) delete _interactiveMessages[message];
+    }
+}, 10000);
+
 //Handle file uploads
 controller.on('file_shared', function(bot, message) {
     console.log('File Message', message);
     var teamId = bot.team_info.id,
         interactiveBot = _interactive_bots[teamId];
-    var reply = {};
+    var reply = 'Hello';
     interactiveBot.replyInteractive(message, reply);
 });
 
 //Handle Interactive Messages
+var _interactiveMessages = {};
 // receive an interactive message, and reply with a message that will replace the original
 controller.on('interactive_message_callback', function(bot, message) {
     trackBot(bot, 'interactive');
+
+    //Check to see if message has already been sent
+    if (_interactiveMessages.hasOwnProperty(message.callback_id)) return;
+
+    _interactiveMessages[message.callback_id] = new Date();
     //console.log('Interactive Bot', bot);
     console.log('Button Response Message', message);
     console.log('Original Message Attachments', message.original_message.attachments);
@@ -76,6 +90,7 @@ controller.on('interactive_message_callback', function(bot, message) {
         bot.replyInteractive(message, {
             text: 'Ok, I will not send your message.'
         });
+        delete _interactiveMessages[message.callback_id];
         return;
     }
 
@@ -110,6 +125,7 @@ controller.on('interactive_message_callback', function(bot, message) {
                             if (err) console.log(err);
                         }
                     );
+                    delete _interactiveMessages[message.callback_id];
                     return
                 }
 
@@ -165,6 +181,8 @@ controller.on('interactive_message_callback', function(bot, message) {
                 }, function(error, response, body) {
                     if (error){
                         console.log(error);
+                        bot.replyInteractive(message, 'There was an error connecting to NetSuite, please try again.');
+                        delete _interactiveMessages[message.callback_id];
                     } else {
                         // function sendMessage(i) {
                         //     return new Promise(function(resolve) {
@@ -193,12 +211,16 @@ controller.on('interactive_message_callback', function(bot, message) {
 
 
                         //console.log('Body:', body);
-                        if (typeof body == 'string' && body.indexOf('error') === 2){
+                        if ((typeof body == 'string' && body.indexOf('error') === 2) || (body.hasOwnProperty('type') && body.type.indexOf('error'))){
                             console.log('Error :' + body);
+                            bot.replyInteractive(message, 'There was an error sending your message, please try again.');
+                            delete _interactiveMessages[message.callback_id];
+
                         } else {
                             var reply = { attachments: body[0].attachments };
                             console.log('Reply: ' + JSON.stringify(reply));
                             bot.replyInteractive(message, reply);
+                            delete _interactiveMessages[message.callback_id];
 
                             // // The loop initialization
                             // var len = body.length;
