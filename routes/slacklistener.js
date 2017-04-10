@@ -754,6 +754,45 @@ router.post('/casereply',
     }
 );
 
+//Post case assignments
+router.post('/caseassigned',
+    passport.authenticate('bearer', { session: false }),
+    function (req, res) {
+        var message = req.body,
+            slackMessages = message['slack_messages'],
+            teamId = message.team_id,
+            bot = _bots[teamId],
+            attachments = getAttachments(slackMessages),
+            slackAttachment = {};
+        //console.log('body:', message);
+        //console.log('headers: ' + JSON.stringify(req.headers));
+        controller.storage.teams.get(teamId, function(err, team) {
+            if (err) console.log(err);
+            getUserIdList(message.assigned, bot)
+                .then(function(userId) {
+                    console.log('User ID', userId);
+                    slackAttachment = {
+                        attachments: attachments,
+                        //channel: '#testing',
+                        channel: userId
+                    };
+                    console.log('RTM Slack Attachment:', slackAttachment);
+                    bot.say(slackAttachment, function(err) {
+                        if (err) {
+                            console.log('Error sending case reply', err);
+                            // slackAttachment.channel = '#general';
+                            // bot.say(slackAttachment,function(err) {
+                            //     if (err) console.log('Error sending new case to general channel', err);
+                            // })
+                        }
+                        storeMessageData(teamId, team, 'caseassigned', slackAttachment);
+                    });
+                })
+        });
+        res.end("NetSuite Listener");
+    }
+);
+
 /* GET home page. */
 router.get('/',
     passport.authenticate('bearer', { session: false }),
