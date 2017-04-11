@@ -537,6 +537,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                         console.log('Byte Length', byteCount(noBlankLinesMessage + intro) + 16);
                                         if (byteCount(noBlankLinesMessage + intro) + 16 > 4000) {
                                             var introBytes = byteCount(intro);
+                                            console.log('Slim byte length', byteCount(substr_utf8_bytes(noBlankLinesMessage, 0, 4000 - introBytes - 16)));
                                             body[i].message = intro + '```' + substr_utf8_bytes(noBlankLinesMessage, 0, 4000 - introBytes - 16) + ' (more)...```';
                                         } else {
                                             body[i].message = intro + '```' + noBlankLinesMessage + '```';
