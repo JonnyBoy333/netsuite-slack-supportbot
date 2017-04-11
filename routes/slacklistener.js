@@ -495,7 +495,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                     function byteCount(s) {
                                         return encodeURI(s).split(/%(?:u[0-9A-F]{2})?[0-9A-F]{2}|./).length - 1;
                                     }
-                                    console.log('Body Before Cleaning', body[i]);
+                                    //console.log('Body Before Cleaning', body[i]);
                                     var dirtyMessage = body[i].message;
                                     console.log('Dirty Message', dirtyMessage);
                                     var intro = dirtyMessage.substr(0, dirtyMessage.indexOf('sent the following message:') + 27);
