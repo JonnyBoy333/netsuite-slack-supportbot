@@ -494,9 +494,6 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                             return new Promise(function(resolve) {
                                 if (body[i].needsCleaning === true) {
                                     function byteCount(str) {
-                                        //return encodeURI(s).split(/%(?:u[0-9A-F]{2})?[0-9A-F]{2}|./).length - 1;
-                                        //return (new TextEncoder('utf-8').encode('foo')).length;
-                                        // returns the byte length of an utf8 string
                                         var s = str.length;
                                         for (var i=str.length-1; i>=0; i--) {
                                             var code = str.charCodeAt(i);
@@ -512,27 +509,6 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                     var intro = dirtyMessage.substr(0, dirtyMessage.indexOf('sent the following message:') + 27);
                                     var html = dirtyMessage.substr(dirtyMessage.indexOf('sent the following message:') + 27);
                                     if (html) {
-                                        // function encode_utf8( s ) {
-                                        //     return unescape( encodeURIComponent( s ) );
-                                        // }
-                                        //
-                                        // function substr_utf8_bytes(str, startInBytes, lengthInBytes) {
-                                        //     var resultStr = '';
-                                        //     var startInChars = 0;
-                                        //
-                                        //     for (var bytePos = 0; bytePos < startInBytes; startInChars++) {
-                                        //         var ch = str.charCodeAt(startInChars);
-                                        //         bytePos += (ch < 128) ? 1 : encode_utf8(str[startInChars]).length;
-                                        //     }
-                                        //
-                                        //     var end = startInChars + lengthInBytes - 1;
-                                        //     for (var n = startInChars; startInChars <= end; n++) {
-                                        //         ch = str.charCodeAt(n);
-                                        //         end -= (ch < 128) ? 1 : encode_utf8(str[n]).length;
-                                        //         resultStr += str[n];
-                                        //     }
-                                        //     return resultStr;
-                                        // }
 
                                         function cutInUTF8(str, n) {
                                             var len = Math.min(n, str.length);
@@ -700,9 +676,9 @@ function storeMessageData(teamId, team, type, slackAttachment) {
     controller.storage.channels.save(channelData, function (err, message) {
         if (err) console.log('Error adding message to channel storage', err);
         message.type = 'channel';
-        console.log('Channel message', message);
         channelData.$push.messages.date = new Date();
         message.messages = [channelData.$push.messages];
+        console.log('Channel message', message);
         nsStats(message);
     });
 }
