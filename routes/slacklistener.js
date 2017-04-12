@@ -595,12 +595,12 @@ function getUserIdList (name, bot, defaultChannel){
             resolve(userId);
         } else {
             bot.api.users.list({},function(err,response) {
-                console.log(response);
+                //console.log(response);
                 for (var i = 0; i < response.members.length; i++){
                     var member = response.members[i];
                     var cleanName = member.profile.real_name.replace(/ /g,'').toLowerCase().trim();
-                    console.log('Name : Slack Name', name + ' : ' + cleanName);
                     if(name == cleanName) {
+                        console.log('Name : Slack Name', name + ' : ' + cleanName);
                         userId = member.id;
                         break;
                     }
