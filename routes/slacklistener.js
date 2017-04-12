@@ -9,6 +9,7 @@ var express = require('express'),
     _interactive_bots = require('../modules/track_bot').interacticeBots,
     passport = require('passport'),
     nsStats = require('../modules/netsuite_logging');
+    // fs = require('fs');
 
 controller.storage.teams.all(function(err,teams) {
     console.log('Start bot connecting');
@@ -492,34 +493,57 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                         function sendMessage(i) {
                             return new Promise(function(resolve) {
                                 if (body[i].needsCleaning === true) {
-                                    function byteCount(s) {
-                                        return encodeURI(s).split(/%(?:u[0-9A-F]{2})?[0-9A-F]{2}|./).length - 1;
+                                    function byteCount(str) {
+                                        //return encodeURI(s).split(/%(?:u[0-9A-F]{2})?[0-9A-F]{2}|./).length - 1;
+                                        //return (new TextEncoder('utf-8').encode('foo')).length;
+                                        // returns the byte length of an utf8 string
+                                        var s = str.length;
+                                        for (var i=str.length-1; i>=0; i--) {
+                                            var code = str.charCodeAt(i);
+                                            if (code > 0x7f && code <= 0x7ff) s++;
+                                            else if (code > 0x7ff && code <= 0xffff) s+=2;
+                                            if (code >= 0xDC00 && code <= 0xDFFF) i--; //trail surrogate
+                                        }
+                                        return s;
                                     }
                                     var dirtyMessage = body[i].message;
                                     console.log('Dirty Message', dirtyMessage);
                                     var intro = dirtyMessage.substr(0, dirtyMessage.indexOf('sent the following message:') + 27);
                                     var html = dirtyMessage.substr(dirtyMessage.indexOf('sent the following message:') + 27);
                                     if (html) {
-                                        function encode_utf8( s ) {
-                                            return unescape( encodeURIComponent( s ) );
-                                        }
+                                        // function encode_utf8( s ) {
+                                        //     return unescape( encodeURIComponent( s ) );
+                                        // }
+                                        //
+                                        // function substr_utf8_bytes(str, startInBytes, lengthInBytes) {
+                                        //     var resultStr = '';
+                                        //     var startInChars = 0;
+                                        //
+                                        //     for (var bytePos = 0; bytePos < startInBytes; startInChars++) {
+                                        //         var ch = str.charCodeAt(startInChars);
+                                        //         bytePos += (ch < 128) ? 1 : encode_utf8(str[startInChars]).length;
+                                        //     }
+                                        //
+                                        //     var end = startInChars + lengthInBytes - 1;
+                                        //     for (var n = startInChars; startInChars <= end; n++) {
+                                        //         ch = str.charCodeAt(n);
+                                        //         end -= (ch < 128) ? 1 : encode_utf8(str[n]).length;
+                                        //         resultStr += str[n];
+                                        //     }
+                                        //     return resultStr;
+                                        // }
 
-                                        function substr_utf8_bytes(str, startInBytes, lengthInBytes) {
-                                            var resultStr = '';
-                                            var startInChars = 0;
-
-                                            for (var bytePos = 0; bytePos < startInBytes; startInChars++) {
-                                                var ch = str.charCodeAt(startInChars);
-                                                bytePos += (ch < 128) ? 1 : encode_utf8(str[startInChars]).length;
+                                        function cutInUTF8(str, n) {
+                                            var len = Math.min(n, str.length);
+                                            var i, cs, c = 0, bytes = 0;
+                                            for (i = 0; i < len; i++) {
+                                                c = str.charCodeAt(i);
+                                                cs = 1;
+                                                if (c >= 128) cs++;
+                                                if (c >= 2048) cs++;
+                                                if (n < (bytes += cs)) break;
                                             }
-
-                                            var end = startInChars + lengthInBytes - 1;
-                                            for (var n = startInChars; startInChars <= end; n++) {
-                                                ch = str.charCodeAt(n);
-                                                end -= (ch < 128) ? 1 : encode_utf8(str[n]).length;
-                                                resultStr += str[n];
-                                            }
-                                            return resultStr;
+                                            return str.substr(0, i);
                                         }
 
                                         var cleanMessage = sanitizeHtml(html, {
@@ -534,9 +558,10 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                         console.log('No Blanks: ' + noBlankLinesMessage);
                                         //console.log('No Blanks and Intro Length', intro.length + 3 + noBlankLinesMessage.substr(0, 3980 - intro.length).length + 13);
                                         console.log('Byte Length', byteCount(noBlankLinesMessage + intro) + 16);
-                                        if (byteCount(noBlankLinesMessage + intro) + 16 > 4000) {
+                                        if (byteCount(noBlankLinesMessage + intro) + 17 > 3900) {
                                             var introBytes = byteCount(intro);
-                                            body[i].message = intro + '```' + substr_utf8_bytes(noBlankLinesMessage, 0, 4000 - introBytes - 16) + ' (more)...```';
+                                            console.log('Slim Bite Length', byteCount(cutInUTF8(noBlankLinesMessage, 3900 - introBytes - 17)));
+                                            body[i].message = intro + '```' + cutInUTF8(noBlankLinesMessage, 3900 - introBytes - 17) + ' (more)...```';
                                         } else {
                                             body[i].message = intro + '```' + noBlankLinesMessage + '```';
                                         }
@@ -544,6 +569,12 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                 }
                                 var reply = body[i].attachments && body[i].attachments.length > 0 ? {attachments: body[i].attachments} : body[i].message;
                                 console.log('Reply: ' + JSON.stringify(reply));
+                                // fs.writeFile("reply.json", reply, function(err) {
+                                //     if(err) {
+                                //         return console.log(err);
+                                //     }
+                                //     console.log("The file was saved!");
+                                // });
                                 bot.reply(message, reply, function (err) {
                                     if (err) console.log(err);
                                     resolve();
