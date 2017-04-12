@@ -699,12 +699,9 @@ function storeMessageData(teamId, team, type, slackAttachment) {
     controller.storage.channels.save(channelData, function (err, message) {
         if (err) console.log('Error adding message to channel storage', err);
         message.type = 'channel';
-        //console.log('Channel message', message);
-        // message.messages = [{
-        //     keyword: message.match[0],
-        //     message: message.text,
-        //     date: new Date()
-        // }];
+        console.log('Channel message', message);
+        channelData.$push.messages.date = new Date();
+        message.messages = [channelData.$push.messages];
         nsStats(message);
     });
 }
