@@ -692,7 +692,9 @@ router.post('/newcase',
         attachments = getAttachments(slackMessages),
         slackAttachment = {};
     //console.log('body:', message);
-    console.log('Cleaned attachments', attachments);
+    console.log('TeamID:', teamId);
+    console.log('Bot:', bot);
+    console.log('Cleaned attachments:', attachments);
     //console.log('headers: ' + JSON.stringify(req.headers));
     controller.storage.teams.get(teamId, function(err, team) {
         if (err) console.log(err);
