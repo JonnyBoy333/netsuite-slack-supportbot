@@ -506,6 +506,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                         }
                                         return s;
                                     }
+                                    //console.log('Body Before Cleaning', body[i]);
                                     var dirtyMessage = body[i].message;
                                     console.log('Dirty Message', dirtyMessage);
                                     var intro = dirtyMessage.substr(0, dirtyMessage.indexOf('sent the following message:') + 27);
@@ -558,10 +559,10 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                         console.log('No Blanks: ' + noBlankLinesMessage);
                                         //console.log('No Blanks and Intro Length', intro.length + 3 + noBlankLinesMessage.substr(0, 3980 - intro.length).length + 13);
                                         console.log('Byte Length', byteCount(noBlankLinesMessage + intro) + 16);
-                                        if (byteCount(noBlankLinesMessage + intro) + 17 > 3900) {
+                                        if (byteCount(noBlankLinesMessage + intro) + 16 > 3900) {
                                             var introBytes = byteCount(intro);
-                                            console.log('Slim Bite Length', byteCount(cutInUTF8(noBlankLinesMessage, 3900 - introBytes - 17)));
-                                            body[i].message = intro + '```' + cutInUTF8(noBlankLinesMessage, 3900 - introBytes - 17) + ' (more)...```';
+                                            console.log('Slim Bite Length', byteCount(cutInUTF8(noBlankLinesMessage, 3900 - introBytes - 16)));
+                                            body[i].message = intro + '```' + cutInUTF8(noBlankLinesMessage, 3900 - introBytes - 16) + ' (more)...```';
                                         } else {
                                             body[i].message = intro + '```' + noBlankLinesMessage + '```';
                                         }
@@ -624,12 +625,12 @@ function getUserIdList (name, bot, defaultChannel){
             resolve(userId);
         } else {
             bot.api.users.list({},function(err,response) {
-                console.log(response);
+                //console.log(response);
                 for (var i = 0; i < response.members.length; i++){
                     var member = response.members[i];
                     var cleanName = member.profile.real_name.replace(/ /g,'').toLowerCase().trim();
-                    console.log('Name : Slack Name', name + ' : ' + cleanName);
                     if(name == cleanName) {
+                        console.log('Name : Slack Name', name + ' : ' + cleanName);
                         userId = member.id;
                         break;
                     }
@@ -717,8 +718,10 @@ router.post('/newcase',
         bot = _bots[teamId],
         attachments = getAttachments(slackMessages),
         slackAttachment = {};
-    //console.log('body:', message);
-    console.log('Cleaned attachments', attachments);
+    console.log('body:', message);
+    console.log('TeamID:', teamId);
+    console.log('Bot:', bot);
+    console.log('Cleaned attachments:', attachments);
     //console.log('headers: ' + JSON.stringify(req.headers));
     controller.storage.teams.get(teamId, function(err, team) {
         if (err) console.log(err);
