@@ -778,6 +778,10 @@ router.post('/caseassigned',
             getUserIdList(message.assigned, bot)
                 .then(function(userId) {
                     console.log('User ID', userId);
+                    if (!userId) {
+                        console.log('User not found for case assignment');
+                        return;
+                    }
                     slackAttachment = {
                         attachments: attachments,
                         //channel: '#testing',
