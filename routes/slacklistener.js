@@ -8,8 +8,8 @@ var express = require('express'),
     _bots = require('../modules/track_bot').bots,
     _interactive_bots = require('../modules/track_bot').interacticeBots,
     passport = require('passport'),
-    nsStats = require('../modules/netsuite_logging');
-    // fs = require('fs');
+    nsStats = require('../modules/netsuite_logging'),
+    fs = require('fs');
 
 controller.storage.teams.all(function(err,teams) {
     console.log('Start bot connecting');
@@ -505,7 +505,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                     }
                                     //console.log('Body Before Cleaning', body[i]);
                                     var dirtyMessage = body[i].message;
-                                    console.log('Dirty Message', dirtyMessage);
+                                    //console.log('Dirty Message', dirtyMessage);
                                     var intro = body[i].keyword === 'last message' ? dirtyMessage.substr(0, dirtyMessage.indexOf('is:') + 3) : dirtyMessage.substr(0, dirtyMessage.indexOf('sent the following message:') + 27);
                                     console.log('Intro', intro);
                                     var html = body[i].keyword === 'last message' ? dirtyMessage.substr(dirtyMessage.indexOf('is:') + 3) : dirtyMessage.substr(dirtyMessage.indexOf('sent the following message:') + 27);
@@ -533,7 +533,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                         var removeBlanks = /[\r\n]{2,}/g;
                                         var noBlankLinesMessage = trimmedMessage.replace(removeBlanks, '\r\n');
                                         console.log('i', i);
-                                        console.log('No Blanks: ' + noBlankLinesMessage);
+                                        //console.log('No Blanks: ' + noBlankLinesMessage);
                                         //console.log('No Blanks and Intro Length', intro.length + 3 + noBlankLinesMessage.substr(0, 3980 - intro.length).length + 13);
                                         console.log('Byte Length', byteCount(noBlankLinesMessage + intro) + 16);
                                         if (byteCount(noBlankLinesMessage + intro) + 16 > 3900) {
@@ -547,12 +547,12 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                 }
                                 var reply = body[i].attachments && body[i].attachments.length > 0 ? {attachments: body[i].attachments} : body[i].message;
                                 console.log('Reply: ' + JSON.stringify(reply));
-                                // fs.writeFile("reply.json", reply, function(err) {
-                                //     if(err) {
-                                //         return console.log(err);
-                                //     }
-                                //     console.log("The file was saved!");
-                                // });
+                                fs.writeFile("reply.txt", reply, function(err) {
+                                    if(err) {
+                                        return console.log(err);
+                                    }
+                                    console.log("The file was saved!");
+                                });
                                 bot.reply(message, reply, function (err) {
                                     if (err) console.log(err);
                                     resolve();
