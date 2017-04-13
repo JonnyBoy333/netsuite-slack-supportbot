@@ -8,8 +8,8 @@ var express = require('express'),
     _bots = require('../modules/track_bot').bots,
     _interactive_bots = require('../modules/track_bot').interacticeBots,
     passport = require('passport'),
-    nsStats = require('../modules/netsuite_logging'),
-    fs = require('fs');
+    nsStats = require('../modules/netsuite_logging');
+    //fs = require('fs');
 
 controller.storage.teams.all(function(err,teams) {
     console.log('Start bot connecting');
