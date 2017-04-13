@@ -536,10 +536,10 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                         //console.log('No Blanks: ' + noBlankLinesMessage);
                                         //console.log('No Blanks and Intro Length', intro.length + 3 + noBlankLinesMessage.substr(0, 3980 - intro.length).length + 13);
                                         console.log('Byte Length', byteCount(noBlankLinesMessage + intro) + 16);
-                                        if (byteCount(noBlankLinesMessage + intro) + 16 > 3600) {
+                                        if (byteCount(noBlankLinesMessage + intro) + 16 > 3800) {
                                             var introBytes = byteCount(intro);
-                                            console.log('Slim Bite Length', byteCount(cutInUTF8(noBlankLinesMessage, 3600 - introBytes - 16)));
-                                            body[i].message = intro + '```' + cutInUTF8(noBlankLinesMessage, 3600 - introBytes - 16) + ' (more)...```';
+                                            console.log('Slim Bite Length', byteCount(cutInUTF8(noBlankLinesMessage, 3800 - introBytes - 16)));
+                                            body[i].message = intro + '```' + cutInUTF8(noBlankLinesMessage, 3800 - introBytes - 16) + ' (more)...```';
                                         } else {
                                             body[i].message = intro + '```' + noBlankLinesMessage + '```';
                                         }
