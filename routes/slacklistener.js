@@ -153,7 +153,6 @@ controller.on('interactive_message_callback', function(bot, message) {
                     };
                 }
 
-
                 //app credentials
                 var oauth = OAuth({
                     consumer: {
@@ -184,31 +183,6 @@ controller.on('interactive_message_callback', function(bot, message) {
                         bot.replyInteractive(message, 'There was an error connecting to NetSuite, please try again.');
                         delete _interactiveMessages[message.callback_id];
                     } else {
-                        // function sendMessage(i) {
-                        //     return new Promise(function(resolve) {
-                        //         if (body[i].needsCleaning === true) {
-                        //             var dirtyMessage = body[i].message;
-                        //             if (dirtyMessage) {
-                        //                 var cleanMessage = sanitizeHtml(dirtyMessage, {
-                        //                     allowedTags: [],
-                        //                     allowedAttributes: []
-                        //                 });
-                        //                 //console.log('Clean message: ' + cleanMessage);
-                        //                 var trimmedMessage = cleanMessage.trim();
-                        //                 var removeBlanks = /[\r\n]{2,}/g;
-                        //                 var noBlankLinesMessage = trimmedMessage.replace(removeBlanks, '\r\n');
-                        //                 //console.log('No Blanks: ' + noBlankLinesMessage);
-                        //                 body[i].message = noBlankLinesMessage;
-                        //             }
-                        //         }
-                        //         var reply = body[i].attachments && body[i].attachments.length > 0 ? {attachments: body[i].attachments} : body[i].message;
-                        //         console.log('Reply: ' + JSON.stringify(reply));
-                        //         bot.replyInteractive(message, reply);
-                        //         resolve();
-                        //         if (i <= (body.length - 1)) {bot.startTyping(message)}
-                        //     })
-                        // }
-
 
                         //console.log('Body:', body);
                         if ((typeof body == 'string' && body.indexOf('error') === 2) || (body.hasOwnProperty('type') && body.type.indexOf('error'))){
@@ -222,25 +196,13 @@ controller.on('interactive_message_callback', function(bot, message) {
                             bot.replyInteractive(message, reply);
                             delete _interactiveMessages[message.callback_id];
 
-                            // // The loop initialization
-                            // var len = body.length;
-                            // Promise.resolve(0).then(function loop(i) {
-                            //     // The loop check
-                            //     if (i < len) { // The post iteration increment
-                            //         return sendMessage(i).thenReturn(i + 1).then(loop);
-                            //     }
-                            // }).then(function() {
-                            //     console.log("All messages sent");
-                            // }).catch(function(e) {
-                            //     console.log("error", e);
-                            // });
                         }
                     }
                 });
             })
                 .catch(function(reason){
-                    console.log(reason);
-                })
+                console.log(reason);
+            })
         });
 });
 
