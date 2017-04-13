@@ -8,8 +8,8 @@ var express = require('express'),
     _bots = require('../modules/track_bot').bots,
     _interactive_bots = require('../modules/track_bot').interacticeBots,
     passport = require('passport'),
-    nsStats = require('../modules/netsuite_logging'),
-    fs = require('fs');
+    nsStats = require('../modules/netsuite_logging');
+    //fs = require('fs');
 
 controller.storage.teams.all(function(err,teams) {
     console.log('Start bot connecting');
@@ -547,12 +547,12 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                 }
                                 var reply = body[i].attachments && body[i].attachments.length > 0 ? {attachments: body[i].attachments} : body[i].message;
                                 console.log('Reply: ' + JSON.stringify(reply));
-                                fs.writeFile("reply.txt", reply, function(err) {
-                                    if(err) {
-                                        return console.log(err);
-                                    }
-                                    console.log("The file was saved!");
-                                });
+                                // fs.writeFile("reply.txt", reply, function(err) {
+                                //     if(err) {
+                                //         return console.log(err);
+                                //     }
+                                //     console.log("The file was saved!");
+                                // });
                                 bot.reply(message, reply, function (err) {
                                     if (err) console.log(err);
                                     resolve();

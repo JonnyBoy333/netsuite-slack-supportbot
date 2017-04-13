@@ -53,7 +53,7 @@
     jQuery(document).ready(function(){
         jQuery('#characterLeft').text('240 characters left');
         jQuery('#message').keydown(function () {
-            var max = 140;
+            var max = 240;
             var len = jQuery(this).val().length;
             if (len >= max) {
                 jQuery('#characterLeft').text('You have reached the limit');
