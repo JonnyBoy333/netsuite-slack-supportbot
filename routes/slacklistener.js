@@ -506,8 +506,9 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                     //console.log('Body Before Cleaning', body[i]);
                                     var dirtyMessage = body[i].message;
                                     console.log('Dirty Message', dirtyMessage);
-                                    var intro = dirtyMessage.substr(0, dirtyMessage.indexOf('sent the following message:') + 27);
-                                    var html = dirtyMessage.substr(dirtyMessage.indexOf('sent the following message:') + 27);
+                                    var intro = body[i].keyword === 'last message' ? dirtyMessage.substr(0, dirtyMessage.indexOf('is:') + 3) : dirtyMessage.substr(0, dirtyMessage.indexOf('sent the following message:') + 27);
+                                    console.log('Intro', intro);
+                                    var html = body[i].keyword === 'last message' ? dirtyMessage.substr(dirtyMessage.indexOf('is:') + 3) : dirtyMessage.substr(dirtyMessage.indexOf('sent the following message:') + 27);
                                     if (html) {
 
                                         function cutInUTF8(str, n) {
