@@ -56,7 +56,10 @@ setInterval(function(){
     var date = new Date();
     for (var message in _interactiveMessages) {
         var messageExpiration = _interactiveMessages[message].setSeconds(_interactiveMessages[message].getSeconds() + 10);
-        if (date > messageExpiration) delete _interactiveMessages[message];
+        if (date > messageExpiration) {
+            console.log('Message deleted', _interactiveMessages[message]);
+            delete _interactiveMessages[message];
+        }
     }
 }, 10000);
 
@@ -76,7 +79,10 @@ controller.on('interactive_message_callback', function(bot, message) {
     trackBot(bot, 'interactive');
 
     //Check to see if message has already been sent
-    if (_interactiveMessages.hasOwnProperty(message.callback_id)) return;
+    if (_interactiveMessages.hasOwnProperty(message.callback_id)) {
+        console.log('Message already sent');
+        return;
+    }
 
     _interactiveMessages[message.callback_id] = new Date();
     //console.log('Interactive Bot', bot);
@@ -376,7 +382,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                 break;
 
             case "about":
-                newMessage = "Netsuite Support Bot `v0.1 beta`.\n" +
+                newMessage = "Netsuite Support Bot `v0.4.2`.\n" +
                     "For questions or to report bugs please email us at erpsupport@bergankdv.com";
                 break;
 
@@ -536,10 +542,10 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                         //console.log('No Blanks: ' + noBlankLinesMessage);
                                         //console.log('No Blanks and Intro Length', intro.length + 3 + noBlankLinesMessage.substr(0, 3980 - intro.length).length + 13);
                                         console.log('Byte Length', byteCount(noBlankLinesMessage + intro) + 16);
-                                        if (byteCount(noBlankLinesMessage + intro) + 16 > 3800) {
+                                        if (byteCount(noBlankLinesMessage + intro) + 16 > 3700) {
                                             var introBytes = byteCount(intro);
-                                            console.log('Slim Bite Length', byteCount(cutInUTF8(noBlankLinesMessage, 3800 - introBytes - 16)));
-                                            body[i].message = intro + '```' + cutInUTF8(noBlankLinesMessage, 3800 - introBytes - 16) + ' (more)...```';
+                                            console.log('Slim Bite Length', byteCount(cutInUTF8(noBlankLinesMessage, 3700 - introBytes - 16)));
+                                            body[i].message = intro + '```' + cutInUTF8(noBlankLinesMessage, 3700 - introBytes - 16) + ' (more)...```';
                                         } else {
                                             body[i].message = intro + '```' + noBlankLinesMessage + '```';
                                         }
@@ -772,7 +778,7 @@ router.post('/caseassigned',
             bot = _bots[teamId],
             attachments = getAttachments(slackMessages),
             slackAttachment = {};
-        //console.log('body:', message);
+        console.log('body:', message);
         //console.log('headers: ' + JSON.stringify(req.headers));
         controller.storage.teams.get(teamId, function(err, team) {
             if (err) console.log(err);
