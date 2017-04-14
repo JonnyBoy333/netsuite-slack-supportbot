@@ -382,7 +382,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                 break;
 
             case "about":
-                newMessage = "Netsuite Support Bot `v0.1 beta`.\n" +
+                newMessage = "Netsuite Support Bot `v0.4.2`.\n" +
                     "For questions or to report bugs please email us at erpsupport@bergankdv.com";
                 break;
 
