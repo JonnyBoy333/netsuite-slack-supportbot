@@ -240,7 +240,7 @@ router.put('/updateaccount/:accountid',
 });
 
 //Check to see if active account
-router.put('/activate/:accountid',
+router.get('/activate/:accountid',
     passport.authenticate('bearer', { session: false }),
     function(req, res) {
         var accountId = req.params.accountid;
