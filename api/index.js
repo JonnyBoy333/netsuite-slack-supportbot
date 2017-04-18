@@ -239,6 +239,85 @@ router.put('/updateaccount/:accountid',
     }
 });
 
+//Check to see if active account
+router.put('/activate/:accountid',
+    passport.authenticate('bearer', { session: false }),
+    function(req, res) {
+        var accountId = req.params.accountid;
+        console.log(accountId);
+        console.log(req.body);
+        if (accountId) {
+
+            //Activate the account
+            var update = { $set : { 'active' : true } },
+            search = { "netsuite.account_id": accountId },
+            options = { new: true };
+
+            teamModel.findOneAndUpdate(search, update, options).exec()
+                .then(function (updatedAccount) {
+                    console.log('Updated Account', updatedAccount);
+
+                    if (updatedAccount) {
+                        //Update active status in NetSuite logs
+                        updatedAccount.type = 'team';
+                        nsStats(updatedAccount);
+                        res.status(200).send({
+                            team_id: updatedAccount.id,
+                            default_channel: updatedAccount.default_channel,
+                            slack_token: updatedAccount.token,
+                            slack_bot_token: updatedAccount.bot.token
+                        });
+
+                        //Spawn bot
+                        controller.spawn(updatedAccount.bot).startRTM(function(err, bot) {
+                            if (err) {
+                                console.log('Error connecting bot to Slack:', err); //bot probably already spawned
+                            } else {
+                                console.log('Bot re activated:', bot.team_info.name);
+                                trackBot(bot, 'main');
+                            }
+                        });
+
+                        //Activate the channels
+                        search = { team_id : accountId };
+                        channelModel.updateMany(search, update).exec()
+                            .then(function (channel) {
+                                channel.type = 'channel';
+                                nsStats(channel);
+                            })
+                            .catch(function (err) {
+                                if (err) {
+                                    console.log('Error activating channels', err);
+                                    res.status(500).send(err);
+                                }
+                            });
+
+                        //Activate the users
+                        userModel.updateMany(search, update).exec()
+                            .then(function (users) {
+                                users.type = 'user';
+                                nsStats(users);
+                            })
+                            .catch(function (err) {
+                                if (err) {
+                                    console.log('Error activating users', err);
+                                    res.status(500).send(err);
+                                }
+                            });
+                    } else {
+                        res.status(200).send();
+                    }
+                })
+                .catch(function(err) {
+                    console.log(err);
+                    res.status(404).send(err);
+                });
+
+        } else {
+            res.status(500).send();
+        }
+    });
+
 //Delete an account
 router.delete('/delete/:accountid',
     passport.authenticate('bearer', { session: false }),
@@ -303,7 +382,8 @@ router.delete('/delete/:accountid',
         if (bot) {
             bot.destroy(function(err) {
                 console.log('Error destroying bot', err);
-            })
+            });
+            delete _bots[accountId];
         }
     }
 });
