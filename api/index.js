@@ -244,8 +244,8 @@ router.get('/activate/:accountid',
     passport.authenticate('bearer', { session: false }),
     function(req, res) {
         var accountId = req.params.accountid;
-        console.log(accountId);
-        console.log(req.body);
+        console.log('Account ID', accountId);
+        console.log('Body', req.body);
         if (accountId) {
 
             //Activate the account
@@ -319,72 +319,74 @@ router.get('/activate/:accountid',
     });
 
 //Delete an account
-router.delete('/delete/:accountid',
-    passport.authenticate('bearer', { session: false }),
-    function (req, res) {
-    var accountId = req.params.accountid;
+router.delete('/delete/:accountid', function (req, res) {
+    if (req.headers.authorization === 'Bearer ' + process.env.ACCESS_TOKEN) {
+        var accountId = req.params.accountid;
 
-    //Destroy the token
-    var token = req.headers.authorization.substr(8);
-    console.log('Token being deleted', token);
-    tokenSchema.findOneAndRemove({ 'token': token }, function(err) {
-        if (err) console.log('Error deleting token', err);
-    });
-
-    if (accountId) {
-
-        //Deactivate the team
-        var update = { $set : { 'active' : false } },
-            search = { id: accountId },
-            options = { new: true };
-        teamModel.findOneAndUpdate(search, update, options).exec()
-            .then(function (team) {
-                team.type = 'team';
-                nsStats(team);
-            })
-            .catch(function(err){
-            if (err) {
-                console.log('Error deactivating team', err);
-                res.status(500).send(err);
-            }
+        //Destroy the token
+        var token = req.headers.authorization.substr(8);
+        console.log('Token being deleted', token);
+        tokenSchema.findOneAndRemove({'token': token}, function (err) {
+            if (err) console.log('Error deleting token', err);
         });
 
-        //Deactivate the channels
-        search = { team_id : accountId };
-        channelModel.updateMany(search, update).exec()
-            .then(function (channel) {
-                channel.type = 'channel';
-                nsStats(channel);
-            })
-            .catch(function (err) {
-                if (err) {
-                    console.log('Error deactivating channels', err);
-                    res.status(500).send(err);
-                }
-            });
+        if (accountId) {
 
-        //Deactivate the users
-        userModel.updateMany(search, update).exec()
-            .then(function (users) {
-                users.type = 'user';
-                nsStats(users);
-            })
-            .catch(function (err) {
-                if (err) {
-                    console.log('Error deactivating users', err);
-                    res.status(500).send(err);
-                }
-            });
+            //Deactivate the team
+            var update = {$set: {'active': false}},
+                search = {id: accountId},
+                options = {new: true};
+            teamModel.findOneAndUpdate(search, update, options).exec()
+                .then(function (team) {
+                    team.type = 'team';
+                    nsStats(team);
+                })
+                .catch(function (err) {
+                    if (err) {
+                        console.log('Error deactivating team', err);
+                        res.status(500).send(err);
+                    }
+                });
 
-        //Send response and destroy the activate bot
-        res.status(200).send(accountId + ' successfully deleted.');
-        var bot = _bots[accountId];
-        if (bot) {
-            bot.destroy(function(err) {
-                console.log('Error destroying bot', err);
-            });
-            delete _bots[accountId];
+            //Deactivate the channels
+            search = {team_id: accountId};
+            channelModel.updateMany(search, update).exec()
+                .then(function (channel) {
+                    channel.type = 'channel';
+                    nsStats(channel);
+                })
+                .catch(function (err) {
+                    if (err) {
+                        console.log('Error deactivating channels', err);
+                        res.status(500).send(err);
+                    }
+                });
+
+            //Deactivate the users
+            userModel.updateMany(search, update).exec()
+                .then(function (users) {
+                    users.type = 'user';
+                    nsStats(users);
+                })
+                .catch(function (err) {
+                    if (err) {
+                        console.log('Error deactivating users', err);
+                        res.status(500).send(err);
+                    }
+                });
+
+            //Send response and destroy the activate bot
+            res.status(200).send(accountId + ' successfully deleted.');
+            var bot = _bots[accountId];
+            if (bot) {
+                bot.destroy(function (err) {
+                    console.log('Error destroying bot', err);
+                });
+                delete _bots[accountId];
+            }
         }
+    } else {
+        res.status(401).send('Not Authorized');
     }
 });
 
