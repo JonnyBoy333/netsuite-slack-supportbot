@@ -245,7 +245,6 @@ router.get('/activate/:accountid',
     function(req, res) {
         var accountId = req.params.accountid;
         console.log('Account ID', accountId);
-        console.log('Body', req.body);
         if (accountId) {
 
             //Activate the account
@@ -324,7 +323,8 @@ router.delete('/delete/:accountid', function (req, res) {
         var accountId = req.params.accountid;
 
         //Destroy the token
-        var token = req.headers.authorization.substr(8);
+        //var token = req.headers.authorization.substr(8);
+        var token = req.body.token;
         console.log('Token being deleted', token);
         tokenSchema.findOneAndRemove({'token': token}, function (err) {
             if (err) console.log('Error deleting token', err);
