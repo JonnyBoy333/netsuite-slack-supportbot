@@ -324,7 +324,7 @@ router.delete('/delete/:accountid', function (req, res) {
 
         //Destroy the token
         //var token = req.headers.authorization.substr(8);
-        var token = req.body.token;
+        var token = req.query.token;
         console.log('Token being deleted', token);
         tokenSchema.findOneAndRemove({'token': token}, function (err) {
             if (err) console.log('Error deleting token', err);
