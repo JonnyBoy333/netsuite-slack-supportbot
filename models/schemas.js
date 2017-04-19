@@ -40,7 +40,8 @@ var teamSchema = mongoose.Schema({
     },
     netsuite: {
         slack_listener_uri: String,
-        account_id: { type: String, unique: true, index: true }
+        account_id: { type: String, unique: true, index: true },
+        environment: String
     },
     token: String,
     bot: {

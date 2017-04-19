@@ -44,7 +44,8 @@ router.post('/addaccount/:accountid',
         if (req.body.default_channel_id) newAccount.default_channel = req.body.default_channel_id;
         if (req.body.netsuite) newAccount.netsuite = {
             slack_listener_uri: req.body.netsuite.slack_listener_uri,
-            account_id: req.body.netsuite.account_id
+            account_id: req.body.netsuite.account_id,
+            environment: req.body.netsuite.environment
         };
         if (req.body.token) newAccount.token = req.body.token;
         if (req.body.bot.token) newAccount.bot = { token: req.body.bot.token };
@@ -331,7 +332,6 @@ router.delete('/delete/:accountid', function (req, res) {
         });
 
         if (accountId) {
-
             //Deactivate the team
             var update = {$set: {'active': false}},
                 search = {id: accountId},

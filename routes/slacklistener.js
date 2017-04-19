@@ -20,7 +20,7 @@ controller.storage.teams.all(function(err,teams) {
 
     // connect all teams with bots up to slack!
     for (var t in teams) {
-        if (teams[t].bot && teams.hasOwnProperty(t)) {
+        if (teams.hasOwnProperty(t) && teams[t].bot && teams[t].active === true) {
             controller.spawn(teams[t].bot).startRTM(function(err, bot) {
                 if (err) {
                     console.log('Error connecting bot to Slack:', err);
