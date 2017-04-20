@@ -581,23 +581,26 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                 keyword = body.keyword,
                                 messages = body.messages;
 
+                            console.log('Version', version);
+                            console.log('Checker', versionCheck(version, '0.4.5'));
                             //Check to make sure version is compatible
                             if (!version || versionCheck(version, '0.4.5') < 0) {
-                                bot.reply(message, 'There is a critical update to Support Bot, please update to the latest version.', function (err) {
+                                bot.reply(message, 'There is a critical update to Support Bot, please update to version `' + process.env.CURRENT_VERSION + '`.', function (err) {
                                     if (err) console.log(err);
                                 })
-                            } 
+                            } else {
+                                Promise.resolve(0).then(function loop(i) {
+                                    // The loop check
+                                    if (i < len) { // The post iteration increment
+                                        return sendMessage(i).thenReturn(i + 1).then(loop);
+                                    }
+                                }).then(function() {
+                                    console.log("All messages sent");
+                                }).catch(function(e) {
+                                    console.log("error", e);
+                                });
+                            }
 
-                            Promise.resolve(0).then(function loop(i) {
-                                // The loop check
-                                if (i < len) { // The post iteration increment
-                                    return sendMessage(i).thenReturn(i + 1).then(loop);
-                                }
-                            }).then(function() {
-                                console.log("All messages sent");
-                            }).catch(function(e) {
-                                console.log("error", e);
-                            });
                         }
                     }
                 });
