@@ -366,7 +366,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
 
 
     //Responses to send to NetSuite
-    if (foundTerm === "hello" || foundTerm === "it going" || foundTerm === "would you like to" || foundTerm === "help" || foundTerm === 'about') {
+    if (foundTerm === "hello" || foundTerm === "it going" || foundTerm === "would you like to" || foundTerm === "help") {
         bot.startTyping(message);
         var newMessage = '';
         switch (foundTerm) {
@@ -577,7 +577,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                             console.log('Full Body', body);
                             // The loop initialization
                             //var len = body.length;
-                            var len = body.messages.length,
+                            var len = body.messages ? body.messages.length : 0,
                                 version = body.version,
                                 keyword = body.keyword,
                                 messages = body.messages;
