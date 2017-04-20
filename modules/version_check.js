@@ -31,6 +31,8 @@
 function versionCompare(v1, v2, options) {
     'use strict';
 
+    if (v1 === null || v2 === null) return NaN;
+
     var i,
         lexicographical = options && options.lexicographical,
         zeroExtend = options && options.zeroExtend,
