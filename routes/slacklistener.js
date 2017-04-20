@@ -8,7 +8,8 @@ var express = require('express'),
     _bots = require('../modules/track_bot').bots,
     _interactive_bots = require('../modules/track_bot').interacticeBots,
     passport = require('passport'),
-    nsStats = require('../modules/netsuite_logging');
+    nsStats = require('../modules/netsuite_logging'),
+    versionCheck = require('../modules/version_check');
     //fs = require('fs');
 
 controller.storage.teams.all(function(err,teams) {
@@ -498,7 +499,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                     } else {
                         function sendMessage(i) {
                             return new Promise(function(resolve) {
-                                if (body[i].needsCleaning === true) {
+                                if (messages[i].needsCleaning === true) {
                                     function byteCount(str) {
                                         var s = str.length;
                                         for (var i=str.length-1; i>=0; i--) {
@@ -509,12 +510,12 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                         }
                                         return s;
                                     }
-                                    //console.log('Body Before Cleaning', body[i]);
-                                    var dirtyMessage = body[i].message;
+                                    //console.log('messages Before Cleaning', messages[i]);
+                                    var dirtyMessage = messages[i].message;
                                     //console.log('Dirty Message', dirtyMessage);
-                                    var intro = body[i].keyword === 'last message' ? dirtyMessage.substr(0, dirtyMessage.indexOf('is:') + 3) : dirtyMessage.substr(0, dirtyMessage.indexOf('sent the following message:') + 27);
+                                    var intro = keyword === 'last message' ? dirtyMessage.substr(0, dirtyMessage.indexOf('is:') + 3) : dirtyMessage.substr(0, dirtyMessage.indexOf('sent the following message:') + 27);
                                     console.log('Intro', intro);
-                                    var html = body[i].keyword === 'last message' ? dirtyMessage.substr(dirtyMessage.indexOf('is:') + 3) : dirtyMessage.substr(dirtyMessage.indexOf('sent the following message:') + 27);
+                                    var html = keyword === 'last message' ? dirtyMessage.substr(dirtyMessage.indexOf('is:') + 3) : dirtyMessage.substr(dirtyMessage.indexOf('sent the following message:') + 27);
                                     if (html) {
 
                                         function cutInUTF8(str, n) {
@@ -545,13 +546,13 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                         if (byteCount(noBlankLinesMessage + intro) + 16 > 3700) {
                                             var introBytes = byteCount(intro);
                                             console.log('Slim Bite Length', byteCount(cutInUTF8(noBlankLinesMessage, 3700 - introBytes - 16)));
-                                            body[i].message = intro + '```' + cutInUTF8(noBlankLinesMessage, 3700 - introBytes - 16) + ' (more)...```';
+                                            messages[i].message = intro + '```' + cutInUTF8(noBlankLinesMessage, 3700 - introBytes - 16) + ' (more)...```';
                                         } else {
-                                            body[i].message = intro + '```' + noBlankLinesMessage + '```';
+                                            messages[i].message = intro + '```' + noBlankLinesMessage + '```';
                                         }
                                     }
                                 }
-                                var reply = body[i].attachments && body[i].attachments.length > 0 ? {attachments: body[i].attachments} : body[i].message;
+                                var reply = messages[i].attachments && messages[i].attachments.length > 0 ? {attachments: messages[i].attachments} : messages[i].message;
                                 console.log('Reply: ' + JSON.stringify(reply));
                                 // fs.writeFile("reply.txt", reply, function(err) {
                                 //     if(err) {
@@ -563,7 +564,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                     if (err) console.log(err);
                                     resolve();
                                 });
-                                if (i <= (body.length - 1)) {bot.startTyping(message)}
+                                if (i <= (messages.length - 1)) {bot.startTyping(message)}
                             })
                         }
 
@@ -574,17 +575,32 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                         } else {
                             console.log('Full Body', body);
                             // The loop initialization
-                            var len = body.length;
-                            Promise.resolve(0).then(function loop(i) {
-                                // The loop check
-                                if (i < len) { // The post iteration increment
-                                    return sendMessage(i).thenReturn(i + 1).then(loop);
-                                }
-                            }).then(function() {
-                                console.log("All messages sent");
-                            }).catch(function(e) {
-                                console.log("error", e);
-                            });
+                            //var len = body.length;
+                            var len = body.messages.length,
+                                version = body.version,
+                                keyword = body.keyword,
+                                messages = body.messages;
+
+                            console.log('Version', version);
+                            console.log('Checker', versionCheck(version, '0.4.5'));
+                            //Check to make sure version is compatible
+                            if (!version || versionCheck(version, '0.4.5') < 0) {
+                                bot.reply(message, 'There is a critical update to Support Bot, please update to version `' + process.env.CURRENT_VERSION + '`.', function (err) {
+                                    if (err) console.log(err);
+                                })
+                            } else {
+                                Promise.resolve(0).then(function loop(i) {
+                                    // The loop check
+                                    if (i < len) { // The post iteration increment
+                                        return sendMessage(i).thenReturn(i + 1).then(loop);
+                                    }
+                                }).then(function() {
+                                    console.log("All messages sent");
+                                }).catch(function(e) {
+                                    console.log("error", e);
+                                });
+                            }
+
                         }
                     }
                 });
