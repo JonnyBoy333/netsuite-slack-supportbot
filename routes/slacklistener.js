@@ -382,10 +382,10 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                 newMessage = "Let's ride a bike!";
                 break;
 
-            case "about":
-                newMessage = "Netsuite Support Bot `v0.4.2`.\n" +
-                    "For questions or to report bugs please email us at erpsupport@bergankdv.com";
-                break;
+            // case "about":
+            //     newMessage = "Netsuite Support Bot `v0.4.2`.\n" +
+            //         "For questions or to report bugs please email us at erpsupport@bergankdv.com";
+            //     break;
 
             case "help":
                 newMessage = "Hello, I am the Support Bot and I can help you manage your support cases in NetSuite. " +
@@ -552,6 +552,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                         }
                                     }
                                 }
+                                if (keyword === 'about') messages[i].message = messages[i].message.replace('xxxxx', process.env.CURRENT_VERSION);
                                 var reply = messages[i].attachments && messages[i].attachments.length > 0 ? {attachments: messages[i].attachments} : messages[i].message;
                                 console.log('Reply: ' + JSON.stringify(reply));
                                 // fs.writeFile("reply.txt", reply, function(err) {
