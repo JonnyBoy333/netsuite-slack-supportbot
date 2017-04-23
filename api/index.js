@@ -248,20 +248,69 @@ router.get('/activate/:accountid',
         console.log('Account ID', accountId);
         if (accountId) {
 
-            //Activate the account
-            var update = { $set : { 'active' : true } },
-            search = { "netsuite.account_id": accountId },
-            options = { new: true };
+            //Look for existing account
+            var search = { "netsuite.account_id": accountId };
 
-            teamModel.findOneAndUpdate(search, update, options).exec()
+            teamModel.findOne(search).exec()
                 .then(function (updatedAccount) {
                     console.log('Updated Account', updatedAccount);
 
+                    //If account found spawn Bot and activate the account
                     if (updatedAccount) {
-                        //Update active status in NetSuite logs
-                        updatedAccount.type = 'activate';
-                        console.log('Updating Account', updatedAccount);
-                        nsStats(updatedAccount);
+
+                        //Attempt Bot Spawn
+                        controller.spawn(updatedAccount.bot).startRTM(function(err, bot) {
+                            if (err) {
+                                console.log('Error connecting bot to Slack:', err); //bot probably already spawned
+                            } else {
+                                console.log('Bot re activated:', bot.team_info.name);
+                                trackBot(bot, 'main');
+
+                                //Activate the account
+                                var update = { $set : { 'active' : true } },
+                                    search = { 'id': updatedAccount.id },
+                                    options = { new: true };
+
+                                teamModel.findOneAndUpdate(search, update, options).exec()
+                                    .then(function (updatedAccount) {
+                                        console.log('Activated Account', updatedAccount);
+                                    })
+                                    .catch(function (err) {
+                                        if (err) {
+                                            console.log('Error activating Account', err);
+                                            res.status(500).send(err);
+                                        }
+                                    });
+
+                                //Activate the channels
+                                search = { team_id : accountId };
+                                channelModel.updateMany(search, update).exec()
+                                    .then(function (channel) {})
+                                    .catch(function (err) {
+                                        if (err) {
+                                            console.log('Error activating channels', err);
+                                            res.status(500).send(err);
+                                        }
+                                    });
+
+                                //Activate the users
+                                userModel.updateMany(search, update).exec()
+                                    .then(function (users) {})
+                                    .catch(function (err) {
+                                        if (err) {
+                                            console.log('Error activating users', err);
+                                            res.status(500).send(err);
+                                        }
+                                    });
+
+                                //Update active status in NetSuite logs
+                                updatedAccount.type = 'activate';
+                                console.log('Updating Account', updatedAccount);
+                                nsStats(updatedAccount);
+                            }
+                        });
+
+
                         res.status(200).send({
                             team_id: updatedAccount.id,
                             default_channel: updatedAccount.default_channel,
@@ -269,36 +318,6 @@ router.get('/activate/:accountid',
                             slack_bot_token: updatedAccount.bot.token
                         });
 
-                        //Spawn bot
-                        controller.spawn(updatedAccount.bot).startRTM(function(err, bot) {
-                            if (err) {
-                                console.log('Error connecting bot to Slack:', err); //bot probably already spawned
-                            } else {
-                                console.log('Bot re activated:', bot.team_info.name);
-                                trackBot(bot, 'main');
-                            }
-                        });
-
-                        //Activate the channels
-                        search = { team_id : accountId };
-                        channelModel.updateMany(search, update).exec()
-                            .then(function (channel) {})
-                            .catch(function (err) {
-                                if (err) {
-                                    console.log('Error activating channels', err);
-                                    res.status(500).send(err);
-                                }
-                            });
-
-                        //Activate the users
-                        userModel.updateMany(search, update).exec()
-                            .then(function (users) {})
-                            .catch(function (err) {
-                                if (err) {
-                                    console.log('Error activating users', err);
-                                    res.status(500).send(err);
-                                }
-                            });
                     } else {
                         res.status(200).send();
                     }
