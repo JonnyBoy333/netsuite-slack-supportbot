@@ -60,12 +60,12 @@ controller.storage.teams.all(function(err,teams) {
         if (teams.hasOwnProperty(t) && teams[t].bot && teams[t].active === true) {
             function spawnBot(team) {
                 new Promise(function (resolve, reject) {
-                    controller.spawn(team.bot).startRTM(function (err, bot, payload) {
+                    controller.spawn(team.bot).startRTM(function (err, bot) {
                         if (err) {
                             console.log('Error connecting ' + team.name + ' bot to Slack:', err);
                             if (err === 'account_inactive') {
                                 delete _bots[team.id];
-                                //deactivateAccount(bot.team_info.id);
+                                deactivateAccount(bot.team_info.id);
                             }
                         } else {
                             console.log('Bot connected:', bot.team_info.name);
