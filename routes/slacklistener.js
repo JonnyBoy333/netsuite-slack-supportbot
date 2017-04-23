@@ -574,7 +574,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                         if ((typeof body == 'string' && body.indexOf('error') === 2) || body.hasOwnProperty('error')){
                             console.log('Error :' + body);
                             if (body.error.code === 'INVALID_LOGIN_ATTEMPT') {
-                                bot.reply(message, 'You need to setup employee tokens on the slack setup page.');
+                                bot.reply(message, 'Employee tokens are not setup yet. Please go to the Slack setup page and follow the instructions to add employee tokens.');
                             }
                         } else {
                             console.log('Full Body', body);

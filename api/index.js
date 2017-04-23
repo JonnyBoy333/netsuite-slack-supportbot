@@ -259,7 +259,8 @@ router.get('/activate/:accountid',
 
                     if (updatedAccount) {
                         //Update active status in NetSuite logs
-                        updatedAccount.type = 'team';
+                        updatedAccount.type = 'activate';
+                        console.log('Updating Account', updatedAccount);
                         nsStats(updatedAccount);
                         res.status(200).send({
                             team_id: updatedAccount.id,
@@ -281,10 +282,7 @@ router.get('/activate/:accountid',
                         //Activate the channels
                         search = { team_id : accountId };
                         channelModel.updateMany(search, update).exec()
-                            .then(function (channel) {
-                                channel.type = 'channel';
-                                nsStats(channel);
-                            })
+                            .then(function (channel) {})
                             .catch(function (err) {
                                 if (err) {
                                     console.log('Error activating channels', err);
@@ -294,10 +292,7 @@ router.get('/activate/:accountid',
 
                         //Activate the users
                         userModel.updateMany(search, update).exec()
-                            .then(function (users) {
-                                users.type = 'user';
-                                nsStats(users);
-                            })
+                            .then(function (users) {})
                             .catch(function (err) {
                                 if (err) {
                                     console.log('Error activating users', err);
@@ -338,7 +333,8 @@ router.delete('/delete/:accountid', function (req, res) {
                 options = {new: true};
             teamModel.findOneAndUpdate(search, update, options).exec()
                 .then(function (team) {
-                    team.type = 'team';
+                    team.type = 'deactivate';
+                    console.log('Deactivating Team:', team);
                     nsStats(team);
                 })
                 .catch(function (err) {
@@ -351,10 +347,7 @@ router.delete('/delete/:accountid', function (req, res) {
             //Deactivate the channels
             search = {team_id: accountId};
             channelModel.updateMany(search, update).exec()
-                .then(function (channel) {
-                    channel.type = 'channel';
-                    nsStats(channel);
-                })
+                .then(function (channel) {})
                 .catch(function (err) {
                     if (err) {
                         console.log('Error deactivating channels', err);
@@ -364,10 +357,7 @@ router.delete('/delete/:accountid', function (req, res) {
 
             //Deactivate the users
             userModel.updateMany(search, update).exec()
-                .then(function (users) {
-                    users.type = 'user';
-                    nsStats(users);
-                })
+                .then(function (users) {})
                 .catch(function (err) {
                     if (err) {
                         console.log('Error deactivating users', err);
