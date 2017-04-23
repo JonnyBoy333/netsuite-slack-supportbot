@@ -59,9 +59,9 @@ controller.storage.teams.all(function(err,teams) {
     for (var t in teams) {
         if (teams.hasOwnProperty(t) && teams[t].bot && teams[t].active === true) {
             controller.spawn(teams[t].bot).startRTM(function(err, bot, payload) {
-                console.log('Bot with error connecting', bot);
-                console.log('Payload with error connecting', payload);
                 if (err) {
+                    console.log('Bot with error connecting', bot);
+                    console.log('Payload with error connecting', payload);
                     console.log('Error connecting ' + teams[t].name + ' bot to Slack:', err);
                     if (err === 'account_inactive') {
                         delete _bots[teams[t].id];
