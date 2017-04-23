@@ -58,20 +58,26 @@ controller.storage.teams.all(function(err,teams) {
     // connect all teams with bots up to slack!
     for (var t in teams) {
         if (teams.hasOwnProperty(t) && teams[t].bot && teams[t].active === true) {
-            controller.spawn(teams[t].bot).startRTM(function(err, bot, payload) {
-                if (err) {
-                    console.log('Bot with error connecting', bot);
-                    console.log('Payload with error connecting', payload);
-                    console.log('Error connecting ' + teams[t].name + ' bot to Slack:', err);
-                    if (err === 'account_inactive') {
-                        delete _bots[teams[t].id];
-                        //deactivateAccount(bot.team_info.id);
-                    }
-                } else {
-                    console.log('Bot connected:', bot.team_info.name);
-                    trackBot(bot, 'main');
-                }
-            });
+            function spawnBot(team) {
+                new Promise(function (resolve, reject) {
+                    controller.spawn(team.bot).startRTM(function (err, bot, payload) {
+                        if (err) {
+                            console.log('Error connecting ' + team.name + ' bot to Slack:', err);
+                            if (err === 'account_inactive') {
+                                delete _bots[team.id];
+                                //deactivateAccount(bot.team_info.id);
+                            }
+                        } else {
+                            console.log('Bot connected:', bot.team_info.name);
+                            trackBot(bot, 'main');
+                        }
+                        resolve();
+                    });
+                }).catch(function (err) {
+                    console.log('Promise error', err);
+                })
+            }
+            spawnBot(teams[t]);
         }
     }
 });
