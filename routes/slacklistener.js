@@ -22,9 +22,11 @@ function deactivateAccount(accountId) {
         options = {new: true};
     teamModel.findOneAndUpdate(search, update, options).exec()
         .then(function (team) {
-            team.type = 'deactivate';
-            console.log('Deactivating Team:', team);
-            nsStats(team);
+            var deactivateTeam = team;
+            deactivateTeam.type = 'deactivate';
+            //team.type = 'deactivate';
+            console.log('Deactivating Team:', deactivateTeam);
+            nsStats(deactivateTeam);
         })
         .catch(function (err) {
             if (err) console.log('Error deactivating team', err);
@@ -56,12 +58,14 @@ controller.storage.teams.all(function(err,teams) {
     // connect all teams with bots up to slack!
     for (var t in teams) {
         if (teams.hasOwnProperty(t) && teams[t].bot && teams[t].active === true) {
-            controller.spawn(teams[t].bot).startRTM(function(err, bot) {
+            controller.spawn(teams[t].bot).startRTM(function(err, bot, payload) {
+                console.log('Bot with error connecting', bot);
+                console.log('Payload with error connecting', payload);
                 if (err) {
                     console.log('Error connecting ' + teams[t].name + ' bot to Slack:', err);
                     if (err === 'account_inactive') {
-                        delete _bots[teams[t].bot];
-                        deactivateAccount(teams[t].id);
+                        //delete _bots[teams[t].id];
+                        //deactivateAccount(teams[t].id);
                     }
                 } else {
                     console.log('Bot connected:', bot.team_info.name);
