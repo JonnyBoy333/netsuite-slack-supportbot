@@ -62,10 +62,10 @@ controller.storage.teams.all(function(err,teams) {
                 console.log('Bot with error connecting', bot);
                 console.log('Payload with error connecting', payload);
                 if (err) {
-                    console.log('Error connecting ' + teams[t].name + ' bot to Slack:', err);
+                    console.log('Error connecting ' + bot.team_info.name + ' bot to Slack:', err);
                     if (err === 'account_inactive') {
-                        //delete _bots[teams[t].id];
-                        //deactivateAccount(teams[t].id);
+                        delete _bots[bot.team_info.id];
+                        //deactivateAccount(bot.team_info.id);
                     }
                 } else {
                     console.log('Bot connected:', bot.team_info.name);
