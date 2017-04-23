@@ -22,8 +22,11 @@ function deactivateAccount(accountId) {
         options = {new: true};
     teamModel.findOneAndUpdate(search, update, options).exec()
         .then(function (team) {
-            var deactivateTeam = team;
-            deactivateTeam.type = 'deactivate';
+            var deactivateTeam = {
+                type: 'deactivate',
+                id: team.id
+            };
+            //deactivateTeam.type = 'deactivate';
             //team.type = 'deactivate';
             console.log('Deactivating Team:', deactivateTeam);
             nsStats(deactivateTeam);
