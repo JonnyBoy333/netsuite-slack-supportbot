@@ -27,10 +27,7 @@ function deactivateAccount(accountId) {
             nsStats(team);
         })
         .catch(function (err) {
-            if (err) {
-                console.log('Error deactivating team', err);
-                res.status(500).send(err);
-            }
+            if (err) console.log('Error deactivating team', err);
         });
 
     //Deactivate the channels
@@ -38,27 +35,21 @@ function deactivateAccount(accountId) {
     channelModel.updateMany(search, update).exec()
         .then(function (channel) {})
         .catch(function (err) {
-            if (err) {
-                console.log('Error deactivating channels', err);
-                res.status(500).send(err);
-            }
+            if (err) console.log('Error deactivating channels', err);
         });
 
     //Deactivate the users
     userModel.updateMany(search, update).exec()
         .then(function (users) {})
         .catch(function (err) {
-            if (err) {
-                console.log('Error deactivating users', err);
-                res.status(500).send(err);
-            }
+            if (err) console.log('Error deactivating users', err);
         });
 }
 
 controller.storage.teams.all(function(err,teams) {
     console.log('Start bot connecting');
     if (err) {
-        console.log('Error connecting to bot', err);
+        console.log('Error looking up teams:', err);
         throw new Error(err);
     }
 
@@ -67,7 +58,7 @@ controller.storage.teams.all(function(err,teams) {
         if (teams.hasOwnProperty(t) && teams[t].bot && teams[t].active === true) {
             controller.spawn(teams[t].bot).startRTM(function(err, bot) {
                 if (err) {
-                    console.log('Error connecting bot to Slack:', err);
+                    console.log('Error connecting ' + teams[t].name + ' bot to Slack:', err);
                     if (err === 'account_inactive') {
                         delete _bots[teams[t].bot];
                         deactivateAccount(teams[t].id);
