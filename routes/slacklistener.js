@@ -571,8 +571,11 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
 
 
                         //console.log('Body:', body);
-                        if (typeof body == 'string' && body.indexOf('error') === 2){
+                        if ((typeof body == 'string' && body.indexOf('error') === 2) || body.hasOwnProperty('error')){
                             console.log('Error :' + body);
+                            if (body.error.code === 'INVALID_LOGIN_ATTEMPT') {
+                                bot.reply(message, 'You need to setup employee tokens on the slack setup page.');
+                            }
                         } else {
                             console.log('Full Body', body);
                             // The loop initialization
