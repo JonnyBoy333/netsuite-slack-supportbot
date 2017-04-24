@@ -697,12 +697,19 @@ function storeMessageData(teamId, team, type, slackAttachment) {
         nsStats(message);
     });
 
+    var title = '';
+    if (slackAttachment.hasOwnProperty('attachments') && slackAttachment.attachments.length > 0) {
+        if (slackAttachment.attachments[0].hasOwnProperty('title')) title = slackAttachment.attachments[0].title;
+        else if (slackAttachment.attachments[0].hasOwnProperty('text')) title = slackAttachment.attachments[0].text;
+    } else if (slackAttachment.hasOwnProperty('text')) {
+        title = slackAttachment.text;
+    }
     var channelData = {
         id: team.default_channel,
         $push: {
             messages: {
                 message_type: type,
-                message: slackAttachment.attachments[0].title
+                message: title
             }
         },
         $inc: {
