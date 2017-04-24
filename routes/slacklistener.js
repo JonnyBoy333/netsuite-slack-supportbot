@@ -867,12 +867,12 @@ router.post('/custommessage',
                 return new Promise(function (resolve) {
 
                     console.log('Custom Message To Slack:', messages[i]);
-                    bot.say(messages[i], function (err, response) {
+                    bot.say(messages[i], function (err, slackRes) {
                         if (err) {
                             console.log('Error sending custom messages', err);
                             response.push({ message_number: i, result: err })
                         } else {
-                            response.push({ message_number: i, result: response })
+                            response.push({ message_number: i, result: slackRes })
                         }
                         storeMessageData(teamId, team, req.body.type, messages[i]);
                         resolve();
