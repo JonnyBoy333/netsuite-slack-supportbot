@@ -847,15 +847,12 @@ router.post('/caseassigned',
 router.post('/custommessage',
     passport.authenticate('bearer', { session: false }),
     function (req, res) {
-        var messages = req.body,
-            attachments = messages.attachments,
+        var messages = req.body.messages,
             teamId = messages.team_id,
             bot = _bots[teamId];
 
-        console.log('body:', messages);
+        console.log('body:', req.body);
         console.log('TeamID:', teamId);
-        console.log('Bot:', bot);
-        console.log('Cleaned attachments:', attachments);
         //console.log('headers: ' + JSON.stringify(req.headers));
         controller.storage.teams.get(teamId, function(err, team) {
             if (err) console.log(err);
@@ -865,7 +862,7 @@ router.post('/custommessage',
                     //var reply = messages[i].attachments && messages[i].attachments.length > 0 ? { attachments: messages[i].attachments } : messages[i].messages;
                     //var reply = { channel: messages[i].channel };
 
-                    console.log('New Case Slack Attachment:', messages[i]);
+                    console.log('Custom Message To Slack:', messages[i]);
                     bot.say(messages[i], function (err) {
                         if (err) console.log('Error sending custom messages', err);
                         storeMessageData(teamId, team, messages.type, messages[i]);
