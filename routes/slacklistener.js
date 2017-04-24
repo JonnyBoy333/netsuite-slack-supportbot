@@ -866,13 +866,11 @@ router.post('/custommessage',
 
             function sendMessage(i) {
                 return new Promise(function (resolve) {
-                    //var reply = messages[i].attachments && messages[i].attachments.length > 0 ? { attachments: messages[i].attachments } : messages[i].messages;
-                    //var reply = { channel: messages[i].channel };
 
                     console.log('Custom Message To Slack:', messages[i]);
                     bot.say(messages[i], function (err) {
                         if (err) console.log('Error sending custom messages', err);
-                        storeMessageData(teamId, team, messages.type, messages[i]);
+                        storeMessageData(teamId, team, req.body.type, messages[i]);
                         resolve();
                     });
                     if (i <= (messages.length - 1)) {
