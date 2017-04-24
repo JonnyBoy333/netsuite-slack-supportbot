@@ -889,10 +889,11 @@ router.post('/custommessage',
                     return sendMessage(i).thenReturn(i + 1).then(loop);
                 }
             }).then(function() {
-                res.end(response);
+                res.end({ responses: response });
                 console.log("All messages sent");
             }).catch(function(e) {
                 console.log("error", e);
+                res.end('Error sending messages');
             });
         });
     });
