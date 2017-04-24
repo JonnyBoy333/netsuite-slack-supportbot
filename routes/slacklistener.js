@@ -723,7 +723,6 @@ function storeMessageData(teamId, team, type, slackAttachment) {
         message.type = 'channel';
         channelData.$push.messages.date = new Date();
         message.messages = [channelData.$push.messages];
-        console.log('Channel message', message);
         nsStats(message);
     });
 }
@@ -869,7 +868,10 @@ router.post('/custommessage',
 
                     console.log('Custom Message To Slack:', messages[i]);
                     bot.say(messages[i], function (err) {
-                        if (err) console.log('Error sending custom messages', err);
+                        if (err) {
+                            console.log('Error sending custom messages', err);
+                            res.send({ error: err });
+                        }
                         storeMessageData(teamId, team, req.body.type, messages[i]);
                         resolve();
                     });
