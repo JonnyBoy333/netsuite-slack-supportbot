@@ -859,18 +859,20 @@ router.post('/custommessage',
 
         console.log('body:', req.body);
         console.log('TeamID:', teamId);
-        //console.log('headers: ' + JSON.stringify(req.headers));
         controller.storage.teams.get(teamId, function(err, team) {
             if (err) console.log(err);
+            var response = [];
 
             function sendMessage(i) {
                 return new Promise(function (resolve) {
 
                     console.log('Custom Message To Slack:', messages[i]);
-                    bot.say(messages[i], function (err) {
+                    bot.say(messages[i], function (err, response) {
                         if (err) {
                             console.log('Error sending custom messages', err);
-                            res.send({ error: err });
+                            response.push({ message_number: i, result: err })
+                        } else {
+                            response.push({ message_number: i, result: response })
                         }
                         storeMessageData(teamId, team, req.body.type, messages[i]);
                         resolve();
@@ -887,12 +889,12 @@ router.post('/custommessage',
                     return sendMessage(i).thenReturn(i + 1).then(loop);
                 }
             }).then(function() {
+                res.end(response);
                 console.log("All messages sent");
             }).catch(function(e) {
                 console.log("error", e);
             });
         });
-        res.end("Custom messages sent.");
     });
 
 /* GET home page. */
