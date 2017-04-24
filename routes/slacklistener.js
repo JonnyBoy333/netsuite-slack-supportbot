@@ -26,8 +26,6 @@ function deactivateAccount(accountId) {
                 type: 'deactivate',
                 id: team.id
             };
-            //deactivateTeam.type = 'deactivate';
-            //team.type = 'deactivate';
             console.log('Deactivating Team:', deactivateTeam);
             nsStats(deactivateTeam);
         })
@@ -761,6 +759,7 @@ function storeMessageData(teamId, team, type, slackAttachment) {
 }
 
 router.use(passport.authenticate('bearer', { session: false }));
+
 //Post new cases
 router.post('/newcase',
     passport.authenticate('bearer', { session: false }),
@@ -880,6 +879,54 @@ router.post('/caseassigned',
         res.end("NetSuite Listener");
     }
 );
+
+//Post custom message
+router.post('/custommessage',
+    passport.authenticate('bearer', { session: false }),
+    function (req, res) {
+        var messages = req.body,
+            attachments = messages.attachments,
+            teamId = messages.team_id,
+            bot = _bots[teamId];
+
+        console.log('body:', messages);
+        console.log('TeamID:', teamId);
+        console.log('Bot:', bot);
+        console.log('Cleaned attachments:', attachments);
+        //console.log('headers: ' + JSON.stringify(req.headers));
+        controller.storage.teams.get(teamId, function(err, team) {
+            if (err) console.log(err);
+
+            function sendMessage(i) {
+                return new Promise(function (resolve) {
+                    //var reply = messages[i].attachments && messages[i].attachments.length > 0 ? { attachments: messages[i].attachments } : messages[i].messages;
+                    //var reply = { channel: messages[i].channel };
+
+                    console.log('New Case Slack Attachment:', messages[i]);
+                    bot.say(messages[i], function (err) {
+                        if (err) console.log('Error sending custom messages', err);
+                        storeMessageData(teamId, team, messages.type, messages[i]);
+                        resolve();
+                    });
+                    if (i <= (messages.length - 1)) {
+                        bot.startTyping(messages)
+                    }
+                });
+            }
+
+            Promise.resolve(0).then(function loop(i) {
+                // The loop check
+                if (i < messages.length) { // The post iteration increment
+                    return sendMessage(i).thenReturn(i + 1).then(loop);
+                }
+            }).then(function() {
+                console.log("All messages sent");
+            }).catch(function(e) {
+                console.log("error", e);
+            });
+        });
+        res.end("NetSuite Listener");
+    });
 
 /* GET home page. */
 router.get('/',
