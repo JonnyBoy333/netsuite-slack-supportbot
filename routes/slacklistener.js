@@ -848,7 +848,7 @@ router.post('/custommessage',
     passport.authenticate('bearer', { session: false }),
     function (req, res) {
         var messages = req.body.messages,
-            teamId = messages.team_id,
+            teamId = req.body.team_id,
             bot = _bots[teamId];
 
         console.log('body:', req.body);
@@ -885,7 +885,7 @@ router.post('/custommessage',
                 console.log("error", e);
             });
         });
-        res.end("NetSuite Listener");
+        res.end("Custom messages sent.");
     });
 
 /* GET home page. */
