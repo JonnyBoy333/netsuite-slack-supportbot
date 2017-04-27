@@ -32,7 +32,9 @@
 
     <link href='//fonts.googleapis.com/css?family=Sofia' rel='stylesheet'>
 
-    <link rel="stylesheet" href="../stylesheets/style.css" rel="stylesheet">
+    <link href="../stylesheets/atom-one-light.css" rel="stylesheet">
+
+    <link href="../stylesheets/style.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -45,12 +47,16 @@
 
 <div class="header clearfix">
     <nav>
-        <ul class="nav nav-pills pull-right">
-            <li role="presentation" class=<%= home %>><a href="/">Home</a></li>
-            <li role="presentation" class=<%= instructions %>><a href="/instructions">Instructions</a></li>
-            <li role="presentation" class=<%= contact %>><a href="/contact">Contact</a></li>
-            <!--<li role="presentation" class=<%= privacypolicy %>><a href="/privacypolicy">Privacy Policy</a></li>-->
-        </ul>
+        <div class="container-fluid">
+            <ul class="nav nav-pills pull-right">
+                <li role="presentation" class=<%= home %>><a href="/">Home</a></li>
+                <li role="presentation" class=<%= instructions %>><a href="/instructions">Instructions</a></li>
+                <li role="presentation" class=<%= contact %>><a href="/contact">Contact</a></li>
+                <!--<li role="presentation" class=<%= privacypolicy %>><a href="/privacypolicy">Privacy Policy</a></li>-->
+            </ul>
+            <div class="navbar-header">
+                <h3 class="text-muted">NetSuite Support Bot</h3>
+            </div>
+        </div>
     </nav>
-    <h3 class="text-muted">NetSuite Support Bot</h3>
 </div>
