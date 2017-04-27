@@ -697,12 +697,19 @@ function storeMessageData(teamId, team, type, slackAttachment) {
         nsStats(message);
     });
 
+    var title = '';
+    if (slackAttachment.hasOwnProperty('attachments') && slackAttachment.attachments.length > 0) {
+        if (slackAttachment.attachments[0].hasOwnProperty('title')) title = slackAttachment.attachments[0].title;
+        else if (slackAttachment.attachments[0].hasOwnProperty('text')) title = slackAttachment.attachments[0].text;
+    } else if (slackAttachment.hasOwnProperty('text')) {
+        title = slackAttachment.text;
+    }
     var channelData = {
         id: team.default_channel,
         $push: {
             messages: {
                 message_type: type,
-                message: slackAttachment.attachments[0].title
+                message: title
             }
         },
         $inc: {
@@ -716,7 +723,6 @@ function storeMessageData(teamId, team, type, slackAttachment) {
         message.type = 'channel';
         channelData.$push.messages.date = new Date();
         message.messages = [channelData.$push.messages];
-        console.log('Channel message', message);
         nsStats(message);
     });
 }
@@ -847,28 +853,28 @@ router.post('/caseassigned',
 router.post('/custommessage',
     passport.authenticate('bearer', { session: false }),
     function (req, res) {
-        var messages = req.body,
-            attachments = messages.attachments,
-            teamId = messages.team_id,
+        var messages = req.body.messages,
+            teamId = req.body.team_id,
             bot = _bots[teamId];
 
-        console.log('body:', messages);
+        console.log('body:', req.body);
         console.log('TeamID:', teamId);
-        console.log('Bot:', bot);
-        console.log('Cleaned attachments:', attachments);
-        //console.log('headers: ' + JSON.stringify(req.headers));
         controller.storage.teams.get(teamId, function(err, team) {
             if (err) console.log(err);
+            var response = [];
 
             function sendMessage(i) {
                 return new Promise(function (resolve) {
-                    //var reply = messages[i].attachments && messages[i].attachments.length > 0 ? { attachments: messages[i].attachments } : messages[i].messages;
-                    //var reply = { channel: messages[i].channel };
 
-                    console.log('New Case Slack Attachment:', messages[i]);
-                    bot.say(messages[i], function (err) {
-                        if (err) console.log('Error sending custom messages', err);
-                        storeMessageData(teamId, team, messages.type, messages[i]);
+                    console.log('Custom Message To Slack:', messages[i]);
+                    bot.say(messages[i], function (err, slackRes) {
+                        if (err) {
+                            console.log('Error sending custom messages', err);
+                            response.push({ message_number: i, result: err })
+                        } else {
+                            response.push({ message_number: i, result: slackRes })
+                        }
+                        storeMessageData(teamId, team, req.body.type, messages[i]);
                         resolve();
                     });
                     if (i <= (messages.length - 1)) {
@@ -883,12 +889,13 @@ router.post('/custommessage',
                     return sendMessage(i).thenReturn(i + 1).then(loop);
                 }
             }).then(function() {
+                res.end(JSON.stringify({ responses: response }));
                 console.log("All messages sent");
             }).catch(function(e) {
                 console.log("error", e);
+                res.end('Error sending messages');
             });
         });
-        res.end("NetSuite Listener");
     });
 
 /* GET home page. */
