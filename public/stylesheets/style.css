@@ -22,7 +22,7 @@ pre {
     border: 0;
     background-color: transparent;
     padding: 0;
-    margin: 30px 0 60px;
+    margin: 30px 0 40px;
 }
 
 .slack-image {
@@ -37,7 +37,20 @@ pre {
 }
 
 .hljs {
+    padding: 25px 25px;
+}
+
+#main-code {
     padding: 30px 15px;
+}
+
+.code-holder{
+    width: 100%; /* your prefered width */
+    overflow-x: scroll;
+}
+
+.code-holder code{
+    white-space: pre; /* this rule is important*/
 }
 /* Small devices (tablets, 768px and up) */
 /*@media (min-width: 768px) {*/
@@ -137,7 +150,7 @@ ul.features {
 }
 
 ol.instructions {
-    padding-left: 10px;
+    padding-left: 20px;
     margin-top: 1em;
     color: #777777;
     font-family: Slack-Lato, sans-serif;
@@ -164,4 +177,13 @@ img.instructions {
     border-color: #DEDEDE;
     border-radius:5px;
     margin: 20px 0;
+}
+
+img#tps-image {
+    width: 60%;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #DEDEDE;
+    border-radius:5px;
+    padding: 2%;
 }

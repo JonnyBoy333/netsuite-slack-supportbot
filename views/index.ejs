@@ -56,11 +56,12 @@
       <img id="workflow" class="pull-left gap-right img-rounded" src="../images/demo_imgs/slack_workflow.png" width="100%">
     </a>
     <p>Know your way around SuiteScript? The new public Slack module let's you send Slack messages right from your current scripts, leveraging the full power of Slack messages in an incredibly easy to use way.</p>
-    <pre><code class="javascript">    var message = {
+    <pre><code class="javascript" id="main-code">    var message = {
         channel: '@peter',
         text: 'How are those TPS reports coming? :coffee:'
     };
     slack.send(message);</code></pre>
+    <div style="text-align: center"><img src="../images/demo_imgs/message_tps.jpg" alt="TPS Message" id="tps-image"></div>
     <div class="divider"></div>
     <h4>Complete List of Features</h4>
     <ul class="features">
@@ -86,8 +87,7 @@
   </div>
 
 </div>
+<%- include('footer') -%>
 
 <script src="../js/highlight.pack.js"></script>
 <script>hljs.initHighlightingOnLoad();</script>
-
-<%- include('footer') -%>
