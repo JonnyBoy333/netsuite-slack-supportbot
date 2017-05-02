@@ -162,6 +162,12 @@ ul.toc {
     padding-left: 0px;
 }
 
+ul.toc-sub {
+    list-style-type: none;
+    margin-left: -2em;
+    font-style: italic;
+}
+
 .features li:before {
     content:"\2219";    /* escaped unicode character */
     font-size:2.5em;    /* the default unicode bullet size is very small */
@@ -185,5 +191,15 @@ img#tps-image {
     border-width: 1px;
     border-color: #DEDEDE;
     border-radius:5px;
-    padding: 2%;
+    padding: 3% 4%;
+}
+
+img.demo-messages {
+    width: 60%;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #DEDEDE;
+    border-radius:5px;
+    padding: 3% 4%;
+    margin-bottom: 6%;
 }
