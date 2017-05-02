@@ -16,6 +16,10 @@
             <li><a class="instructions" href="#bundleinstall">Bundle Install</a></li>
             <li><a class="instructions" href="#appinstall">Slack App Install</a></li>
             <li><a class="instructions" href="#usage">Usage Instructions</a></li>
+            <ul class="toc-sub">
+                <li><a class="instructions" href="#custommessages">Custom Messages</a></li>
+                <li><a class="instructions" href="#changebotname">Change Bot Name</a></li>
+            </ul>
             <li><a class="instructions" href="#updating">Updating</a></li>
             <li><a class="instructions" href="#uninstalling">Uninstalling</a></li>
         </ul>
@@ -89,7 +93,7 @@
                 <li>close (case #)</li>
                 <li>about</li>
             </ol>
-            <h5>Custom Messages</h5>
+            <h5 id="custommessages">Custom Messages</h5>
             <i>Workflow</i>
             <p>Sending messages through the Workflow is simple. The workflow actions are available to all records in all execution contexts. Simply add the action to your state and Support Bot will do the rest.</p>
             <ul class="instructions">
@@ -188,6 +192,7 @@ define(['/.bundle/165111/modules/public_slack_module.js'],
         }
     }
 );</code></pre></div>
+                <div style="text-align: center"><img class="img-rounded demo-messages" src="../images/instructions/message_quote.jpg" alt="Simple Quote Message"><br></div>
     Scheduled Script that searches all Sales Orders pending approval and then sends a message for each one to a user in Slack.
                 <div class="code-holder"><pre><code>/**
  * @NApiVersion 2.x
@@ -237,6 +242,7 @@ define(['N/search', '/.bundle/165111/modules/public_slack_module.js'],
         }
     }
 );</code></pre></div>
+                <div style="text-align: center"><img class="img-rounded demo-messages" src="../images/instructions/message_sales_order.jpg" alt="Simple Quote Message" style="width: 70%"><br></div>
                 <p>Send a complex attachment style message After Submit on a User Event script.</p>
 
                 <div class="code-holder"><pre><code class="javascript">/**
@@ -298,10 +304,19 @@ define(['/.bundle/165111/modules/public_slack_module.js'],
         }
     }
 );</code></pre></div>
+                <div style="text-align: center"><img class="img-rounded demo-messages" src="../images/instructions/message_dog.jpg" alt="Simple Quote Message" style="width: 80%; padding: 4% 4%"><br></div>
             </ol>
             
             <a class="top" href="#"><span class="icon-chevron-up"></span> top</a>
         </div>
+        <h5 id="changebotname">Change Bot Name</h5>
+        <ol class="instructions">
+            <li>Log into your slack account on the slack.com website and navigate to the home dashboard</li>
+            <li>Click on <i>configure apps</i></li>
+            <li>Click on NS Support Bot</li>
+            <li>Scroll to the bottom and click the pencil to edit next to the bot name</li>
+            <li>Change the name to whatever you like and click <i>Save Changes</i></li>
+        </ol>
 
         <div>
             <h4 id="updating">Updating the App</h4>
