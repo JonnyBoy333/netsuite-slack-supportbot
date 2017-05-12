@@ -24,7 +24,7 @@ function sendData (message) {
     var headerWithRealm = oauth.toHeader(oauth.authorize(request_data, token));
     headerWithRealm.Authorization += ', realm=' + process.env.NETSUITE_ACCT_ID;
     headerWithRealm['content-type'] = 'application/json';
-    console.log('Header Authorization for logging: ' + JSON.stringify(headerWithRealm));
+    //console.log('Header Authorization for logging: ' + JSON.stringify(headerWithRealm));
 
     request({
         url: request_data.url,

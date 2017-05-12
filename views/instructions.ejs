@@ -16,6 +16,10 @@
             <li><a class="instructions" href="#bundleinstall">Bundle Install</a></li>
             <li><a class="instructions" href="#appinstall">Slack App Install</a></li>
             <li><a class="instructions" href="#usage">Usage Instructions</a></li>
+            <ul class="toc-sub">
+                <li><a class="instructions" href="#custommessages">Custom Messages</a></li>
+                <li><a class="instructions" href="#changebotname">Change Bot Name</a></li>
+            </ul>
             <li><a class="instructions" href="#updating">Updating</a></li>
             <li><a class="instructions" href="#uninstalling">Uninstalling</a></li>
         </ul>
@@ -71,10 +75,248 @@
             <p>You can message NetSuite Support Bot directly in a DM in slack or from within a channel that Support Bot has been invited into. When sending a message to Support Bot from within a channel you must direct the message to Support Bot by including @support before your message.<br /><br />
                 To get started message ‘help’ to Support Bot for a list of supported commands. In most cases you will specify the command, followed by a case number and in some cases an additional parameter. Separate each of these elements by a single space. When specifying a name to assign or escalate a case to you must specify the first and last name of the person (a space between the two is optional). Please note that the first and last name must match the first and last name of an employee in NetSuite who is marked as a support rep.<br /><br />
                 Many commands require you to specify a case # to interact with that specific case. It is often easiest to use one of the first three commands to list out cases before choosing one to interact with. When you list cases you will see the case number, subject, abbreviation for the support rep assigned to the case, the company that the case is associated with and a color that corresponds to the priority. When you list your own cases you will see the abbreviation for the case status instead of who it is assigned to. Some commands support interacting with multiple cases at once. These include the ‘grab,’ ‘escalate,’ ‘assign,’ ‘close,’ ‘increase priority,’ and the ‘decrease priority’ commands. Simply separate each case number with a space (i.e. close 123 456 789).<br /><br />
-                NetSuite Support Bot was built to support our internal team but I thought it would be a good tool for others to use. NetSuite Support Bot is currently in Beta and is free to use. I hope you enjoy using it as much as we do.
             </p>
+            <p>List of all available commands:</p>
+            <ol class="instructions">
+                <li>help</li>
+                <li>open cases</li>
+                <li>unassigned cases</li>
+                <li>my cases</li>
+                <li>grab (case #)</li>
+                <li>last message (case #)</li>
+                <li>all messages (case #)</li>
+                <li>all attachments (case #)</li>
+                <li>escalate (case #) *escalatee*</li>
+                <li>increase/decrease priority (case #)</li>
+                <li>assign (case #) *assignee*</li>
+                <li>reply (case #) *message*</li>
+                <li>close (case #)</li>
+                <li>about</li>
+            </ol>
+            <h5 id="custommessages">Custom Messages</h5>
+            <i>Workflow</i>
+            <p>Sending messages through the Workflow is simple. The workflow actions are available to all records in all execution contexts. Simply add the action to your state and Support Bot will do the rest.</p>
+            <ul class="instructions">
+                <li style="list-style: none">
+                    Basic Message<br>
+                    <ol class="instructions">
+                        <li>Add the <i>Slack - Basic Message</i> action to your Workflow State</li>
+                        <li>Select the channel to post to or type the username of the person you wish to message</li>
+                        <li>
+                            If you do not know the username and wish to send to an employee you can select an employee from the drop down and Support Bot will attempt to
+                            find that user in your Slack channel's userbase. Note that the first and last name in Slack must match the first and last name in NetSuite for this to work.
+                        </li>
+                        <li>Enter the text that you want to send in your message. This text supports all standard markup in Slack (i.e. *bold* or _italics_)</li>
+                    </ol>
+                </li>
+
+                <li style="list-style: none">Attachment Message</li>
+                <ol class="instructions">
+                    <li>Add the <i>Slack - Attachment Message</i> action to your Workflow State</li>
+                    <li>Add the channel or user you are sending to as described in the basic message setup</li>
+                    <li>
+                        Add extra information into the subsequent fields to create a content rich message. All of the additional fields are optional so you only need to fill in
+                        information that you want to see in your message. For a comprehensive list of where each item will show and what type of information should be in each field
+                        read the documentation at <a href="https://api.slack.com/docs/message-attachments" target="_blank">Slack attachment messages</a>.
+                    </li>
+                    <img class="img-rounded instructions" src="../images/instructions/attachment_message_formatting.png" alt="Attachment Message Formatting" width="100%">
+                </ol>
+            </ul>
+            <i>SuiteScript</i>
+            <ol class="instructions">
+                <li>Import the module into your script by including <code>/.bundle/165111/modules/public_slack_module.js</code> in the Array of the first argument of the define function</li>
+                <li>Add <i>slack</i> as the corresponding parameter in your executing function</li>
+                <li>Create a message to send to you Slack account. Messages must contain a <i>channel</i> property as well as either a <i>text</i> or an <i>attachment</i> property</li>
+                <li>
+                    Usernames must start with an '@' symbole while channels must start with a '#'. You can optionally have have Support Bot attempt to lookup the user by passing an employee id to the <i>channel</i>
+                    property in the form of <code>{ employee_id: 3 }</code>
+                </li>
+                <li>Pass your message to the .send() method of the slack object</li>
+                <pre><code class="javascript">var message = {
+    channel: { employee_id: 3 },
+    text: 'Can you approve this order?'
+};
+slack.send(message);</code></pre>
+                <li>
+                    You can optionally pass an Array of messages to the .send() method to send multiple messages in one call. It is preferred that you group multiple messages
+                    in a single Array and pass them to the .send() method instead of calling .send() multiple times as it improves performance and ensures synchronous
+                    delivery of all of your messages
+                </li>
+                <li>
+                    Additional parameters can be put in the message object to add content to your message. For a full list of available perameters see slack documentation on
+                    <a href="https://api.slack.com/docs/message-attachments" target="_blank">building attachment messages</a>. <i>Note: Buttons are not currently supported
+                    with custom messages.</i>
+                </li><br>
+                Examples:<br><br>
+                Sending a simple message in a User Event script running After Submit on an Estimate record.
+                <div class="code-holder"><pre><code>/**
+ * @NApiVersion 2.x
+ * @NScriptType UserEventScript
+ * @NModuleScope SameAccount
+ * author: xxxxxx
+ * Date: 4/29/17
+ * Version: 1.0
+ */
+
+define(['/.bundle/165111/modules/public_slack_module.js'],
+
+    /**
+     * @param {slack} slack
+     */
+    function (slack) {
+
+        /**
+         * Function definition to be triggered before record is loaded.
+         * @param {Object} context
+         * @param {Record} context.newRecord - New record
+         * @param {Record} context.oldRecord - Old record
+         * @param {string} context.type - Trigger type
+         * @Since 2015.2
+         */
+        function afterSubmit(context) {
+
+            var rec = context.newRecord;
+            var quoteURL = 'https://system.netsuite.com/app/accounting/transactions/estimate.nl?id=' + rec.id;
+            var quoteNum = rec.getValue({ fieldId: 'tranid' });
+            var message = {
+                channel: "#support",
+                text: 'Can someone look at quote <' + quoteURL + '|Quote #' + quoteNum + '?>'
+            };
+
+            var response = slack.send(message);
+            log.debug('Response', response);
+        }
+
+        return {
+            afterSubmit: afterSubmit
+        }
+    }
+);</code></pre></div>
+                <div style="text-align: center"><img class="img-rounded demo-messages" src="../images/instructions/message_quote.jpg" alt="Simple Quote Message"><br></div>
+    Scheduled Script that searches all Sales Orders pending approval and then sends a message for each one to a user in Slack.
+                <div class="code-holder"><pre><code>/**
+ * @NApiVersion 2.x
+ * @NScriptType ScheduledScript
+ * @NModuleScope SameAccount
+ * author: xxxxxx
+ * Date: 4/29/17
+ * Version: 1.0
+ */
+
+define(['N/search', '/.bundle/165111/modules/public_slack_module.js'],
+
+    /**
+     * @param {search} search
+     * @param {slack} slack
+     */
+    function (search, slack) {
+
+        /**
+         * Definition of the Scheduled script trigger point.
+         * @param {Object} context
+         * @param {string} context.type - The context in which the script is executed. It is one of the values from the context.InvocationType enum.
+         * @Since 2015.2
+         */
+        function execute(context) {
+
+            var slackMessages = [];
+            var columns = [{name: 'salesrep'}];
+            var filters = [{name: 'orderstatus', operator: 'anyof', values: ['Pending Approval']}];
+
+            search.create({type: search.Type.SALES_ORDER, columns: columns, filters: filters})
+                .run().each(function (result) {
+                    var employeeId = result.getValue({ name: 'salesrep' });
+                    var soURL = 'https://system.netsuite.com/app/accounting/transactions/salesord.nl?id=' + result.id;
+                    slackMessages.push({
+                        channel: { employee_id: employeeId },
+                        text: 'Can you approve this Sales Order? <' + soURL + '|Sales Order #' + result.id + '>'
+                    });
+                    return true;
+                });
+            var slackResponse = slack.send(slackMessages);
+            log.debug('Response from Slack', slackResponse);
+        }
+
+        return {
+            execute: execute
+        }
+    }
+);</code></pre></div>
+                <div style="text-align: center"><img class="img-rounded demo-messages" src="../images/instructions/message_sales_order.jpg" alt="Simple Quote Message" style="width: 70%"><br></div>
+                <p>Send a complex attachment style message After Submit on a User Event script.</p>
+
+                <div class="code-holder"><pre><code class="javascript">/**
+ * @NApiVersion 2.x
+ * @NScriptType UserEventScript
+ * @NModuleScope SameAccount
+ * author: xxxxxx
+ * Date: 4/29/17
+ * Version: 1.0
+ */
+
+define(['/.bundle/165111/modules/public_slack_module.js'],
+
+    /**
+     * @param {slack} slack
+     */
+    function (slack) {
+
+        /**
+         * Function definition to be triggered before record is loaded.
+         * @param {Object} context
+         * @param {Record} context.newRecord - New record
+         * @param {Record} context.oldRecord - Old record
+         * @param {string} context.type - Trigger type
+         * @Since 2015.2
+         */
+        function afterSubmit(context) {
+            slack.send({
+                channel: #support,
+                attachments: [
+                    {
+                        fallback: 'New case has been submitted.',
+                        color: '#36a64f',
+                        pretext: 'here is some general information about the case.',
+                        author_name: 'Bobby Tables',
+                        author_link: 'https://system.netsuite.com/app/common/entity/employee.nl?id=7415&',
+                        author_icon: 'http://pix.iemoji.com/images/emoji/apple/ios-9/256/dog-face.png',
+                        title: 'Fixing computer problems',
+                        title_link: 'https://system.netsuite.com/app/crm/support/supportcase.nl?id=167205',
+                        text: 'This is some more detailed information about the case.',
+                        fields: [
+                            {
+                                title: 'Priority',
+                                value: 'High',
+                                short: false
+                            }
+                        ],
+                        image_url: 'http://nssupportbot.com/images/instructions/dog-image.jpg',
+                        footer: 'Slack API',
+                        footer_icon: 'https://platform.slack-edge.com/img/default_application_icon.png',
+                        ts: 123456789
+                    }
+                ]
+            })
+        }
+
+        return {
+            afterSubmit: afterSubmit
+        }
+    }
+);</code></pre></div>
+                <div style="text-align: center"><img class="img-rounded demo-messages" src="../images/instructions/message_dog.jpg" alt="Simple Quote Message" style="width: 80%; padding: 4% 4%"><br></div>
+            </ol>
+            
             <a class="top" href="#"><span class="icon-chevron-up"></span> top</a>
         </div>
+        <h5 id="changebotname">Change Bot Name</h5>
+        <ol class="instructions">
+            <li>Log into your slack account on the slack.com website and navigate to the home dashboard</li>
+            <li>Click on <i>configure apps</i></li>
+            <li>Click on NS Support Bot</li>
+            <li>Scroll to the bottom and click the pencil to edit next to the bot name</li>
+            <li>Change the name to whatever you like and click <i>Save Changes</i></li>
+        </ol>
 
         <div>
             <h4 id="updating">Updating the App</h4>
@@ -132,3 +374,6 @@
         return false;
     });
 </script>
+
+<script src="../js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>

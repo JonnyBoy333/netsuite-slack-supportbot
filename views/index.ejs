@@ -1,7 +1,7 @@
 <%- include('header') -%>
 
 <div class="jumbotron">
-  <img class="logo" width="20%" src="../images/demo_imgs/slack_logo.png"><img style="padding: 10px 15px" width="10%" src="../images/demo_imgs/plus.png"><img class="logo" width="20%" src="../images/demo_imgs/netsuite_logo.png"><br>
+  <img class="logo" style="padding: 0% 4%" width="20%" src="../images/demo_imgs/slack_logo.png"><img style="padding: 0% 2%" width="10%" src="../images/demo_imgs/plus.png"><img class="logo" style="padding: 0% 4%" width="20%" src="../images/demo_imgs/netsuite_logo.png"><br>
   <img class="logo" width="50%" src="../images/demo_imgs/slack_support_icon.png">
   <h1 style="font-size:50px">Support Cases In Slack!</h1>
   <p class="lead">Interact with NetSuite support cases from within Slack. Manage communication with your team and your cases in one place! Click the button below to install or search for 'NS Support Bot for Slack' in the bundle search in NetSuite.</p>
@@ -11,7 +11,7 @@
 <div class="row marketing">
   <div class="col-lg-12">
     <div class="embed-responsive embed-responsive-16by9">
-      <iframe class="embed-responsive-item" style="margin-bottom: 20px" src="https://www.youtube.com/embed/Cm2uUi5oEqg"></iframe>
+      <iframe class="embed-responsive-item" style="margin-bottom: 20px" src="https://www.youtube.com/embed/Cm2uUi5oEqg" allowfullscreen></iframe>
     </div>
     <div class="divider"></div>
     <h4>New Cases and Case Replies In Slack</h4>
@@ -20,28 +20,48 @@
       <img id="newcase" src="../images/demo_imgs/new_case.jpg" width="100%">
     </a>
     <div class="divider"></div>
-    <h3><i>No additional NetSuite licensing is required to run Support Bot. Only one license is required to connect Support Bot to your NetSuite account and have your whole Slack team interacting with NetSuite!</i></h3>
+    <h3><i>No additional NetSuite licensing is required to run Support Bot. Only one existing user license is required to connect Support Bot to your NetSuite account and have your whole Slack team interacting with NetSuite!</i></h3>
     <div class="divider"></div>
     <div class="clearfix feature">
-      <img class="pull-left gap-right img-rounded" src="../images/demo_imgs/send_messages.jpg" width="70%">
+      <a href="../images/demo_imgs/send_messages.jpg" data-lightbox="send_message" data-title="Sending A Message">
+        <img class="pull-left gap-right img-rounded slack-image" src="../images/demo_imgs/send_messages.jpg">
+      </a>
       <span class="vcenter">
         <p>Send replies to cases straight from Slack. Simply specify the case number and the message you wish to send. You will see a preview of your message before it gets sent so there's always time to make any last minute adjustments.</p>
       </span>
     </div>
     <div class="divider"></div>
     <div class="clearfix feature">
-      <img class="pull-right gap-left img-rounded" src="../images/demo_imgs/grab_cases.jpg" width="70%">
+      <a href="../images/demo_imgs/grab_cases.jpg" data-lightbox="grab_case" data-title="Assign A Case To Yourself">
+        <img class="pull-right gap-left img-rounded slack-image" src="../images/demo_imgs/grab_cases.jpg">
+      </a>
       <span class="vcenter">
         <p>With Support Bot you can assign multiple cases to yourself or any other support rep in NetSuite by simply typing the <i>grab</i> or <i>assign</i> keywords followed by the cases and who you wish to assign them to.</p>
       </span>
     </div>
     <div class="divider"></div>
     <div class="clearfix feature">
-      <img class="pull-left gap-right img-rounded" src="../images/demo_imgs/open_cases.jpg" width="70%">
+      <a href="../images/demo_imgs/open_cases.jpg" data-lightbox="open_cases" data-title="See All Open Cases">
+        <img class="pull-left gap-right img-rounded slack-image" src="../images/demo_imgs/open_cases.jpg">
+      </a>
       <span class="vcenter">
         <p>See case load at a glance. Support Bot allows you to see a list of all open cases in your NetSuite account as well as all the open cases that you are assigned to. Need more info? Just click the case link and NetSuite will open to that case in your browser.</p>
       </span>
     </div>
+    <div class="divider"></div>
+    <h4>Custom Messages</h4>
+    <p>Support Bot has many features but sometimes you just need to make something fully customized. There are now two ways to send you own messages.
+      Use the power of workflows to leverage Slack messages into your current workflow logic. Two new workflow actions allow you to send anything from simple text messages to complex, content rich messages to your Slack account.</p>
+    <a href="../images/demo_imgs/slack_workflow.png" data-lightbox="slack_workflow" data-title="Slack Workflow Action">
+      <img id="workflow" class="pull-left gap-right img-rounded" src="../images/demo_imgs/slack_workflow.png" width="100%">
+    </a>
+    <p>Know your way around SuiteScript? The new public Slack module let's you send Slack messages right from your current scripts, leveraging the full power of Slack messages in an incredibly easy to use way.</p>
+    <pre><code class="javascript" id="main-code">    var message = {
+        channel: '@peter',
+        text: 'How are those TPS reports coming? :coffee:'
+    };
+    slack.send(message);</code></pre>
+    <div style="text-align: center"><img src="../images/demo_imgs/message_tps.jpg" alt="TPS Message" id="tps-image"></div>
     <div class="divider"></div>
     <h4>Complete List of Features</h4>
     <ul class="features">
@@ -51,6 +71,7 @@
       <li>See all cases assigned to yourself</li>
       <li>See all unassigned case</li>
       <li>Assign a case to yourself or others</li>
+      <li>Get notified when you are assigned to a Case</li>
       <li>See the last message for a cases</li>
       <li>See all messages for a case</li>
       <li>See all attachments for a case</li>
@@ -58,11 +79,15 @@
       <li>Increase/decrease priority of a case</li>
       <li>Reply to a case</li>
       <li>Close a case</li>
-      <li>Only one license to NetSuite required</li>
+      <li>Custom Workflow integrated messages</li>
+      <li>Custom SuiteScript integrated messages</li>
+      <li>No additional license to NetSuite required</li>
     </ul>
 
   </div>
 
 </div>
-
 <%- include('footer') -%>
+
+<script src="../js/highlight.pack.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>

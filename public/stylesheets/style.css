@@ -15,8 +15,55 @@ h3 {
     font-family: Slack-Lato, sans-serif;
     font-weight: 300;
     line-height: 32px;
+    text-align: center;
 }
 
+pre {
+    border: 0;
+    background-color: transparent;
+    padding: 0;
+    margin: 30px 0 40px;
+}
+
+.slack-image {
+    width: 70%;
+}
+
+@media (max-width: 480px) {
+    .slack-image {
+        width: 100%;
+        padding-bottom: 10%;
+    }
+}
+
+.hljs {
+    padding: 25px 25px;
+}
+
+#main-code {
+    padding: 30px 15px;
+}
+
+.code-holder{
+    width: 100%; /* your prefered width */
+    overflow-x: scroll;
+}
+
+.code-holder code{
+    white-space: pre; /* this rule is important*/
+}
+/* Small devices (tablets, 768px and up) */
+/*@media (min-width: 768px) {*/
+    /*.navbar {*/
+        /*display: inline-block;*/
+        /*float: none;*/
+        /*vertical-align: top;*/
+    /*}*/
+
+    /*.navbar .navbar-collapse {*/
+        /*text-align: center;*/
+    /*}*/
+/*}*/
 #newcase {
     margin-top: 20px;
     border-style: solid;
@@ -24,6 +71,11 @@ h3 {
     border-color: #DEDEDE;
     border-radius: 4px;
 }
+
+#workflow {
+    margin: 20px 0 30px;
+}
+
 a, a:hover, a:active, a:visited, a:focus {
     text-decoration:none;
     font-family: Slack-Lato, sans-serif;
@@ -31,13 +83,15 @@ a, a:hover, a:active, a:visited, a:focus {
 }
 
 .logo {
-  padding: 15px 25px;
+  padding: 4% 4%;
 }
+
 .gap-right {
-  margin-right: 25px;
+  margin-right: 4%;
 }
+
 .gap-left {
-  margin-left: 25px;
+  margin-left: 4%;
 }
 
 p {
@@ -67,29 +121,27 @@ p {
 }
 
 .features li {
-    text-indent: 15px;
+    /*text-indent: 5px;*/
     position:relative;
+    padding-left: 20px;
 }
 ul.features {
-  /*list-style-type:disc;*/
-    list-style-type:none; /* removes default bullet */
-    padding-left: 20px;
+    list-style-type:none;
+    padding-left: 2%;
     -webkit-column-break-inside:avoid;
     -moz-column-break-inside:avoid;
     -o-column-break-inside:avoid;
     -ms-column-break-inside:avoid;
     column-break-inside:avoid;
-  margin-top: 1em;
-  -webkit-column-count: 2;
-  /*-webkit-column-gap:-0.5em;*/
-  -moz-column-count:2;
-  /*-moz-column-gap:-0.5em;*/
-  -o-column-count:2;
-  /*-o-column-gap:-0.5em;*/
-  column-count:2;
- /* column-gap:-0.5em;*/
-  /*list-style-position: inside;*/
-    /*columns: 2;*/
+    margin-top: 1em;
+    -webkit-column-count: 2;
+    /*-webkit-column-gap:-0.5em;*/
+    -moz-column-count:2;
+    /*-moz-column-gap:-0.5em;*/
+     -o-column-count:2;
+    /*-o-column-gap:-0.5em;*/
+    column-count:2;
+    /* column-gap:-0.5em;*/
     /*-webkit-columns: 2;*/
     /*-moz-columns: 2;*/
     color: #777777;
@@ -110,13 +162,19 @@ ul.toc {
     padding-left: 0px;
 }
 
+ul.toc-sub {
+    list-style-type: none;
+    margin-left: -2em;
+    font-style: italic;
+}
+
 .features li:before {
     content:"\2219";    /* escaped unicode character */
     font-size:2.5em;    /* the default unicode bullet size is very small */
     line-height:0;        /* kills huge line height on resized bullet */
     position:absolute;  /* position bullet relative to list item */
     top:11px;           /* vertical align bullet position relative to list item */
-    left: -.5em;            /* position the bullet L- R relative to list item */
+    left: -0.5%;            /* position the bullet L- R relative to list item */
 }
 
 img.instructions {
@@ -125,4 +183,23 @@ img.instructions {
     border-color: #DEDEDE;
     border-radius:5px;
     margin: 20px 0;
+}
+
+img#tps-image {
+    width: 60%;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #DEDEDE;
+    border-radius:5px;
+    padding: 3% 4%;
+}
+
+img.demo-messages {
+    width: 60%;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #DEDEDE;
+    border-radius:5px;
+    padding: 3% 4%;
+    margin-bottom: 6%;
 }

@@ -8,27 +8,77 @@ var express = require('express'),
     _bots = require('../modules/track_bot').bots,
     _interactive_bots = require('../modules/track_bot').interacticeBots,
     passport = require('passport'),
-    nsStats = require('../modules/netsuite_logging');
+    nsStats = require('../modules/netsuite_logging'),
+    versionCheck = require('../modules/version_check'),
+    teamModel = require('../models/schemas').teams,
+    channelModel = require('../models/schemas').channels,
+    userModel = require('../models/schemas').users;
+    //fs = require('fs');
+
+function deactivateAccount(accountId) {
+    //Deactivate the team
+    var update = {$set: {'active': false}},
+        search = {id: accountId},
+        options = {new: true};
+    teamModel.findOneAndUpdate(search, update, options).exec()
+        .then(function (team) {
+            var deactivateTeam = {
+                type: 'deactivate',
+                id: team.id
+            };
+            console.log('Deactivating Team:', deactivateTeam);
+            nsStats(deactivateTeam);
+        })
+        .catch(function (err) {
+            if (err) console.log('Error deactivating team', err);
+        });
+
+    //Deactivate the channels
+    search = {team_id: accountId};
+    channelModel.updateMany(search, update).exec()
+        .then(function (channel) {})
+        .catch(function (err) {
+            if (err) console.log('Error deactivating channels', err);
+        });
+
+    //Deactivate the users
+    userModel.updateMany(search, update).exec()
+        .then(function (users) {})
+        .catch(function (err) {
+            if (err) console.log('Error deactivating users', err);
+        });
+}
 
 controller.storage.teams.all(function(err,teams) {
     console.log('Start bot connecting');
     if (err) {
-        console.log('Error connecting to bot', err);
+        console.log('Error looking up teams:', err);
         throw new Error(err);
     }
 
     // connect all teams with bots up to slack!
     for (var t in teams) {
-        if (teams[t].bot && teams.hasOwnProperty(t)) {
-            controller.spawn(teams[t].bot).startRTM(function(err, bot) {
-                if (err) {
-                    console.log('Error connecting bot to Slack:', err);
-                    //TODO remove team as they likely removed your app
-                } else {
-                    console.log('Bot connected:', bot.team_info.name);
-                    trackBot(bot, 'main');
-                }
-            });
+        if (teams.hasOwnProperty(t) && teams[t].bot && teams[t].active === true) {
+            function spawnBot(team) {
+                new Promise(function (resolve, reject) {
+                    controller.spawn(team.bot).startRTM(function (err, bot) {
+                        if (err) {
+                            console.log('Error connecting ' + team.name + ' bot to Slack:', err);
+                            if (err === 'account_inactive') {
+                                delete _bots[team.id];
+                                deactivateAccount(team.id);
+                            }
+                        } else {
+                            console.log('Bot connected:', bot.team_info.name);
+                            trackBot(bot, 'main');
+                        }
+                        resolve();
+                    });
+                }).catch(function (err) {
+                    console.log('Promise error', err);
+                })
+            }
+            spawnBot(teams[t]);
         }
     }
 });
@@ -55,7 +105,10 @@ setInterval(function(){
     var date = new Date();
     for (var message in _interactiveMessages) {
         var messageExpiration = _interactiveMessages[message].setSeconds(_interactiveMessages[message].getSeconds() + 10);
-        if (date > messageExpiration) delete _interactiveMessages[message];
+        if (date > messageExpiration) {
+            console.log('Message deleted', _interactiveMessages[message]);
+            delete _interactiveMessages[message];
+        }
     }
 }, 10000);
 
@@ -75,7 +128,10 @@ controller.on('interactive_message_callback', function(bot, message) {
     trackBot(bot, 'interactive');
 
     //Check to see if message has already been sent
-    if (_interactiveMessages.hasOwnProperty(message.callback_id)) return;
+    if (_interactiveMessages.hasOwnProperty(message.callback_id)) {
+        console.log('Message already sent');
+        return;
+    }
 
     _interactiveMessages[message.callback_id] = new Date();
     //console.log('Interactive Bot', bot);
@@ -191,7 +247,7 @@ controller.on('interactive_message_callback', function(bot, message) {
                             delete _interactiveMessages[message.callback_id];
 
                         } else {
-                            var reply = { attachments: body[0].attachments };
+                            var reply = { attachments: body.messages[0].attachments };
                             console.log('Reply: ' + JSON.stringify(reply));
                             bot.replyInteractive(message, reply);
                             delete _interactiveMessages[message.callback_id];
@@ -200,7 +256,7 @@ controller.on('interactive_message_callback', function(bot, message) {
                     }
                 });
             })
-                .catch(function(reason){
+            .catch(function(reason){
                 console.log(reason);
             })
         });
@@ -320,7 +376,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
 
 
     //Responses to send to NetSuite
-    if (foundTerm === "hello" || foundTerm === "it going" || foundTerm === "would you like to" || foundTerm === "help" || foundTerm === 'about') {
+    if (foundTerm === "hello" || foundTerm === "it going" || foundTerm === "would you like to" || foundTerm === "help") {
         bot.startTyping(message);
         var newMessage = '';
         switch (foundTerm) {
@@ -336,10 +392,10 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                 newMessage = "Let's ride a bike!";
                 break;
 
-            case "about":
-                newMessage = "Netsuite Support Bot `v0.1 beta`.\n" +
-                    "For questions or to report bugs please email us at erpsupport@bergankdv.com";
-                break;
+            // case "about":
+            //     newMessage = "Netsuite Support Bot `v0.4.2`.\n" +
+            //         "For questions or to report bugs please email us at erpsupport@bergankdv.com";
+            //     break;
 
             case "help":
                 newMessage = "Hello, I am the Support Bot and I can help you manage your support cases in NetSuite. " +
@@ -453,36 +509,36 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                     } else {
                         function sendMessage(i) {
                             return new Promise(function(resolve) {
-                                if (body[i].needsCleaning === true) {
-                                    function byteCount(s) {
-                                        return encodeURI(s).split(/%(?:u[0-9A-F]{2})?[0-9A-F]{2}|./).length - 1;
-                                    }
-                                    //console.log('Body Before Cleaning', body[i]);
-                                    var dirtyMessage = body[i].message;
-                                    console.log('Dirty Message', dirtyMessage);
-                                    var intro = dirtyMessage.substr(0, dirtyMessage.indexOf('sent the following message:') + 27);
-                                    var html = dirtyMessage.substr(dirtyMessage.indexOf('sent the following message:') + 27);
-                                    if (html) {
-                                        function encode_utf8( s ) {
-                                            return unescape( encodeURIComponent( s ) );
+                                if (messages[i].needsCleaning === true) {
+                                    function byteCount(str) {
+                                        var s = str.length;
+                                        for (var i=str.length-1; i>=0; i--) {
+                                            var code = str.charCodeAt(i);
+                                            if (code > 0x7f && code <= 0x7ff) s++;
+                                            else if (code > 0x7ff && code <= 0xffff) s+=2;
+                                            if (code >= 0xDC00 && code <= 0xDFFF) i--; //trail surrogate
                                         }
+                                        return s;
+                                    }
+                                    //console.log('messages Before Cleaning', messages[i]);
+                                    var dirtyMessage = messages[i].message;
+                                    //console.log('Dirty Message', dirtyMessage);
+                                    var intro = keyword === 'last message' ? dirtyMessage.substr(0, dirtyMessage.indexOf('is:') + 3) : dirtyMessage.substr(0, dirtyMessage.indexOf('sent the following message:') + 27);
+                                    console.log('Intro', intro);
+                                    var html = keyword === 'last message' ? dirtyMessage.substr(dirtyMessage.indexOf('is:') + 3) : dirtyMessage.substr(dirtyMessage.indexOf('sent the following message:') + 27);
+                                    if (html) {
 
-                                        function substr_utf8_bytes(str, startInBytes, lengthInBytes) {
-                                            var resultStr = '';
-                                            var startInChars = 0;
-
-                                            for (var bytePos = 0; bytePos < startInBytes; startInChars++) {
-                                                var ch = str.charCodeAt(startInChars);
-                                                bytePos += (ch < 128) ? 1 : encode_utf8(str[startInChars]).length;
+                                        function cutInUTF8(str, n) {
+                                            var len = Math.min(n, str.length);
+                                            var i, cs, c = 0, bytes = 0;
+                                            for (i = 0; i < len; i++) {
+                                                c = str.charCodeAt(i);
+                                                cs = 1;
+                                                if (c >= 128) cs++;
+                                                if (c >= 2048) cs++;
+                                                if (n < (bytes += cs)) break;
                                             }
-
-                                            var end = startInChars + lengthInBytes - 1;
-                                            for (var n = startInChars; startInChars <= end; n++) {
-                                                ch = str.charCodeAt(n);
-                                                end -= (ch < 128) ? 1 : encode_utf8(str[n]).length;
-                                                resultStr += str[n];
-                                            }
-                                            return resultStr;
+                                            return str.substr(0, i);
                                         }
 
                                         var cleanMessage = sanitizeHtml(html, {
@@ -494,46 +550,71 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                         var removeBlanks = /[\r\n]{2,}/g;
                                         var noBlankLinesMessage = trimmedMessage.replace(removeBlanks, '\r\n');
                                         console.log('i', i);
-                                        console.log('No Blanks: ' + noBlankLinesMessage);
+                                        //console.log('No Blanks: ' + noBlankLinesMessage);
                                         //console.log('No Blanks and Intro Length', intro.length + 3 + noBlankLinesMessage.substr(0, 3980 - intro.length).length + 13);
                                         console.log('Byte Length', byteCount(noBlankLinesMessage + intro) + 16);
-                                        if (byteCount(noBlankLinesMessage + intro) + 16 > 4000) {
+                                        if (byteCount(noBlankLinesMessage + intro) + 16 > 3700) {
                                             var introBytes = byteCount(intro);
-                                            console.log('Slim byte length', byteCount(substr_utf8_bytes(noBlankLinesMessage, 0, 4000 - introBytes - 16)));
-                                            body[i].message = intro + '```' + substr_utf8_bytes(noBlankLinesMessage, 0, 4000 - introBytes - 16) + ' (more)...```';
+                                            console.log('Slim Bite Length', byteCount(cutInUTF8(noBlankLinesMessage, 3700 - introBytes - 16)));
+                                            messages[i].message = intro + '```' + cutInUTF8(noBlankLinesMessage, 3700 - introBytes - 16) + ' (more)...```';
                                         } else {
-                                            body[i].message = intro + '```' + noBlankLinesMessage + '```';
+                                            messages[i].message = intro + '```' + noBlankLinesMessage + '```';
                                         }
                                     }
                                 }
-                                var reply = body[i].attachments && body[i].attachments.length > 0 ? {attachments: body[i].attachments} : body[i].message;
+                                if (keyword === 'about') messages[i].message = messages[i].message.replace('xxxxx', process.env.CURRENT_VERSION);
+                                var reply = messages[i].attachments && messages[i].attachments.length > 0 ? {attachments: messages[i].attachments} : messages[i].message;
                                 console.log('Reply: ' + JSON.stringify(reply));
+                                // fs.writeFile("reply.txt", reply, function(err) {
+                                //     if(err) {
+                                //         return console.log(err);
+                                //     }
+                                //     console.log("The file was saved!");
+                                // });
                                 bot.reply(message, reply, function (err) {
                                     if (err) console.log(err);
                                     resolve();
                                 });
-                                if (i <= (body.length - 1)) {bot.startTyping(message)}
+                                if (i <= (messages.length - 1)) {bot.startTyping(message)}
                             })
                         }
 
 
                         //console.log('Body:', body);
-                        if (typeof body == 'string' && body.indexOf('error') === 2){
+                        if ((typeof body == 'string' && body.indexOf('error') === 2) || body.hasOwnProperty('error')){
                             console.log('Error :' + body);
+                            if (body.error.code === 'INVALID_LOGIN_ATTEMPT') {
+                                bot.reply(message, 'Employee tokens are not setup yet. Please go to the Slack setup page and follow the instructions to add employee tokens.');
+                            }
                         } else {
                             console.log('Full Body', body);
                             // The loop initialization
-                            var len = body.length;
-                            Promise.resolve(0).then(function loop(i) {
-                                // The loop check
-                                if (i < len) { // The post iteration increment
-                                    return sendMessage(i).thenReturn(i + 1).then(loop);
-                                }
-                            }).then(function() {
-                                console.log("All messages sent");
-                            }).catch(function(e) {
-                                console.log("error", e);
-                            });
+                            //var len = body.length;
+                            var len = body.messages ? body.messages.length : 0,
+                                version = body.version,
+                                keyword = body.keyword,
+                                messages = body.messages;
+
+                            console.log('Version', version);
+                            console.log('Checker', versionCheck(version, '0.4.5'));
+                            //Check to make sure version is compatible
+                            if (!version || versionCheck(version, '0.4.5') < 0) {
+                                bot.reply(message, 'There is a critical update to Support Bot, please update to version `' + process.env.CURRENT_VERSION + '`.', function (err) {
+                                    if (err) console.log(err);
+                                })
+                            } else {
+                                Promise.resolve(0).then(function loop(i) {
+                                    // The loop check
+                                    if (i < len) { // The post iteration increment
+                                        return sendMessage(i).thenReturn(i + 1).then(loop);
+                                    }
+                                }).then(function() {
+                                    console.log("All messages sent");
+                                }).catch(function(e) {
+                                    console.log("error", e);
+                                });
+                            }
+
                         }
                     }
                 });
@@ -615,12 +696,19 @@ function storeMessageData(teamId, team, type, slackAttachment) {
         nsStats(message);
     });
 
+    var title = '';
+    if (slackAttachment.hasOwnProperty('attachments') && slackAttachment.attachments.length > 0) {
+        if (slackAttachment.attachments[0].hasOwnProperty('title')) title = slackAttachment.attachments[0].title;
+        else if (slackAttachment.attachments[0].hasOwnProperty('text')) title = slackAttachment.attachments[0].text;
+    } else if (slackAttachment.hasOwnProperty('text')) {
+        title = slackAttachment.text;
+    }
     var channelData = {
         id: team.default_channel,
         $push: {
             messages: {
                 message_type: type,
-                message: slackAttachment.attachments[0].title
+                message: title
             }
         },
         $inc: {
@@ -632,17 +720,14 @@ function storeMessageData(teamId, team, type, slackAttachment) {
     controller.storage.channels.save(channelData, function (err, message) {
         if (err) console.log('Error adding message to channel storage', err);
         message.type = 'channel';
-        //console.log('Channel message', message);
-        // message.messages = [{
-        //     keyword: message.match[0],
-        //     message: message.text,
-        //     date: new Date()
-        // }];
+        channelData.$push.messages.date = new Date();
+        message.messages = [channelData.$push.messages];
         nsStats(message);
     });
 }
 
 router.use(passport.authenticate('bearer', { session: false }));
+
 //Post new cases
 router.post('/newcase',
     passport.authenticate('bearer', { session: false }),
@@ -719,6 +804,98 @@ router.post('/casereply',
         res.end("NetSuite Listener");
     }
 );
+
+//Post case assignments
+router.post('/caseassigned',
+    passport.authenticate('bearer', { session: false }),
+    function (req, res) {
+        var message = req.body,
+            slackMessages = message['slack_messages'],
+            teamId = message.team_id,
+            bot = _bots[teamId],
+            attachments = getAttachments(slackMessages),
+            slackAttachment = {};
+        console.log('body:', message);
+        //console.log('headers: ' + JSON.stringify(req.headers));
+        controller.storage.teams.get(teamId, function(err, team) {
+            if (err) console.log(err);
+            getUserIdList(message.assigned, bot)
+                .then(function(userId) {
+                    console.log('User ID', userId);
+                    if (!userId) {
+                        console.log('User not found for case assignment');
+                        return;
+                    }
+                    slackAttachment = {
+                        attachments: attachments,
+                        //channel: '#testing',
+                        channel: userId
+                    };
+                    console.log('RTM Slack Attachment:', slackAttachment);
+                    bot.say(slackAttachment, function(err) {
+                        if (err) {
+                            console.log('Error sending case reply', err);
+                            // slackAttachment.channel = '#general';
+                            // bot.say(slackAttachment,function(err) {
+                            //     if (err) console.log('Error sending new case to general channel', err);
+                            // })
+                        }
+                        storeMessageData(teamId, team, 'caseassigned', slackAttachment);
+                    });
+                })
+        });
+        res.end("NetSuite Listener");
+    }
+);
+
+//Post custom message
+router.post('/custommessage',
+    passport.authenticate('bearer', { session: false }),
+    function (req, res) {
+        var messages = req.body.messages,
+            teamId = req.body.team_id,
+            bot = _bots[teamId];
+
+        console.log('body:', req.body);
+        console.log('TeamID:', teamId);
+        controller.storage.teams.get(teamId, function(err, team) {
+            if (err) console.log(err);
+            var response = [];
+
+            function sendMessage(i) {
+                return new Promise(function (resolve) {
+
+                    console.log('Custom Message To Slack:', messages[i]);
+                    bot.say(messages[i], function (err, slackRes) {
+                        if (err) {
+                            console.log('Error sending custom messages', err);
+                            response.push({ message_number: i, result: err })
+                        } else {
+                            response.push({ message_number: i, result: slackRes })
+                        }
+                        storeMessageData(teamId, team, req.body.type, messages[i]);
+                        resolve();
+                    });
+                    if (i <= (messages.length - 1)) {
+                        bot.startTyping(messages)
+                    }
+                });
+            }
+
+            Promise.resolve(0).then(function loop(i) {
+                // The loop check
+                if (i < messages.length) { // The post iteration increment
+                    return sendMessage(i).thenReturn(i + 1).then(loop);
+                }
+            }).then(function() {
+                res.end(JSON.stringify({ responses: response }));
+                console.log("All messages sent");
+            }).catch(function(e) {
+                console.log("error", e);
+                res.end('Error sending messages');
+            });
+        });
+    });
 
 /* GET home page. */
 router.get('/',
