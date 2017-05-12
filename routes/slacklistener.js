@@ -12,7 +12,9 @@ var express = require('express'),
     versionCheck = require('../modules/version_check'),
     teamModel = require('../models/schemas').teams,
     channelModel = require('../models/schemas').channels,
-    userModel = require('../models/schemas').users;
+    userModel = require('../models/schemas').users,
+    Logger = require('le_node'),
+    logger = new Logger({ token: '75fe78e9-e1e4-4748-9e5f-751e5d5570a5' });
     //fs = require('fs');
 
 function deactivateAccount(accountId) {
@@ -291,6 +293,7 @@ var searchTerms = [
 var searchReg = new RegExp(searchTerms, 'gi');
 
 controller.hears([searchReg],['direct_message','direct_mention','mention'],function(bot,message) {
+    logger.debug('I herd something');
     if (message.user == bot.identity.id) return;
 
     //Store message data in db
