@@ -346,22 +346,26 @@ router.post('/announcement/',
             controller.storage.teams.all(function (err, teams) {
                 teams.forEach(function (team) {
                     if (err) console.log('Error retrieving all teams', err);
+                    if (team.active === false) return;
+
                     console.log('Team ID', team.id);
                     var bot = _bots[team.id];
                     announcement.channel = team.default_channel;
                     console.log('Announcement:', announcement);
-                    bot.say(announcement, function(err) {
-                        if (err) {
-                            console.log('Error sending announcement', err);
-                            // lookupGeneralChan(bot)
-                            // .then(function (generalChan) {
-                            //     announcement.channel = generalChan;
-                            //     bot.say(announcement,function(err) {
-                            //         if (err) console.log('Error sending new case to general channel', err);
-                            //     })
-                            // })
-                        }
-                    });
+                    if (bot) {
+                        bot.say(announcement, function(err) {
+                            if (err) {
+                                console.log('Error sending announcement', err);
+                                // lookupGeneralChan(bot)
+                                // .then(function (generalChan) {
+                                //     announcement.channel = generalChan;
+                                //     bot.say(announcement,function(err) {
+                                //         if (err) console.log('Error sending new case to general channel', err);
+                                //     })
+                                // })
+                            }
+                        });
+                    }
                 })
             });
             res.status(200).send({ result: 'All messages sent' });
