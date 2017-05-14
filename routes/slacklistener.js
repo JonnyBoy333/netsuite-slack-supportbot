@@ -211,7 +211,6 @@ controller.on('interactive_message_callback', function(bot, message) {
                     };
                 }
 
-
                 //app credentials
                 var oauth = OAuth({
                     consumer: {

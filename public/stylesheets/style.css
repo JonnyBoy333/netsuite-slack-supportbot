@@ -72,6 +72,23 @@ pre {
     border-radius: 4px;
 }
 
+#email-attachments {
+    width: 100%;
+    padding: 3.5%;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #DEDEDE;
+    border-radius: 4px;
+    background: #ffffff;
+}
+
+#attachment-box {
+    border: 40px solid #DEDEDE;
+    border-radius: 4px;
+    background: #DEDEDE;
+    margin-top: 3%
+}
+
 #workflow {
     margin: 20px 0 30px;
 }
