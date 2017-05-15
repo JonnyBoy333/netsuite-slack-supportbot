@@ -29,7 +29,8 @@
     "sanitize-html": "latest",
     "serve-favicon": "~2.3.0",
     "universal-analytics": "^0.4.12",
-    "url": "latest"
+    "url": "latest",
+    "winston": "^2.3.1"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"

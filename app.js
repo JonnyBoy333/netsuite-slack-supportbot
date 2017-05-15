@@ -1,7 +1,6 @@
 var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
-var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
@@ -11,11 +10,27 @@ var tokenSchema = require('./models/schemas').tokens;
 var BearerStrategy = require('passport-http-bearer').Strategy;
 var controller = require('./modules/bot_controller');
 var ua = require('universal-analytics');
+var Logger = require('le_node');
+var winston = require('winston');
+
+//Setup external logging
+var logEntriesKey = process.env.NODE_ENV === 'Production' ? process.env.LOG_ENTRIES : process.env.LOG_ENTRIES_DEV;
+var logger = new (winston.Logger)({
+    transports: [
+        new (winston.transports.Logentries)({
+            token: logEntriesKey,
+            handleExceptions: true,
+            humanReadableUnhandledException: true
+        })
+    ]
+});
+logger.exitOnError = false;
 //var ga = require('./modules/ga');
 //var visitor = ua('UA-3542953-4');
 
 if (!process.env.SLACK_KEY || !process.env.SLACK_SECRET || !process.env.NETSUITE_KEY || !process.env.NETSUITE_SECRET) {
     console.log('Error: Specify clientId and clientSecret in environment');
+    logger.warn('Error: Specify clientId and clientSecret in environment');
     process.exit(1);
 }
 
@@ -32,6 +47,7 @@ mongooseDB.on('connecting', function() {
 });
 mongooseDB.on('error', function(error) {
     console.error('Error in MongoDb connection: ' + error);
+    logger.warn('Error in MongoDb connection: ' + error);
     mongoose.disconnect();
 });
 mongooseDB.on('connected', function() {
@@ -76,7 +92,6 @@ app.set('view engine', 'ejs');
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 var analyticsId = process.env.NODE_ENV === 'Production' ? process.env.ANALYTICS_ID : process.env.ANALYTICS_ID_DEV;
-app.use(logger('dev'));
 app.use(bodyParser.json({limit: '5mb'}));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -123,6 +138,5 @@ app.use(function(err, req, res) {
     error: {}
   });
 });
-
 
 module.exports = app;
