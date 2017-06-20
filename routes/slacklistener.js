@@ -115,10 +115,10 @@ setInterval(function(){
 //Handle file uploads
 controller.on('file_shared', function(bot, message) {
     console.log('File Message', message);
-    var teamId = bot.team_info.id,
-        interactiveBot = _interactive_bots[teamId];
-    var reply = 'Hello';
-    interactiveBot.replyInteractive(message, reply);
+    // var teamId = bot.team_info.id,
+    //     interactiveBot = _interactive_bots[teamId];
+    // var reply = 'Hello';
+    // interactiveBot.replyInteractive(message, reply);
 });
 
 //Handle Interactive Messages
