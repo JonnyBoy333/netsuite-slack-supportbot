@@ -16,6 +16,7 @@
     "ejs": "~2.3.3",
     "express": "~4.13.1",
     "http": "latest",
+    "le_node": "^1.7.0",
     "mongoose": "^4.8.1",
     "mongoose-observer": "^0.2.1",
     "morgan": "~1.6.1",
@@ -28,7 +29,8 @@
     "sanitize-html": "latest",
     "serve-favicon": "~2.3.0",
     "universal-analytics": "^0.4.12",
-    "url": "latest"
+    "url": "latest",
+    "winston": "^2.3.1"
   },
   "devDependencies": {
     "nodemon": "^1.11.0"

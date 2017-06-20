@@ -9,7 +9,8 @@ var express  = require('express'),
     _bots = require('../modules/track_bot').bots,
     tokenSchema = require('../models/schemas').tokens,
     passport = require('passport'),
-    nsStats = require('../modules/netsuite_logging');
+    nsStats = require('../modules/netsuite_logging'),
+    logger = require('winston');
 
 // //Lookup General Channel
 // function lookupGeneralChan(bot) {
@@ -68,12 +69,14 @@ router.post('/addaccount/:accountid',
 
         controller.storage.teams.save(newAccount, function (err, newAccount) {
             if (err) {
+                logger.warn('Error saving message', err);
                 console.log('Error saving message', err);
                 return;
             }
             console.log('New Account', newAccount);
             controller.spawn(newAccount.bot).startRTM(function(err, bot) {
                 if (err) {
+                    logger.warn('Error connecting bot to Slack:', err);
                     console.log('Error connecting bot to Slack:', err);
                     //bot.closeRTM();
                 } else {
@@ -130,6 +133,7 @@ router.post('/addaccount/:accountid',
                                 }
                                 resolve(userId);
                                 if (err){
+                                    logger.warn('Error getting user list', err);
                                     reject(err);
                                 }
                             })
@@ -165,6 +169,7 @@ router.post('/addaccount/:accountid',
                             }
                         })
                         .catch(function(e) {
+                            logger.warn('error', e);
                             console.log("error", e);
                         });
                 }
@@ -218,6 +223,7 @@ router.put('/updateaccount/:accountid',
                 nsStats(updatedAccount);
             })
             .catch(function(err) {
+                logger.warn('Error updating team', err);
                 console.log(err);
                 res.status(404).send(err);
             });
@@ -230,7 +236,10 @@ router.put('/updateaccount/:accountid',
             active: true
         };
         controller.storage.channels.save(channelData, function (err, channel) {
-            if (err) console.log('Error saving channel data', err);
+            if (err) {
+                console.log('Error saving channel data', err);
+                logger.warn('Error saving channel data', err);
+            }
             channel.type = 'channel';
             nsStats(channel);
         });
@@ -262,6 +271,7 @@ router.get('/activate/:accountid',
                         controller.spawn(updatedAccount.bot).startRTM(function(err, bot) {
                             if (err) {
                                 console.log('Error connecting bot to Slack:', err); //bot probably already spawned
+                                logger.warn('Error connecting bot to Slack:', err);
                             } else {
                                 console.log('Bot re activated:', bot.team_info.name);
                                 trackBot(bot, 'main');
@@ -278,6 +288,7 @@ router.get('/activate/:accountid',
                                     .catch(function (err) {
                                         if (err) {
                                             console.log('Error activating Account', err);
+                                            logger.warn('Error activating Account', err);
                                             res.status(500).send(err);
                                         }
                                     });
@@ -288,6 +299,7 @@ router.get('/activate/:accountid',
                                     .then(function (channel) {})
                                     .catch(function (err) {
                                         if (err) {
+                                            logger.warn('Error activating channels', err);
                                             console.log('Error activating channels', err);
                                             res.status(500).send(err);
                                         }
@@ -298,6 +310,7 @@ router.get('/activate/:accountid',
                                     .then(function (users) {})
                                     .catch(function (err) {
                                         if (err) {
+                                            logger.warn('Error activating users', err);
                                             console.log('Error activating users', err);
                                             res.status(500).send(err);
                                         }
@@ -323,6 +336,7 @@ router.get('/activate/:accountid',
                     }
                 })
                 .catch(function(err) {
+                    logger.warn('Error', err);
                     console.log(err);
                     res.status(404).send(err);
                 });
@@ -358,6 +372,7 @@ router.delete('/delete/:accountid', function (req, res) {
                 })
                 .catch(function (err) {
                     if (err) {
+                        logger.warn('Error deactivating team', err);
                         console.log('Error deactivating team', err);
                         res.status(500).send(err);
                     }
@@ -369,6 +384,7 @@ router.delete('/delete/:accountid', function (req, res) {
                 .then(function (channel) {})
                 .catch(function (err) {
                     if (err) {
+                        logger.warn('Error deactivating channels', err);
                         console.log('Error deactivating channels', err);
                         res.status(500).send(err);
                     }
@@ -379,6 +395,7 @@ router.delete('/delete/:accountid', function (req, res) {
                 .then(function (users) {})
                 .catch(function (err) {
                     if (err) {
+                        logger.warn('Error deactivating users', err);
                         console.log('Error deactivating users', err);
                         res.status(500).send(err);
                     }
@@ -389,6 +406,7 @@ router.delete('/delete/:accountid', function (req, res) {
             var bot = _bots[accountId];
             if (bot) {
                 bot.destroy(function (err) {
+                    logger.warn('Error destroying bot', err);
                     console.log('Error destroying bot', err);
                 });
                 delete _bots[accountId];
@@ -412,6 +430,7 @@ router.post('/generate-token', function(req, res){
             res.status(200).send({ token: token });
         })
         .catch(function(err){
+            logger.warn('Error saving token', err.message);
             console.log('Error saving token', err.message);
             if (err.code == 11000) {
                 tokenSchema.findOne({
@@ -436,7 +455,10 @@ router.post('/announcement/',
         if (announcement) {
             controller.storage.teams.all(function (err, teams) {
                 teams.forEach(function (team) {
-                    if (err) console.log('Error retrieving all teams', err);
+                    if (err) {
+                        logger.warn('Error retrieving all teams', err);
+                        console.log('Error retrieving all teams', err);
+                    }
                     if (team.active === false) return;
 
                     console.log('Team ID', team.id);
@@ -446,6 +468,7 @@ router.post('/announcement/',
                     if (bot) {
                         bot.say(announcement, function(err) {
                             if (err) {
+                                logger.warn('Error sending announcement', err);
                                 console.log('Error sending announcement', err);
                                 // lookupGeneralChan(bot)
                                 // .then(function (generalChan) {

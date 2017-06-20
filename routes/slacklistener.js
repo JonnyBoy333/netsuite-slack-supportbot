@@ -12,7 +12,8 @@ var express = require('express'),
     versionCheck = require('../modules/version_check'),
     teamModel = require('../models/schemas').teams,
     channelModel = require('../models/schemas').channels,
-    userModel = require('../models/schemas').users;
+    userModel = require('../models/schemas').users,
+    logger = require('winston');
     //fs = require('fs');
 
 function deactivateAccount(accountId) {
@@ -30,7 +31,11 @@ function deactivateAccount(accountId) {
             nsStats(deactivateTeam);
         })
         .catch(function (err) {
-            if (err) console.log('Error deactivating team', err);
+            if (err) {
+                console.log('Error deactivating team', err);
+                logger.warn('Error deactivating team', err);
+            }
+
         });
 
     //Deactivate the channels
@@ -38,14 +43,20 @@ function deactivateAccount(accountId) {
     channelModel.updateMany(search, update).exec()
         .then(function (channel) {})
         .catch(function (err) {
-            if (err) console.log('Error deactivating channels', err);
+            if (err) {
+                console.log('Error deactivating channels', err);
+                logger.warn('Error deactivating channels', err);
+            }
         });
 
     //Deactivate the users
     userModel.updateMany(search, update).exec()
         .then(function (users) {})
         .catch(function (err) {
-            if (err) console.log('Error deactivating users', err);
+            if (err) {
+                console.log('Error deactivating users', err);
+                logger.warn('Error deactivating users', err);
+            }
         });
 }
 
@@ -53,6 +64,7 @@ controller.storage.teams.all(function(err,teams) {
     console.log('Start bot connecting');
     if (err) {
         console.log('Error looking up teams:', err);
+        logger.warn('Error looking up teams:', err);
         throw new Error(err);
     }
 
@@ -75,7 +87,10 @@ controller.storage.teams.all(function(err,teams) {
                         resolve();
                     });
                 }).catch(function (err) {
-                    console.log('Promise error', err);
+                    if (err) {
+                        console.log('Promise error', err);
+                        logger.warn('Promise error', err);
+                    }
                 })
             }
             spawnBot(teams[t]);
@@ -95,6 +110,10 @@ function getUser(id, bot) {
         bot.api.users.info({user: id},function(err,response) {
             resolve(response);
             if (err){
+                if (err) {
+                    console.log('Error retrieving user names', err);
+                    logger.warn('Error retrieving user names', err);
+                }
                 reject(err);
             }
         })
@@ -236,6 +255,7 @@ controller.on('interactive_message_callback', function(bot, message) {
                 }, function(error, response, body) {
                     if (error){
                         console.log(error);
+                        logger.warn('There was an error connecting to NetSuite, please try again', error);
                         bot.replyInteractive(message, 'There was an error connecting to NetSuite, please try again.');
                         delete _interactiveMessages[message.callback_id];
                     } else {
@@ -257,6 +277,7 @@ controller.on('interactive_message_callback', function(bot, message) {
                 });
             })
             .catch(function(reason){
+                logger.warn('Error', reason);
                 console.log(reason);
             })
         });
@@ -307,7 +328,10 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
         active: true
     };
     controller.storage.users.save(messageData, function (err, message) {
-        if (err) console.log('Error saving message', err);
+        if (err) {
+            console.log('Error saving message', err);
+            logger.warn('Error saving message', err);
+        }
         //console.log('User Message : ', message);
         //send to netsuite
         message.type = 'user';
@@ -325,7 +349,10 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
         active: true
     };
     controller.storage.teams.save(teamCountInc, function (err, message) {
-        if (err) console.log('Error saving message', err);
+        if (err) {
+            console.log('Error saving message', err);
+            logger.warn('Error saving message', err);
+        }
         //console.log('Team message', message);
         message.type = 'team';
         nsStats(message);
@@ -505,6 +532,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                     json: postData
                 }, function(error, response, body) {
                     if (error){
+                        logger.warn('Error connection to NetSuite', error);
                         console.log(error);
                     } else {
                         function sendMessage(i) {
@@ -572,7 +600,10 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                                 //     console.log("The file was saved!");
                                 // });
                                 bot.reply(message, reply, function (err) {
-                                    if (err) console.log(err);
+                                    if (err) {
+                                        logger.warn('Error replying to Slack', err);
+                                        console.log(err);
+                                    }
                                     resolve();
                                 });
                                 if (i <= (messages.length - 1)) {bot.startTyping(message)}
@@ -584,6 +615,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                         if ((typeof body == 'string' && body.indexOf('error') === 2) || body.hasOwnProperty('error')){
                             console.log('Error :' + body);
                             if (body.error.code === 'INVALID_LOGIN_ATTEMPT') {
+                                logger.warn('Employee tokens are not setup', body.error);
                                 bot.reply(message, 'Employee tokens are not setup yet. Please go to the Slack setup page and follow the instructions to add employee tokens.');
                             }
                         } else {
@@ -620,6 +652,7 @@ controller.hears([searchReg],['direct_message','direct_mention','mention'],funct
                 });
             })
             .catch(function(reason){
+                logger.warn('Error', reason);
                 console.log(reason);
             })
         });
@@ -650,6 +683,7 @@ function getUserIdList (name, bot, defaultChannel){
                 }
                 resolve(userId);
                 if (err){
+                    logger.warn('Error getting users', err);
                     reject(err);
                 }
             })
@@ -691,7 +725,10 @@ function storeMessageData(teamId, team, type, slackAttachment) {
     };
 
     controller.storage.teams.save(teamCountInc, function (err, message) {
-        if (err) console.log('Error incrementing team message count', err);
+        if (err) {
+            console.log('Error incrementing team message count', err);
+            logger.warn('Error incrementing team message count', err);
+        }
         message.type = 'team';
         nsStats(message);
     });
@@ -718,7 +755,10 @@ function storeMessageData(teamId, team, type, slackAttachment) {
     };
 
     controller.storage.channels.save(channelData, function (err, message) {
-        if (err) console.log('Error adding message to channel storage', err);
+        if (err) {
+            console.log('Error adding message to channel storage', err);
+            logger.warn('Error adding message to channel storage', err);
+        }
         message.type = 'channel';
         channelData.$push.messages.date = new Date();
         message.messages = [channelData.$push.messages];
@@ -753,6 +793,7 @@ router.post('/newcase',
         console.log('New Case Slack Attachment:', slackAttachment);
         bot.say(slackAttachment, function(err) {
             if (err) {
+                logger.warn('Error sending new case', err);
                 console.log('Error sending new case', err);
                 // slackAttachment.channel = '#general';
                 // console.log('Slack attachment to send to general channel', slackAttachment);
@@ -799,6 +840,9 @@ router.post('/casereply',
                     }
                     storeMessageData(teamId, team, 'casereply', slackAttachment);
                 });
+            }).catch(function (err) {
+                console.log('Error retrieving user ID', err);
+                logger.warn('Error retrieving user ID', err);
             })
         });
         res.end("NetSuite Listener");
@@ -818,7 +862,10 @@ router.post('/caseassigned',
         console.log('body:', message);
         //console.log('headers: ' + JSON.stringify(req.headers));
         controller.storage.teams.get(teamId, function(err, team) {
-            if (err) console.log(err);
+            if (err) {
+                console.log(err);
+                logger.warn('Error getting team', err);
+            }
             getUserIdList(message.assigned, bot)
                 .then(function(userId) {
                     console.log('User ID', userId);
@@ -842,7 +889,10 @@ router.post('/caseassigned',
                         }
                         storeMessageData(teamId, team, 'caseassigned', slackAttachment);
                     });
-                })
+                }).catch(function (err) {
+                console.log('Error getting user list', err);
+                logger.warn('Error getting user list', err);
+            })
         });
         res.end("NetSuite Listener");
     }
@@ -859,7 +909,10 @@ router.post('/custommessage',
         console.log('body:', req.body);
         console.log('TeamID:', teamId);
         controller.storage.teams.get(teamId, function(err, team) {
-            if (err) console.log(err);
+            if (err) {
+                console.log(err);
+                logger.warn('Error retrieving teams', err);
+            }
             var response = [];
 
             function sendMessage(i) {
@@ -892,6 +945,7 @@ router.post('/custommessage',
                 console.log("All messages sent");
             }).catch(function(e) {
                 console.log("error", e);
+                logger.warn("error", e);
                 res.end('Error sending messages');
             });
         });
