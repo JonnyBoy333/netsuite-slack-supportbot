@@ -48,6 +48,10 @@ router.post('/',
             console.log('Error sending email', error);
             res.render('contact', {
                 title: 'Contact Us',
+                home: '',
+                instructions: '',
+                privacypolicy: '',
+                contact: 'active',
                 displaysuccess: 'none',
                 displayfailure: 'normal'
             });
@@ -57,6 +61,10 @@ router.post('/',
             console.log('Email successfully sent');
             res.render('contact', {
                 title: 'Contact Us',
+                home: '',
+                instructions: '',
+                privacypolicy: '',
+                contact: 'active',
                 displaysuccess: 'normal',
                 displayfailure: 'none'
             });
